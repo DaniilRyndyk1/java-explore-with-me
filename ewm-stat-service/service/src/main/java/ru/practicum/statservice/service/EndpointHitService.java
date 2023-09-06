@@ -6,8 +6,8 @@ import ru.practicum.statservice.dto.EndpointHitInputDto;
 import ru.practicum.statservice.dto.EndpointHitResultDto;
 import ru.practicum.statservice.mapper.EndpointHitMapper;
 import ru.practicum.statservice.repository.EndpointHitRepository;
-import jakarta.transaction.Transactional;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.*;
 
