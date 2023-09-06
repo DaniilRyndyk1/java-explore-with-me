@@ -13,7 +13,7 @@ public interface EndpointHitRepository extends JpaRepository<EndpointHit, Long> 
             "FROM EndpointHit hit " +
             "WHERE hit.uri IN :uris AND hit.created BETWEEN :start AND :end " +
             "GROUP BY hit.app, hit.uri " +
-            "ORDER BY count(hit.id)")
+            "ORDER BY count(hit.id) DESC")
     List<EndpointHitResultDto> findByPeriodAndUriIn(LocalDateTime start,
                                                     LocalDateTime end,
                                                     String[] uris);
@@ -22,7 +22,7 @@ public interface EndpointHitRepository extends JpaRepository<EndpointHit, Long> 
             "FROM EndpointHit hit " +
             "WHERE hit.created BETWEEN :start AND :end " +
             "GROUP BY hit.app, hit.uri " +
-            "ORDER BY count(hit.id)")
+            "ORDER BY count(hit.id) DESC")
     List<EndpointHitResultDto> findByPeriod(LocalDateTime start,
                                             LocalDateTime end);
 
@@ -30,7 +30,7 @@ public interface EndpointHitRepository extends JpaRepository<EndpointHit, Long> 
             "FROM EndpointHit hit " +
             "WHERE hit.uri IN :uris AND hit.created BETWEEN :start AND :end " +
             "GROUP BY hit.app, hit.uri " +
-            "ORDER BY count(hit.id)")
+            "ORDER BY count(hit.id) DESC")
     List<EndpointHitResultDto> findUniqueByPeriodAndUriIn(LocalDateTime start,
                                                           LocalDateTime end,
                                                           String[] uris);
@@ -39,7 +39,7 @@ public interface EndpointHitRepository extends JpaRepository<EndpointHit, Long> 
             "FROM EndpointHit hit " +
             "WHERE hit.created BETWEEN :start AND :end " +
             "GROUP BY hit.app, hit.uri " +
-            "ORDER BY count(hit.id)")
+            "ORDER BY count(hit.id) DESC")
     List<EndpointHitResultDto> findUniqueByPeriod(LocalDateTime start,
                                                   LocalDateTime end);
 }
