@@ -9,7 +9,7 @@ services:
       - db
       - stat-service
 
-  stat-service:
+  stats-server:
     build: ewm-stat-service
     container_name: ewm-stat-service
     ports:
