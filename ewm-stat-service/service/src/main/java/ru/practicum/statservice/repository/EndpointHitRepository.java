@@ -12,7 +12,8 @@ public interface EndpointHitRepository extends JpaRepository<EndpointHit, Long> 
     @Query("SELECT new ru.practicum.statservice.dto.EndpointHitResultDto(hit.app, hit.uri, count(hit.id)) " +
             "FROM EndpointHit hit " +
             "WHERE hit.uri IN :uris AND hit.created BETWEEN :start AND :end " +
-            "GROUP BY hit.app, hit.uri")
+            "GROUP BY hit.app, hit.uri " +
+            "ORDER BY count(hit.id)")
     List<EndpointHitResultDto> findByPeriodAndUriIn(LocalDateTime start,
                                                     LocalDateTime end,
                                                     String[] uris);
@@ -20,14 +21,16 @@ public interface EndpointHitRepository extends JpaRepository<EndpointHit, Long> 
     @Query("SELECT new ru.practicum.statservice.dto.EndpointHitResultDto(hit.app, hit.uri, count(hit.id)) " +
             "FROM EndpointHit hit " +
             "WHERE hit.created BETWEEN :start AND :end " +
-            "GROUP BY hit.app, hit.uri")
+            "GROUP BY hit.app, hit.uri " +
+            "ORDER BY count(hit.id)")
     List<EndpointHitResultDto> findByPeriod(LocalDateTime start,
                                             LocalDateTime end);
 
     @Query("SELECT new ru.practicum.statservice.dto.EndpointHitResultDto(hit.app, hit.uri, count(DISTINCT hit.ip)) " +
             "FROM EndpointHit hit " +
             "WHERE hit.uri IN :uris AND hit.created BETWEEN :start AND :end " +
-            "GROUP BY hit.app, hit.uri")
+            "GROUP BY hit.app, hit.uri " +
+            "ORDER BY count(hit.id)")
     List<EndpointHitResultDto> findUniqueByPeriodAndUriIn(LocalDateTime start,
                                                           LocalDateTime end,
                                                           String[] uris);
@@ -35,7 +38,8 @@ public interface EndpointHitRepository extends JpaRepository<EndpointHit, Long> 
     @Query("SELECT new ru.practicum.statservice.dto.EndpointHitResultDto(hit.app, hit.uri, count(DISTINCT hit.ip)) " +
             "FROM EndpointHit hit " +
             "WHERE hit.created BETWEEN :start AND :end " +
-            "GROUP BY hit.app, hit.uri")
+            "GROUP BY hit.app, hit.uri " +
+            "ORDER BY count(hit.id)")
     List<EndpointHitResultDto> findUniqueByPeriod(LocalDateTime start,
                                                   LocalDateTime end);
 }
