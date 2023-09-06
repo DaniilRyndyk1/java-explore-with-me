@@ -114,8 +114,8 @@ public class EndpointHitServiceTest {
                 null,
                 false);
         assertEquals(2, hits.size());
-        assertEquals(1, hits.get(0).getHits());
-        assertEquals(3, hits.get(1).getHits());
+        assertEquals(3, hits.get(0).getHits());
+        assertEquals(1, hits.get(1).getHits());
     }
 
     @Test
@@ -128,7 +128,7 @@ public class EndpointHitServiceTest {
                 null,
                 true);
         assertEquals(2, hits.size());
-        assertEquals(1, hits.get(0).getHits());
-        assertEquals(2, hits.get(1).getHits());
+        assertEquals(2, hits.get(0).getHits());
+        assertEquals(1, hits.get(1).getHits());
     }
 }
