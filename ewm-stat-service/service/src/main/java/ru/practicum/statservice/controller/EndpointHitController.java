@@ -28,6 +28,7 @@ public class EndpointHitController {
 
         var startDate = LocalDateTime.parse(startDateString, formatter);
         var endDate = LocalDateTime.parse(endDateString, formatter);
+        unique = unique != null && unique;
 
         return service.getAllByParams(startDate, endDate, uris, unique);
     }
