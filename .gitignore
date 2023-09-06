@@ -3,10 +3,10 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-!**/ewm-main-service/target/
-!**/ewm-stat-service/service/target/
-!**/ewm-stat-service/dto/target/
-!**/ewm-stat-service/client/target/
+/ewm-main-service/target/
+/ewm-stat-service/service/target/
+/ewm-stat-service/dto/target/
+/ewm-stat-service/client/target/
 
 ### STS ###
 .apt_generated
