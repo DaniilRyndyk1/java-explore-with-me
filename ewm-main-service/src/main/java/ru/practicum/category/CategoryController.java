@@ -1,13 +1,13 @@
 package ru.practicum.category;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.dto.NewCategoryDto;
 import ru.practicum.category.service.CategoryService;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,7 +33,7 @@ public class CategoryController {
     }
 
     @GetMapping("/categories")
-    public Page<CategoryDto> getAll(@RequestParam(defaultValue = "0") Integer from,
+    public List<CategoryDto> getAll(@RequestParam(defaultValue = "0") Integer from,
                                     @RequestParam(defaultValue = "10") Integer size) {
         return service.getAll(from, size);
     }

@@ -42,17 +42,17 @@ public class CategoryServiceImplTest {
 
     @Test
     void shouldAddCategory() {
-        var originalSize = service.getAll(0, 10).toList().size();
+        var originalSize = service.getAll(0, 10).size();
         category3 = service.create(categoryDto3);
-        var newSize = service.getAll(0, 10).toList().size();
+        var newSize = service.getAll(0, 10).size();
         assertEquals(originalSize + 1, newSize);
     }
 
     @Test
     void shouldDeleteCategory() {
-        var originalSize = service.getAll(0, 10).toList().size();
+        var originalSize = service.getAll(0, 10).size();
         service.delete(category1.getId());
-        var newSize = service.getAll(0, 10).toList().size();
+        var newSize = service.getAll(0, 10).size();
         assertEquals(originalSize - 1, newSize);
     }
 
@@ -66,12 +66,11 @@ public class CategoryServiceImplTest {
     @Test
     void shouldGetAllCategories() {
         var DTOs = service.getAll(0, 10);
-        var dtosList = DTOs.toList();
-        assertEquals(2, dtosList.size());
-        assertEquals(dtosList.get(0).getId(), category1.getId());
-        assertEquals(dtosList.get(0).getName(), category1.getName());
-        assertEquals(dtosList.get(1).getId(), category2.getId());
-        assertEquals(dtosList.get(1).getName(), category2.getName());
+        assertEquals(2, DTOs.size());
+        assertEquals(DTOs.get(0).getId(), category1.getId());
+        assertEquals(DTOs.get(0).getName(), category1.getName());
+        assertEquals(DTOs.get(1).getId(), category2.getId());
+        assertEquals(DTOs.get(1).getName(), category2.getName());
     }
 
     @Test
