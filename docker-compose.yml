@@ -8,6 +8,8 @@ services:
     depends_on:
       - db
       - stats-server
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/postgres
 
   stats-server:
     build: ewm-stat-service
