@@ -17,8 +17,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @Transactional
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @ActiveProfiles("test")
-public class CategoryServiceTest {
-    private final CategoryService service;
+public class CategoryServiceImplTest {
+    private final CategoryServiceImpl service;
 
     private final NewCategoryDto categoryDto = new NewCategoryDto("theatre");
     private final NewCategoryDto categoryDto2 = new NewCategoryDto("cinema");
