@@ -1,8 +1,8 @@
 version: '3.8'
 services:
   ewm-service:
-    build: ewm-main-service
     container_name: ewm-service
+    build: ewm-main-service
     ports:
       - "8080:8080"
     depends_on:
@@ -12,8 +12,8 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/postgres
 
   stats-server:
-    build: ewm-stat-service
     container_name: stats-server
+    build: ewm-stat-service
     ports:
       - "9090:9090"
     depends_on:
@@ -22,8 +22,8 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5433/postgres
 
   db:
-    image: postgres:15-alpine
     container_name: db
+    image: postgres:15-alpine
     ports:
       - "6541:5432"
     environment:
@@ -32,10 +32,10 @@ services:
       - POSTGRES_PASSWORD=postgres
 
   db2:
-    image: postgres:15-alpine
     container_name: db2
+    image: postgres:15-alpine
     ports:
-      - "6541:5433"
+      - "6542:5433"
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
