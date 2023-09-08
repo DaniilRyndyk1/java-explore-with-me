@@ -23,7 +23,7 @@ public class UserServerImpl implements UserService {
 
     public Page<UserDto> getAll(Long[] ids, Integer from, Integer size) {
         var pageRequest = PageRequest.of(from / size, size);
-        return repository.findAllByUser_IdIn(ids, pageRequest);
+        return repository.findAllByIdIn(ids, pageRequest);
     }
 
     public void delete(Long userId) {

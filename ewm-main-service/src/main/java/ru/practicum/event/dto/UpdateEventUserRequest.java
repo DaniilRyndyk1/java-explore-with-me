@@ -3,6 +3,7 @@ package ru.practicum.event.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import ru.practicum.event.enums.EventStateAction;
+import ru.practicum.event.model.Location;
 
 import javax.validation.constraints.Size;
 

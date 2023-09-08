@@ -15,7 +15,7 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository repository;
     private final CategoryMapper mapper;
 
-    public CategoryDto add(NewCategoryDto dto) {
+    public CategoryDto create(NewCategoryDto dto) {
         var category = mapper.toCategory(-1L, dto);
         category = repository.save(category);
         return mapper.toCategoryDto(category);
@@ -34,7 +34,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     public Page<CategoryDto> getAll(Integer from, Integer size) {
         var pageRequest = PageRequest.of(from / size, size);
-        return repository.findAll(pageRequest);
+        return repository.findAllBy(pageRequest);
     }
 
     public CategoryDto getById(Long categoryId) {

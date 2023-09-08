@@ -7,5 +7,5 @@ import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.model.Category;
 
 public interface CategoryRepository extends JpaRepository<Category, Long> {
-    Page<CategoryDto> findAll(PageRequest pageRequest);
+    Page<CategoryDto> findAllBy(PageRequest pageRequest);
 }

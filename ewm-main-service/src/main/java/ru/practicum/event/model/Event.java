@@ -5,13 +5,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.practicum.category.model.Category;
-import ru.practicum.event.dto.Location;
+import ru.practicum.compilation.model.Compilation;
 import ru.practicum.event.enums.EventState;
 import ru.practicum.user.model.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "events")
@@ -43,7 +45,7 @@ public class Event {
     private String description;
 
     @NotNull
-    @Column(name = "description", nullable = false)
+    @Column(name = "eventDate", nullable = false)
     private LocalDateTime eventDate;
 
     @NotNull
@@ -79,4 +81,7 @@ public class Event {
 
     @Column(name = "views")
     private Long views;
+
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "events", cascade = { CascadeType.ALL })
+    private Set<Compilation> compilations = new HashSet<>();
 }
