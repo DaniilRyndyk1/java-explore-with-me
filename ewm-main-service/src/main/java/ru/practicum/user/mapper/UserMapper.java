@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.practicum.user.dto.NewUserRequest;
 import ru.practicum.user.dto.UserDto;
+import ru.practicum.user.dto.UserShortDto;
 import ru.practicum.user.model.User;
 
 @Component
@@ -21,5 +22,11 @@ public class UserMapper {
                 user.getId(),
                 user.getName(),
                 user.getEmail());
+    }
+
+    public UserShortDto toUserShortDto(User user) {
+        return new UserShortDto(
+                user.getId(),
+                user.getName());
     }
 }

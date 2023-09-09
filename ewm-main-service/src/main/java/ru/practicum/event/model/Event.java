@@ -1,12 +1,10 @@
 package ru.practicum.event.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import ru.practicum.category.model.Category;
 import ru.practicum.compilation.model.Compilation;
 import ru.practicum.event.enums.EventState;
+import ru.practicum.location.model.Location;
 import ru.practicum.user.model.User;
 
 import javax.persistence.*;
@@ -19,8 +17,7 @@ import java.util.Set;
 @Table(name = "events")
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,12 +25,12 @@ public class Event {
 
     @NotNull
     @Column(name = "annotation", nullable = false)
-    private String annotation;
+    private final String annotation;
 
     @NotNull
     @ManyToOne
     @JoinColumn(name = "category_id")
-    private Category category;
+    private final Category category;
 
     @Column(name = "confirmedRequests")
     private Long confirmedRequests;
@@ -42,25 +39,25 @@ public class Event {
     private LocalDateTime createdOn;
 
     @Column(name = "description")
-    private String description;
+    private final String description;
 
     @NotNull
     @Column(name = "eventDate", nullable = false)
-    private LocalDateTime eventDate;
+    private final LocalDateTime eventDate;
 
     @NotNull
     @ManyToOne
     @JoinColumn(name = "initiator_id")
-    private User initiator;
+    private final User initiator;
 
     @NotNull
     @ManyToOne
     @JoinColumn(name = "location_id")
-    private Location location;
+    private final Location location;
 
     @NotNull
     @Column(name = "paid", nullable = false)
-    private Boolean paid;
+    private final Boolean paid;
 
     @Column(name = "participantLimit")
     private Integer participantLimit;
@@ -77,7 +74,7 @@ public class Event {
 
     @NotNull
     @Column(name = "title", nullable = false)
-    private String title;
+    private final String title;
 
     @Column(name = "views")
     private Long views;
