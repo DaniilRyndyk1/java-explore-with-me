@@ -5,13 +5,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.dto.NewCategoryDto;
+import ru.practicum.handler.NotFoundException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import javax.persistence.EntityNotFoundException;
+import javax.validation.ConstraintViolationException;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
@@ -28,12 +33,6 @@ public class CategoryServiceImplTest {
     private CategoryDto category2;
     private CategoryDto category3;
 
-//    private final EndpointHitInputDto hit4 =
-//            new EndpointHitInputDto("ewm-main-service",
-//                    "/events/1",
-//                    "192.163.1.1",
-//                    "2023-06-10 10:00:00");
-
     @BeforeEach
     void setup() {
         category1 = service.create(categoryDto);
@@ -49,6 +48,19 @@ public class CategoryServiceImplTest {
     }
 
     @Test
+    void shouldNotAddCategoryWithSameName() {
+        assertThrows(DataIntegrityViolationException.class,
+                () -> service.create(categoryDto));
+    }
+
+    @Test
+    void shouldNotAddCategoryWithNullName() {
+        var categoryDto3 = new NewCategoryDto(null);
+        assertThrows(ConstraintViolationException.class,
+                () -> service.create(categoryDto3));
+    }
+
+    @Test
     void shouldDeleteCategory() {
         var originalSize = service.getAll(0, 10).size();
         service.delete(category1.getId());
@@ -57,10 +69,36 @@ public class CategoryServiceImplTest {
     }
 
     @Test
+    void shouldNotDeleteCategoryWithWrongId() {
+        var originalSize = service.getAll(0, 10).size();
+        service.delete(999L);
+        var newSize = service.getAll(0, 10).size();
+        assertEquals(originalSize, newSize);
+    }
+
+    @Test
+    void shouldNotDeleteCategoryWithNullId() {
+        assertThrows(InvalidDataAccessApiUsageException.class,
+                () -> service.delete(null));
+    }
+
+    @Test
     void shouldGetCategoryById() {
         var dto = service.getById(category2.getId());
         assertEquals(category2.getId(), dto.getId());
         assertEquals(category2.getName(), dto.getName());
+    }
+
+    @Test
+    void shouldNotGetCategoryByWrongId() {
+        assertThrows(EntityNotFoundException.class,
+                () -> service.getById(999L));
+    }
+
+    @Test
+    void shouldNotGetCategoryByNullId() {
+        assertThrows(InvalidDataAccessApiUsageException.class,
+                () -> service.getById(null));
     }
 
     @Test
@@ -74,6 +112,36 @@ public class CategoryServiceImplTest {
     }
 
     @Test
+    void shouldNotGetAllCategoriesWithFromNegative() {
+        assertThrows(IllegalArgumentException.class,
+                () -> service.getAll(-5, 10));
+    }
+
+    @Test
+    void shouldNotGetAllCategoriesWithSizeNegative() {
+        assertThrows(IllegalArgumentException.class,
+                () -> service.getAll(0, -10));
+    }
+
+    @Test
+    void shouldNotGetAllCategoriesWithSizeEqualsZero() {
+        assertThrows(IllegalArgumentException.class,
+                () -> service.getAll(0, 0));
+    }
+
+    @Test
+    void shouldNotGetAllCategoriesWithNullSize() {
+        assertThrows(NullPointerException.class,
+                () -> service.getAll(0, null));
+    }
+
+    @Test
+    void shouldNotGetAllCategoriesWithNullFrom() {
+        assertThrows(NullPointerException.class,
+                () -> service.getAll(null, 10));
+    }
+
+    @Test
     void shouldUpdateCategory() {
         var dto = new CategoryDto(category1.getId(), "aaaaaoooooaaa");
         service.update(category1.getId(), dto);
@@ -81,5 +149,29 @@ public class CategoryServiceImplTest {
         assertNotNull(newDto);
         assertEquals(newDto.getId(), dto.getId());
         assertEquals(newDto.getName(), dto.getName());
+    }
+
+    @Test
+    void shouldNotUpdateCategoryWithWrongId() {
+        var dto = new CategoryDto(999L, "aaaaaoooooaaa");
+        assertThrows(NotFoundException.class,
+                () -> service.update(999L, dto));
+    }
+
+    @Test
+    void shouldNotUpdateCategoryWithNullName() {
+        var dto = new CategoryDto(category1.getId(), null);
+        service.update(category1.getId(), dto);
+        var newDto = service.getById(category1.getId());
+        assertNotNull(newDto);
+        assertEquals(newDto.getId(), dto.getId());
+        assertEquals(newDto.getName(), dto.getName());
+    }
+
+    @Test
+    void shouldNotUpdateCategoryWithNullId() {
+        var dto = new CategoryDto(null, "test");
+        assertThrows(InvalidDataAccessApiUsageException.class,
+                () -> service.update(null, dto));
     }
 }
