@@ -3,7 +3,6 @@ package ru.practicum.event.service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import ru.practicum.event.dto.*;
-import ru.practicum.user.dto.ParticipationRequestDto;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -24,13 +23,6 @@ public interface EventService {
     EventFullDto updateByIdAndUserId(@NotNull Long userId,
                                      @NotNull Long eventId,
                                      @NotNull UpdateEventUserRequest request);
-
-    ParticipationRequestDto getEventRequestsByUserId(@NotNull Long userId,
-                                                     @NotNull Long eventId);
-
-    EventRequestStatusUpdateResult changeEventStatusByUserId(@NotNull Long userId,
-                                                             @NotNull Long eventId,
-                                                             @NotNull EventRequestStatusUpdateRequest request);
 
     List<EventFullDto> search(Integer[] users,
                               String[] states,

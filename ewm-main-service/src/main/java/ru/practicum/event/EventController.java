@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.event.dto.*;
 import ru.practicum.event.service.EventService;
-import ru.practicum.user.dto.ParticipationRequestDto;
 
 import java.util.List;
 
@@ -43,19 +42,6 @@ public class EventController {
                                @PathVariable Long eventId,
                                @RequestBody UpdateEventUserRequest request) {
         return service.updateByIdAndUserId(userId, eventId, request);
-    }
-
-    @GetMapping("users/{userId}/events/{eventId}/requests")
-    public ParticipationRequestDto getEventRequestsByUserId(@PathVariable Long userId,
-                                                            @PathVariable Long eventId) {
-        return service.getEventRequestsByUserId(userId, eventId);
-    }
-
-    @PatchMapping("users/{userId}/events/{eventId}/requests")
-    public EventRequestStatusUpdateResult changeEventStatusByUserId(@PathVariable Long userId,
-                                                                    @PathVariable Long eventId,
-                                                                    @RequestBody EventRequestStatusUpdateRequest request) {
-        return service.changeEventStatusByUserId(userId, eventId, request);
     }
 
     @GetMapping("admin/events")

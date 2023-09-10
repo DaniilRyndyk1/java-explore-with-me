@@ -9,12 +9,12 @@ import ru.practicum.category.mapper.CategoryMapper;
 import ru.practicum.category.service.CategoryService;
 import ru.practicum.event.dto.*;
 import ru.practicum.event.enums.EventState;
+import ru.practicum.event.enums.EventStateAction;
 import ru.practicum.event.mapper.EventMapper;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.repository.EventRepository;
 import ru.practicum.handler.NotFoundException;
 import ru.practicum.location.service.LocationService;
-import ru.practicum.user.dto.ParticipationRequestDto;
 import ru.practicum.user.service.UserService;
 
 import javax.validation.constraints.NotNull;
@@ -142,8 +142,10 @@ public class EventServiceImpl implements EventService {
             event.setRequestModeration(request.getRequestModeration());
         }
 
-        if (request.getStateAction() != null) {
-            //event.setState(request.getStateAction()); TODO разобраться
+        if (request.getStateAction().equals(EventStateAction.CANCEL_REVIEW)) {
+            event.setState(EventState.CANCELED);
+        } else {
+            event.setState(EventState.PENDING);
         }
 
         if (request.getTitle() != null) {
@@ -152,17 +154,6 @@ public class EventServiceImpl implements EventService {
 
         event = repository.save(event);
         return eventMapper.toFullDto(event);
-    }
-
-    public ParticipationRequestDto getEventRequestsByUserId(@NotNull Long userId,
-                                                            @NotNull Long eventId) {
-        throw new RuntimeException("Метод не реализован");
-    }
-
-    public EventRequestStatusUpdateResult changeEventStatusByUserId(@NotNull Long userId,
-                                                                    @NotNull Long eventId,
-                                                                    @NotNull EventRequestStatusUpdateRequest request) {
-        throw new RuntimeException("Метод не реализован");
     }
 
     public List<EventFullDto> search(Integer[] users,

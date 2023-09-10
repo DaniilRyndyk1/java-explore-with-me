@@ -1,8 +1,8 @@
-package ru.practicum.event.dto;
+package ru.practicum.participationRequest.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import ru.practicum.event.enums.UpdateStatus;
+import ru.practicum.participationRequest.enums.ParticipationRequestState;
 
 import java.util.List;
 
@@ -10,5 +10,5 @@ import java.util.List;
 @Getter
 public class EventRequestStatusUpdateRequest {
     private List<Long> requestIds;
-    private UpdateStatus status;
+    private ParticipationRequestState status;
 }
