@@ -1,7 +1,6 @@
 package ru.practicum.category.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.Utils;
 import ru.practicum.category.dto.CategoryDto;
@@ -46,6 +45,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     public CategoryDto update(@NotNull Long id, @NotNull CategoryDto dto) {
+        getById(id);
         return mapper.toCategoryDto(
                 repository.save(
                         new Category(id, dto.getName())

@@ -13,7 +13,6 @@ import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.dto.NewCategoryDto;
 import ru.practicum.handler.NotFoundException;
 
-import javax.persistence.EntityNotFoundException;
 import javax.validation.ConstraintViolationException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -90,7 +89,7 @@ public class CategoryServiceImplTest {
 
     @Test
     void shouldNotGetCategoryByWrongId() {
-        assertThrows(EntityNotFoundException.class,
+        assertThrows(NotFoundException.class,
                 () -> service.getDtoById(999L));
     }
 
