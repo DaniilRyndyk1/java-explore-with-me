@@ -179,9 +179,14 @@ public class EventServiceImpl implements EventService {
                                       @NotNull Integer from,
                                       @NotNull Integer size) {
         var pageRequest = Utils.getPageRequest(from, size);
-        var start = LocalDateTime.parse(rangeStart, Utils.dateTimeFormatter);
-        var end = LocalDateTime.parse(rangeEnd, Utils.dateTimeFormatter);
+        var start = LocalDateTime.now();
+        var end = start.plusYears(10000);
+        if (rangeStart != null && rangeEnd != null) {
+            start = LocalDateTime.parse(rangeStart, Utils.dateTimeFormatter);
+            end = LocalDateTime.parse(rangeEnd, Utils.dateTimeFormatter);
+        }
 
+        // TODO добавить разновидности функции
         var events = repository.findAllByUserParams(
                 text,
                 categories,
@@ -193,21 +198,23 @@ public class EventServiceImpl implements EventService {
                 .map(eventMapper::toShortDto)
                 .collect(Collectors.toList());
 
-        if (onlyAvailable) {
-            // TODO реализовать запрос
-        } else {
-            // TODO реализовать запрос
+        if (onlyAvailable != null) {
+            if (onlyAvailable) {
+                // TODO реализовать запрос
+            } else {
+                // TODO реализовать запрос
+            }
         }
 
-        switch (sort) {
-            case "EVENT_DATE":
-                // TODO реализовать запрос
-                break;
-            case "VIEWS":
-                // TODO реализовать запрос
-                break;
-            default:
-                throw new UnsupportedOperationException("DEBUG DEBUG"); // TODO Тестовое сообщение
+        if (sort != null) {
+            switch (sort) {
+                case "EVENT_DATE":
+                    // TODO реализовать запрос
+                    break;
+                case "VIEWS":
+                    // TODO реализовать запрос
+                    break;
+            }
         }
 
         return events;
