@@ -11,7 +11,7 @@ public interface ParticipationRequestRepository extends JpaRepository<Participat
     ParticipationRequest findFirstByRequester_IdAndEvent_Id(Long requesterId, Long eventId);
     List<ParticipationRequest> findAllByRequester_Id(Long requesterId);
 
-    @Query("SELECT t FROM ParticipationRequest r WHERE r.status like 'CONFIRMED' OR r.status like 'REJECTED'")
+    @Query("SELECT r FROM ParticipationRequest r WHERE r.status like 'CONFIRMED' OR r.status like 'REJECTED'")
     List<ParticipationRequest> findAllConfirmedOrRejected();
 
     @Query("UPDATE ParticipationRequest r SET r.status = :status WHERE r.id IN :ids")

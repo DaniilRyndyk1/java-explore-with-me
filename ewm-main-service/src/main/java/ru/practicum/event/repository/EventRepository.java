@@ -2,6 +2,7 @@ package ru.practicum.event.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import ru.practicum.event.model.Event;
@@ -13,7 +14,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     @Query("SELECT e " +
             "FROM Event e " +
-            "WHERE e.initiator.Id IN :ids " +
+            "WHERE e.initiator.id IN :ids " +
             "AND e.state IN :states " +
             "AND e.category.id IN :categories " +
             "AND e.eventDate >= :start " +
@@ -24,7 +25,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             Long[] categories,
             LocalDateTime start,
             LocalDateTime end,
-            PageRequest pageRequest);
+            Pageable pageRequest);
 
     @Query("SELECT e " +
             "FROM Event e " +
@@ -33,12 +34,13 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "OR LOWER(e.description) like '*:text*') " +
             "AND e.paid = :paid " +
             "AND e.eventDate >= :start " +
-            "AND e.eventDate <= :end ")
+            "AND e.eventDate <= :end " +
+            "AND e.category.id IN :categories ")
     Page<Event> findAllByUserParams (
             String text,
             Long[] categories,
             Boolean paid,
             LocalDateTime start,
             LocalDateTime end,
-            PageRequest pageRequest);
+            Pageable pageRequest);
 }
