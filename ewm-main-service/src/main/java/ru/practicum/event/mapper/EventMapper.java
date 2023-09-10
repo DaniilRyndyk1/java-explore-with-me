@@ -35,7 +35,7 @@ public class EventMapper {
                 userMapper.toUserShortDto(event.getInitiator()),
                 event.getLocation(),
                 event.getPaid(),
-                event.getPublishedOn().format(formatter),
+                event.getPublishedOn() == null ? "" : event.getPublishedOn().format(formatter),
                 event.getState(),
                 event.getTitle(),
                 event.getViews()
@@ -55,6 +55,8 @@ public class EventMapper {
         );
         event.setParticipantLimit(dto.getParticipantLimit());
         event.setRequestModeration(dto.getRequestModeration());
+        event.setCreatedOn(LocalDateTime.now());
+        event.setConfirmedRequests(0L);
         return event;
     }
 

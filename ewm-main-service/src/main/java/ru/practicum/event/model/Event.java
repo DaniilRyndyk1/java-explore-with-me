@@ -35,17 +35,17 @@ public class Event {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @Column(name = "confirmedRequests")
+    @Column(name = "confirmed_requests")
     private Long confirmedRequests;
 
-    @Column(name = "createdOn")
+    @Column(name = "created_on")
     private LocalDateTime createdOn;
 
     @Column(name = "description")
     private String description;
 
     @NotNull
-    @Column(name = "eventDate", nullable = false)
+    @Column(name = "event_date", nullable = false)
     private LocalDateTime eventDate;
 
     @NotNull
@@ -62,13 +62,13 @@ public class Event {
     @Column(name = "paid", nullable = false)
     private Boolean paid;
 
-    @Column(name = "participantLimit")
+    @Column(name = "participant_limit")
     private Integer participantLimit;
 
-    @Column(name = "publishedOn")
+    @Column(name = "published_on")
     private LocalDateTime publishedOn;
 
-    @Column(name = "requestModeration")
+    @Column(name = "request_moderation")
     private Boolean requestModeration;
 
     @Column(name = "state")
