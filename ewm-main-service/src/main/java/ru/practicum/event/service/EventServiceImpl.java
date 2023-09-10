@@ -4,16 +4,21 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.Utils;
+import ru.practicum.category.mapper.CategoryMapper;
 import ru.practicum.category.service.CategoryService;
 import ru.practicum.event.dto.*;
+import ru.practicum.event.enums.EventState;
 import ru.practicum.event.mapper.EventMapper;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.repository.EventRepository;
 import ru.practicum.handler.NotFoundException;
+import ru.practicum.location.service.LocationService;
 import ru.practicum.user.dto.ParticipationRequestDto;
 import ru.practicum.user.service.UserService;
 
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,13 +27,14 @@ import java.util.stream.Collectors;
 public class EventServiceImpl implements EventService {
     private final UserService userService;
     private final CategoryService categoryService;
-    private final UserService userService;
+    private final LocationService locationService;
     private final EventRepository repository;
-    private final EventMapper mapper;
+    private final EventMapper eventMapper;
+    private final CategoryMapper categoryMapper;
 
     public EventFullDto getById(@NotNull Long id) {
         var event = findById(id);
-        return mapper.toFullDto(event);
+        return eventMapper.toFullDto(event);
     }
 
     public List<EventShortDto> getAllByUser(@NotNull Long userId,
@@ -42,27 +48,110 @@ public class EventServiceImpl implements EventService {
 
         return repository.findAllByInitiator_Id(userId, PageRequest.of(from / size, size))
                 .stream()
-                .map(mapper::toShortDto)
+                .map(eventMapper::toShortDto)
                 .collect(Collectors.toList());
     }
 
     public EventFullDto create(@PathVariable Long userId,
                                @RequestBody NewEventDto dto) {
-        userService.getById(userId);
 
-        var event = mapper.toEvent(dto, )
-        return repository.save(event);
+        var initiator = userService.getById(userId);
+        var location = locationService.create(dto.getLocation());
+        var categoryId = dto.getCategory();
+        var category = categoryMapper.toCategory(categoryId, categoryService.getById(categoryId));
+        var event = repository.save(eventMapper.toEvent(dto, category, initiator, location));
+
+        return eventMapper.toFullDto(event);
     }
 
     public EventFullDto getById(@NotNull Long userId,
-                                         @NotNull Long eventId) {
-        throw new RuntimeException("Метод не реализован");
+                                @NotNull Long eventId) {
+        userService.getById(userId);
+
+        var message = "Event with id=" + eventId + " was not found";
+
+        var event = repository.findById(eventId).orElseThrow(
+                () -> new NotFoundException(message)); //TODO дописать
+
+        if (!event.getInitiator().getId().equals(userId)) {
+            throw new NotFoundException(message);
+        }
+
+        return eventMapper.toFullDto(event);
     }
 
     public EventFullDto updateByIdAndUserId(@NotNull Long userId,
                                             @NotNull Long eventId,
                                             @NotNull UpdateEventUserRequest request) {
-        throw new RuntimeException("Метод не реализован");
+        userService.getById(userId);
+
+        var event = findById(eventId);
+        var eventState = event.getState();
+
+        if (!eventState.equals(EventState.CANCELED) && !eventState.equals(EventState.PENDING)) {
+            throw new UnsupportedOperationException("Only pending or canceled events can be changed");
+        }
+
+        var requestDateRaw = request.getEventDate();
+        if (requestDateRaw != null) {
+            var eventDate = LocalDateTime.parse(requestDateRaw, Utils.dateTimeFormatter);
+
+            var isNotNewDateAfterNextTwoHours = LocalDateTime.now().plusHours(2).isAfter(eventDate);
+            var isDateNotEquals = !event.getEventDate().equals(eventDate);
+
+            if (isNotNewDateAfterNextTwoHours && isDateNotEquals) {
+                throw new UnsupportedOperationException("DEBUG TODO 99"); // TODO найти правильную фразу
+            }
+
+            event.setEventDate(eventDate);
+        }
+
+        if (request.getAnnotation() != null) {
+            event.setAnnotation(request.getAnnotation());
+        }
+
+        var categoryId = request.getCategory();
+        if (categoryId != null && !categoryId.equals(event.getCategory().getId())) {
+            var category = categoryMapper.toCategory(categoryId, categoryService.getById(categoryId));
+            event.setCategory(category);
+        }
+
+        if (request.getDescription() != null) {
+            event.setDescription(request.getDescription());
+        }
+
+        if (request.getLocation() != null) {
+            var lat = request.getLocation().getLat();
+            var lon = request.getLocation().getLon();
+            var location = locationService.getByLatAndLon(lat, lon);
+
+            if (!event.getLocation().getId().equals(location.getId())) {
+                event.setLocation(location);
+            }
+        }
+
+        if (request.getPaid() != null) {
+            event.setPaid(request.getPaid());
+        }
+
+        if (request.getParticipantLimit() != null) {
+            event.setParticipantLimit(request.getParticipantLimit());
+        }
+
+        if (request.getRequestModeration() != null) {
+            event.setRequestModeration(request.getRequestModeration());
+        }
+
+        if (request.getStateAction() != null) {
+            //event.setState(request.getStateAction()); TODO разобраться
+        }
+
+        if (request.getTitle() != null) {
+            event.setTitle(request.getTitle());
+        }
+
+        event = repository.save(event);
+        return eventMapper.toFullDto(event);
     }
 
     public ParticipationRequestDto getEventRequestsByUserId(@NotNull Long userId,

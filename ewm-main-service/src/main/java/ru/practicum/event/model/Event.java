@@ -17,7 +17,7 @@ import java.util.Set;
 @Table(name = "events")
 @Getter
 @Setter
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,12 +25,12 @@ public class Event {
 
     @NotNull
     @Column(name = "annotation", nullable = false)
-    private final String annotation;
+    private String annotation;
 
     @NotNull
     @ManyToOne
     @JoinColumn(name = "category_id")
-    private final Category category;
+    private Category category;
 
     @Column(name = "confirmedRequests")
     private Long confirmedRequests;
@@ -39,25 +39,25 @@ public class Event {
     private LocalDateTime createdOn;
 
     @Column(name = "description")
-    private final String description;
+    private String description;
 
     @NotNull
     @Column(name = "eventDate", nullable = false)
-    private final LocalDateTime eventDate;
+    private LocalDateTime eventDate;
 
     @NotNull
     @ManyToOne
     @JoinColumn(name = "initiator_id")
-    private final User initiator;
+    private User initiator;
 
     @NotNull
     @ManyToOne
     @JoinColumn(name = "location_id")
-    private final Location location;
+    private Location location;
 
     @NotNull
     @Column(name = "paid", nullable = false)
-    private final Boolean paid;
+    private Boolean paid;
 
     @Column(name = "participantLimit")
     private Integer participantLimit;
@@ -74,11 +74,29 @@ public class Event {
 
     @NotNull
     @Column(name = "title", nullable = false)
-    private final String title;
+    private String title;
 
     @Column(name = "views")
     private Long views;
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "events", cascade = { CascadeType.ALL })
     private Set<Compilation> compilations = new HashSet<>();
+
+    public Event(String annotation,
+                 Category category,
+                 String description,
+                 LocalDateTime eventDate,
+                 User initiator,
+                 Location location,
+                 Boolean paid,
+                 String title) {
+        this.annotation = annotation;
+        this.category = category;
+        this.description = description;
+        this.eventDate = eventDate;
+        this.initiator = initiator;
+        this.location = location;
+        this.paid = paid;
+        this.title = title;
+    }
 }

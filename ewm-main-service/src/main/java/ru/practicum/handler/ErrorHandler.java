@@ -34,11 +34,15 @@ public class ErrorHandler {
                 LocalDateTime.now().format(formatter));
     }
 
-//    @ExceptionHandler(ValidationException.class)
-//    @ResponseStatus(HttpStatus.BAD_REQUEST)
-//    public ApiError handleValidationException(ValidationException e) {
-//        return new ErrorResponse(e.getMessage());
-//    }
+    @ExceptionHandler(RequestFailedMeetConditionException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ApiError handleRequestFailedMeetConditionException(RequestFailedMeetConditionException e) {
+        return new ApiError(
+                e.getMessage(),
+                "For the requested operation the conditions are not met.",
+                HttpStatus.FORBIDDEN,
+                LocalDateTime.now().format(formatter));
+    }
 
 //    @ExceptionHandler(ConversionFailedException.class)
 //    @ResponseStatus(HttpStatus.BAD_REQUEST)

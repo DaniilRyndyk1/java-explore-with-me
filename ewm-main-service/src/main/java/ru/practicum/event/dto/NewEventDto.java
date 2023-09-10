@@ -3,7 +3,7 @@ package ru.practicum.event.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import ru.practicum.location.model.Location;
+import ru.practicum.location.dto.LocationDto;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -29,7 +29,7 @@ public class NewEventDto {
     private String eventDate;
 
     @NotNull
-    private Location location;
+    private LocationDto location;
 
     private Boolean paid = false;
     private Integer participantLimit = 0;

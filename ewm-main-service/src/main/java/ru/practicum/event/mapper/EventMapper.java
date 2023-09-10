@@ -2,6 +2,7 @@ package ru.practicum.event.mapper;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import ru.practicum.Utils;
 import ru.practicum.category.mapper.CategoryMapper;
 import ru.practicum.category.model.Category;
 import ru.practicum.event.dto.EventFullDto;
@@ -20,7 +21,7 @@ import java.time.format.DateTimeFormatter;
 public class EventMapper {
     private final CategoryMapper categoryMapper;
     private final UserMapper userMapper;
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private final DateTimeFormatter formatter = Utils.dateTimeFormatter;
 
     public EventFullDto toFullDto(Event event) {
         return new EventFullDto(
@@ -56,6 +57,28 @@ public class EventMapper {
         event.setRequestModeration(dto.getRequestModeration());
         return event;
     }
+
+//    public Event toEvent(EventFullDto dto, Category category, User user) {
+//        return new Event(
+//                dto.getId(),
+//                dto.getAnnotation(),
+//                category,
+//                dto.getConfirmedRequests(),
+//                LocalDateTime.parse(dto.getCreatedOn(), formatter),
+//                dto.getDescription(),
+//                LocalDateTime.parse(dto.getEventDate(), formatter),
+//                user,
+//                dto.getLocation(),
+//                dto.getPaid(),
+//                dto.getParticipantLimit(),
+//                LocalDateTime.parse(dto.getPublishedOn(), formatter),
+//                dto.getRequestModeration(),
+//                dto.getState(),
+//                dto.getTitle(),
+//                dto.getViews(),
+//                null
+//        );
+//    }
 
     public EventShortDto toShortDto(Event event) {
         return new EventShortDto(
