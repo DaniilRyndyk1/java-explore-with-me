@@ -20,9 +20,9 @@ public class UserServerImpl implements UserService {
     private final UserMapper mapper;
 
     public UserDto add(@NotNull NewUserRequest dto) {
-        var user = mapper.toUser(-1L, dto);
-        user = repository.save(user);
-        return mapper.toUserDto(user);
+        return mapper.toUserDto(
+                repository.save(mapper.toUser(-1L, dto))
+        );
     }
 
     public Page<UserDto> getAll(Long[] ids, @NotNull Integer from, @NotNull Integer size) {
@@ -34,15 +34,13 @@ public class UserServerImpl implements UserService {
     }
 
     public void delete(@NotNull Long userId) {
-        var user = repository.getById(userId);
-        repository.delete(user);
+        repository.delete(
+                repository.getById(userId)
+        );
     }
 
     public User getById(@NotNull Long userId) {
-        var userOptional = repository.findById(userId);
-        if (userOptional.isEmpty()) {
-            throw new NotFoundException("DEBUG DEBUG DEBUG"); // TODO дописать
-        }
-        return userOptional.get();
+        return repository.findById(userId).orElseThrow(
+                () -> new NotFoundException("User with id=" + userId + " was not found"));
     }
 }
