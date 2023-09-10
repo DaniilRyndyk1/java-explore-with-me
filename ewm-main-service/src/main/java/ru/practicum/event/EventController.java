@@ -65,13 +65,13 @@ public class EventController {
     }
 
     @GetMapping("events")
-    public List<EventShortDto> getAll(@RequestParam String text,
-                                      @RequestParam Long[] categories,
-                                      @RequestParam Boolean paid,
-                                      @RequestParam String rangeStart,
-                                      @RequestParam String rangeEnd,
+    public List<EventShortDto> getAll(@RequestParam(required = false) String text,
+                                      @RequestParam(required = false) Long[] categories,
+                                      @RequestParam(required = false) Boolean paid,
+                                      @RequestParam(required = false) String rangeStart,
+                                      @RequestParam(required = false) String rangeEnd,
                                       @RequestParam(defaultValue = "false") Boolean onlyAvailable,
-                                      @RequestParam String sort,
+                                      @RequestParam(required = false) String sort,
                                       @RequestParam(defaultValue = "0") Integer from,
                                       @RequestParam(defaultValue = "10") Integer size) {
         return service.getAll(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);

@@ -66,11 +66,12 @@ public class EventServiceImpl implements EventService {
                 categoryService.getDtoById(categoryId)
         );
 
-        var event = repository.save(
-                eventMapper.toEvent(dto, category, user, location)
-        );
+        var event = eventMapper.toEvent(dto, category, user, location);
+        event.setState(EventState.PENDING);
 
-        return eventMapper.toFullDto(event);
+        return eventMapper.toFullDto(
+                repository.save(event)
+        );
     }
 
     public EventFullDto getDtoById(@NotNull Long userId,
@@ -109,6 +110,10 @@ public class EventServiceImpl implements EventService {
                         "DEBUG TODO 99" // TODO найти правильную фразу
                 )
         );
+
+        if (stateAction.equals(EventStateAction.PUBLISH_EVENT)) {
+            event.setState(EventState.PUBLISHED);
+        }
 
         return eventMapper.toFullDto(
                 setValuesFromRequest(request, event)
