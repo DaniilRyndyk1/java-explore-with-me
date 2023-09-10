@@ -3,12 +3,15 @@ package ru.practicum.event.service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import ru.practicum.event.dto.*;
+import ru.practicum.event.model.Event;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
 public interface EventService {
-    EventFullDto getById(@NotNull Long id);
+    EventFullDto getDtoById(@NotNull Long id);
+
+    Event getById(@NotNull Long id);
 
     List<EventShortDto> getAllByUser(@NotNull Long userId,
                                      @NotNull Integer from,
@@ -17,16 +20,16 @@ public interface EventService {
     EventFullDto create(@PathVariable Long userId,
                         @RequestBody NewEventDto dto);
 
-    EventFullDto getById(@NotNull Long userId,
-                         @NotNull Long eventId);
+    EventFullDto getDtoById(@NotNull Long userId,
+                            @NotNull Long eventId);
 
-    EventFullDto updateByIdAndUserId(@NotNull Long userId,
-                                     @NotNull Long eventId,
-                                     @NotNull UpdateEventUserRequest request);
+    EventFullDto update(@NotNull Long userId,
+                        @NotNull Long eventId,
+                        @NotNull UpdateEventUserRequest request);
 
-    List<EventFullDto> search(Integer[] users,
+    List<EventFullDto> search(Long[] users,
                               String[] states,
-                              Integer[] categories,
+                              Long[] categories,
                               String rangeStart,
                               String rangeEnd,
                               @NotNull Integer from,
@@ -35,7 +38,7 @@ public interface EventService {
     EventFullDto update(@NotNull Long eventId, @NotNull UpdateEventAdminRequest request);
 
     List<EventShortDto> getAll(String text,
-                               Integer[] categories,
+                               Long[] categories,
                                Boolean paid,
                                String rangeStart,
                                String rangeEnd,

@@ -7,6 +7,8 @@ import ru.practicum.event.enums.EventState;
 import ru.practicum.location.model.Location;
 import ru.practicum.user.dto.UserShortDto;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -15,18 +17,25 @@ import javax.validation.constraints.Size;
 public class EventFullDto {
     private final Long id;
 
-    @NotNull
+    @NotEmpty
+    @NotBlank
     private final String annotation;
 
     @NotNull
     private final CategoryDto category;
     private final Long confirmedRequests;
 
+    @NotEmpty
+    @NotBlank
     @Size(min = 19, max = 19)
     private final String createdOn;
+
+    @NotEmpty
+    @NotBlank
     private final String description;
 
-    @NotNull
+    @NotEmpty
+    @NotBlank
     @Size(min = 19, max = 19)
     private final String eventDate;
 
@@ -40,12 +49,15 @@ public class EventFullDto {
     private final Boolean paid;
     private final Integer participantLimit = 0;
 
+    @NotEmpty
+    @NotBlank
     @Size(min = 19, max = 19)
     private final String publishedOn;
     private final Boolean requestModeration = true;
     private final EventState state;
 
-    @NotNull
+    @NotEmpty
+    @NotBlank
     private final String title;
     private final Long views;
 }

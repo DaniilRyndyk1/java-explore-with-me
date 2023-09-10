@@ -15,8 +15,6 @@ import java.util.List;
 @RequestMapping
 public class CompilationController {
     private final CompilationService service;
-//    private final DateTimeFormatter formatter =
-//            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @PostMapping("admin/compilations")
     public CompilationDto add(@RequestBody NewCompilationDto dto) {
@@ -28,14 +26,14 @@ public class CompilationController {
 //        return service.getAllByParams(startDate, endDate, uris, unique);
     }
 
-    @DeleteMapping("admin/compilations/{compId}")
-    public void delete(@PathVariable Long compId) {
+    @DeleteMapping("admin/compilations/{id}")
+    public void delete(@PathVariable Long id) {
         //        service.create(dto);
         //        return new ResponseEntity<>(dto, HttpStatus.CREATED);
     }
 
-    @PatchMapping("admin/compilations/{compId}")
-    public CompilationDto update(@PathVariable Long compId,
+    @PatchMapping("admin/compilations/{id}")
+    public CompilationDto update(@PathVariable Long id,
                        @RequestBody UpdateCompilationRequest request) {
         throw new RuntimeException("Метод не реализован");
         //        service.create(dto);
@@ -51,8 +49,8 @@ public class CompilationController {
         //        return new ResponseEntity<>(dto, HttpStatus.CREATED);
     }
 
-    @GetMapping("/compilations/{compId}")
-    public CompilationDto getById(@PathVariable Long compId) {
+    @GetMapping("/compilations/{id}")
+    public CompilationDto getById(@PathVariable Long id) {
         throw new RuntimeException("Метод не реализован");
         //        service.create(dto);
         //        return new ResponseEntity<>(dto, HttpStatus.CREATED);

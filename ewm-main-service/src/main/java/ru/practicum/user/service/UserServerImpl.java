@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import ru.practicum.Utils;
 import ru.practicum.handler.NotFoundException;
 import ru.practicum.user.dto.NewUserRequest;
 import ru.practicum.user.dto.UserDto;
@@ -26,11 +27,7 @@ public class UserServerImpl implements UserService {
     }
 
     public Page<UserDto> getAll(Long[] ids, @NotNull Integer from, @NotNull Integer size) {
-        if (from < 0 || size <= 0) {
-            throw new IllegalArgumentException("Неверное значение параметра");
-        }
-
-        return repository.findAllByIdIn(ids, PageRequest.of(from / size, size));
+        return repository.findAllByIdIn(ids, Utils.getPageRequest(from, size));
     }
 
     public void delete(@NotNull Long userId) {

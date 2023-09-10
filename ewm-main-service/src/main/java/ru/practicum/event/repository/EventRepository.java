@@ -3,8 +3,42 @@ package ru.practicum.event.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import ru.practicum.event.model.Event;
+
+import java.time.LocalDateTime;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
     Page<Event> findAllByInitiator_Id(Long userId, PageRequest pageRequest);
+
+    @Query("SELECT e " +
+            "FROM Event e " +
+            "WHERE e.initiator.Id IN :ids " +
+            "AND e.state IN :states " +
+            "AND e.category.id IN :categories " +
+            "AND e.eventDate >= :start " +
+            "AND e.eventDate <= :end ")
+    Page<Event> findAllByAdminParams (
+            Long[] ids,
+            String[] states,
+            Long[] categories,
+            LocalDateTime start,
+            LocalDateTime end,
+            PageRequest pageRequest);
+
+    @Query("SELECT e " +
+            "FROM Event e " +
+            "WHERE e.state = 'PUBLISHED' " +
+            "AND (LOWER(e.annotation) like '*:text*' " +
+            "OR LOWER(e.description) like '*:text*') " +
+            "AND e.paid = :paid " +
+            "AND e.eventDate >= :start " +
+            "AND e.eventDate <= :end ")
+    Page<Event> findAllByUserParams (
+            String text,
+            Long[] categories,
+            Boolean paid,
+            LocalDateTime start,
+            LocalDateTime end,
+            PageRequest pageRequest);
 }

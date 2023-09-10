@@ -8,6 +8,8 @@ import ru.practicum.location.model.Location;
 import ru.practicum.user.model.User;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -23,7 +25,8 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
+    @NotEmpty
+    @NotBlank
     @Column(name = "annotation", nullable = false)
     private String annotation;
 
@@ -72,7 +75,8 @@ public class Event {
     @Enumerated(EnumType.STRING)
     private EventState state;
 
-    @NotNull
+    @NotEmpty
+    @NotBlank
     @Column(name = "title", nullable = false)
     private String title;
 

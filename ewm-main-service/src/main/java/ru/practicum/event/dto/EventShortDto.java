@@ -5,6 +5,8 @@ import lombok.Getter;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.user.dto.UserShortDto;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -12,19 +14,28 @@ import javax.validation.constraints.Size;
 @Getter
 public class EventShortDto {
     private Long id;
-    @NotNull
+
+    @NotEmpty
+    @NotBlank
     private String annotation;
+
     @NotNull
     private CategoryDto category;
     private Long confirmedRequests;
-    @NotNull
+
+    @NotEmpty
+    @NotBlank
     @Size(min = 19, max = 19)
     private String eventDate;
+
     @NotNull
     private UserShortDto initiator;
+
     @NotNull
     private Boolean paid;
-    @NotNull
+
+    @NotEmpty
+    @NotBlank
     private String title;
     private Long views;
 }

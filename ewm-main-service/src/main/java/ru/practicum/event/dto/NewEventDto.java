@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import ru.practicum.location.dto.LocationDto;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -13,29 +14,32 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 @Getter
 public class NewEventDto {
-    @Size(min = 20, max = 2000)
+    @NotEmpty
     @NotBlank
+    @Size(min = 20, max = 2000)
     private String annotation;
 
     @NotNull
     private Long category;
 
+    @NotEmpty
+    @NotBlank
     @Size(min = 20, max = 7000)
-    @NotNull
     private String description;
 
+    @NotEmpty
+    @NotBlank
     @Size(min = 19, max = 19)
-    @NotNull
     private String eventDate;
 
     @NotNull
     private LocationDto location;
-
     private Boolean paid = false;
     private Integer participantLimit = 0;
     private Boolean requestModeration = true;
 
+    @NotEmpty
+    @NotBlank
     @Size(min = 3, max = 120)
-    @NotNull
     private String title;
 }

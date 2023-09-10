@@ -1,7 +1,6 @@
 package ru.practicum.event.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.Utils;
@@ -32,9 +31,14 @@ public class EventServiceImpl implements EventService {
     private final EventMapper eventMapper;
     private final CategoryMapper categoryMapper;
 
-    public EventFullDto getById(@NotNull Long id) {
-        var event = findById(id);
-        return eventMapper.toFullDto(event);
+    public EventFullDto getDtoById(@NotNull Long id) {
+        return eventMapper.toFullDto(getById(id));
+    }
+
+    public Event getById(@NotNull Long id) {
+        return repository.findById(id).orElseThrow(
+                () -> new NotFoundException("Event with id=" + id + " was not found")
+        );
     }
 
     public List<EventShortDto> getAllByUser(@NotNull Long userId,
@@ -42,11 +46,9 @@ public class EventServiceImpl implements EventService {
                                             @NotNull Integer size) {
         userService.getById(userId);
 
-        if (from < 0 || size <= 0) {
-            throw new IllegalArgumentException("Неверное значение параметра");
-        }
+        var pageRequest = Utils.getPageRequest(from, size);
 
-        return repository.findAllByInitiator_Id(userId, PageRequest.of(from / size, size))
+        return repository.findAllByInitiator_Id(userId, pageRequest)
                 .stream()
                 .map(eventMapper::toShortDto)
                 .collect(Collectors.toList());
@@ -55,65 +57,168 @@ public class EventServiceImpl implements EventService {
     public EventFullDto create(@PathVariable Long userId,
                                @RequestBody NewEventDto dto) {
 
-        var initiator = userService.getById(userId);
+        var user = userService.getById(userId);
         var location = locationService.create(dto.getLocation());
         var categoryId = dto.getCategory();
-        var category = categoryMapper.toCategory(categoryId, categoryService.getById(categoryId));
-        var event = repository.save(eventMapper.toEvent(dto, category, initiator, location));
+
+        var category = categoryMapper.toCategory(
+                categoryId,
+                categoryService.getDtoById(categoryId)
+        );
+
+        var event = repository.save(
+                eventMapper.toEvent(dto, category, user, location)
+        );
 
         return eventMapper.toFullDto(event);
     }
 
-    public EventFullDto getById(@NotNull Long userId,
-                                @NotNull Long eventId) {
+    public EventFullDto getDtoById(@NotNull Long userId,
+                                   @NotNull Long eventId) {
         userService.getById(userId);
 
-        var message = "Event with id=" + eventId + " was not found";
-
-        var event = repository.findById(eventId).orElseThrow(
-                () -> new NotFoundException(message)); //TODO дописать
+        var event = getById(eventId);
 
         if (!event.getInitiator().getId().equals(userId)) {
-            throw new NotFoundException(message);
+            throw new NotFoundException("Event with id=" + eventId + " was not found");
         }
 
         return eventMapper.toFullDto(event);
     }
 
-    public EventFullDto updateByIdAndUserId(@NotNull Long userId,
-                                            @NotNull Long eventId,
-                                            @NotNull UpdateEventUserRequest request) {
+    public EventFullDto update(@NotNull Long eventId,
+                               @NotNull UpdateEventAdminRequest request) {
+
+        var event = getById(eventId);
+        var state = event.getState();
+        var stateAction = request.getStateAction();
+
+        if (!state.equals(EventState.WAITING) && stateAction.equals(EventStateAction.PUBLISH_EVENT)) {
+            throw new UnsupportedOperationException("Cannot publish the event because it's not in the right state: " + state);
+        }
+
+        if (state.equals(EventState.PUBLISHED) && stateAction.equals(EventStateAction.CANCEL_REVIEW)) {
+            throw new UnsupportedOperationException("Cannot cancel the event because it's not in the right state: " + state);
+        }
+
+        event.setPublishedOn(
+                getUpdateRequestCorrectDate(
+                        request,
+                        event.getEventDate(),
+                        1L,
+                        "DEBUG TODO 99" // TODO найти правильную фразу
+                )
+        );
+
+        return eventMapper.toFullDto(
+                setValuesFromRequest(request, event)
+        );
+    }
+
+    public EventFullDto update(@NotNull Long userId,
+                               @NotNull Long eventId,
+                               @NotNull UpdateEventUserRequest request) {
         userService.getById(userId);
 
-        var event = findById(eventId);
-        var eventState = event.getState();
+        var event = getById(eventId);
+        var state = event.getState();
 
-        if (!eventState.equals(EventState.CANCELED) && !eventState.equals(EventState.PENDING)) {
+        if (!state.equals(EventState.CANCELED) && !state.equals(EventState.PENDING)) {
             throw new UnsupportedOperationException("Only pending or canceled events can be changed");
         }
 
-        var requestDateRaw = request.getEventDate();
-        if (requestDateRaw != null) {
-            var eventDate = LocalDateTime.parse(requestDateRaw, Utils.dateTimeFormatter);
+        event.setEventDate(
+                getUpdateRequestCorrectDate(
+                        request,
+                        event.getEventDate(),
+                        2L,
+                        "DEBUG TODO 99" // TODO найти правильную фразу
+                )
+        );
+        
+        return eventMapper.toFullDto(
+                setValuesFromRequest(request, event)
+        );
+    }
 
-            var isNotNewDateAfterNextTwoHours = LocalDateTime.now().plusHours(2).isAfter(eventDate);
-            var isDateNotEquals = !event.getEventDate().equals(eventDate);
+    public List<EventFullDto> search(Long[] users,
+                                     String[] states,
+                                     Long[] categories,
+                                     String rangeStart,
+                                     String rangeEnd,
+                                     @NotNull Integer from,
+                                     @NotNull Integer size) {
+        var pageRequest = Utils.getPageRequest(from, size);
+        var start = LocalDateTime.parse(rangeStart, Utils.dateTimeFormatter);
+        var end = LocalDateTime.parse(rangeEnd, Utils.dateTimeFormatter);
 
-            if (isNotNewDateAfterNextTwoHours && isDateNotEquals) {
-                throw new UnsupportedOperationException("DEBUG TODO 99"); // TODO найти правильную фразу
-            }
+        return repository.findAllByAdminParams(
+                users,
+                states,
+                categories,
+                start,
+                end,
+                pageRequest)
+                .stream()
+                .map(eventMapper::toFullDto)
+                .collect(Collectors.toList());
+    }
 
-            event.setEventDate(eventDate);
+    public List<EventShortDto> getAll(String text,
+                                      Long[] categories,
+                                      Boolean paid,
+                                      String rangeStart,
+                                      String rangeEnd,
+                                      Boolean onlyAvailable,
+                                      String sort,
+                                      @NotNull Integer from,
+                                      @NotNull Integer size) {
+        var pageRequest = Utils.getPageRequest(from, size);
+        var start = LocalDateTime.parse(rangeStart, Utils.dateTimeFormatter);
+        var end = LocalDateTime.parse(rangeEnd, Utils.dateTimeFormatter);
+
+        var events = repository.findAllByUserParams(
+                text,
+                categories,
+                paid,
+                start,
+                end,
+                pageRequest)
+                .stream()
+                .map(eventMapper::toShortDto)
+                .collect(Collectors.toList());
+
+        if (onlyAvailable) {
+            // TODO реализовать запрос
+        } else {
+            // TODO реализовать запрос
         }
 
+        switch (sort) {
+            case "EVENT_DATE":
+                // TODO реализовать запрос
+                break;
+            case "VIEWS":
+                // TODO реализовать запрос
+                break;
+            default:
+                throw new UnsupportedOperationException("DEBUG DEBUG"); // TODO Тестовое сообщение
+        }
+
+        return events;
+    }
+
+    private Event setValuesFromRequest(UpdateEventUserRequest request, Event event) {
         if (request.getAnnotation() != null) {
             event.setAnnotation(request.getAnnotation());
         }
 
         var categoryId = request.getCategory();
-        if (categoryId != null && !categoryId.equals(event.getCategory().getId())) {
-            var category = categoryMapper.toCategory(categoryId, categoryService.getById(categoryId));
-            event.setCategory(category);
+        if (categoryId != null && !event.getCategory().getId().equals(categoryId)) {
+            var category = categoryService.getDtoById(categoryId);
+            event.setCategory(
+                    categoryMapper.toCategory(categoryId, category)
+            );
         }
 
         if (request.getDescription() != null) {
@@ -146,47 +251,29 @@ public class EventServiceImpl implements EventService {
             event.setState(EventState.CANCELED);
         } else {
             event.setState(EventState.PENDING);
-        }
+        } // TODO разобраться
 
         if (request.getTitle() != null) {
             event.setTitle(request.getTitle());
         }
 
-        event = repository.save(event);
-        return eventMapper.toFullDto(event);
+        return repository.save(event);
     }
 
-    public List<EventFullDto> search(Integer[] users,
-                                     String[] states,
-                                     Integer[] categories,
-                                     String rangeStart,
-                                     String rangeEnd,
-                                     @NotNull Integer from,
-                                     @NotNull Integer size) {
-        throw new RuntimeException("Метод не реализован");
-    }
+    private LocalDateTime getUpdateRequestCorrectDate(UpdateEventUserRequest request,
+                                                      LocalDateTime eventDate,
+                                                      Long hours,
+                                                      String errorMessage) {
+        var dateRaw = request.getEventDate();
+        if (dateRaw != null) {
+            var date = LocalDateTime.parse(dateRaw, Utils.dateTimeFormatter);
 
-    public EventFullDto update(@NotNull Long eventId, @NotNull UpdateEventAdminRequest request) {
-        throw new RuntimeException("Метод не реализован");
-    }
+            if (LocalDateTime.now().plusHours(hours).isAfter(date)) {
+                throw new UnsupportedOperationException(errorMessage);
+            }
 
-    public List<EventShortDto> getAll(String text,
-                                      Integer[] categories,
-                                      Boolean paid,
-                                      String rangeStart,
-                                      String rangeEnd,
-                                      Boolean onlyAvailable,
-                                      String sort,
-                                      @NotNull Integer from,
-                                      @NotNull Integer size) {
-        throw new RuntimeException("Метод не реализован");
-    }
-
-    private Event findById(@NotNull Long id) {
-        var eventOptional = repository.findById(id);
-        if (eventOptional.isEmpty()) {
-            throw new NotFoundException("Event with id=" + id + " was not found");
+            return date;
         }
-        return eventOptional.get();
+        return eventDate;
     }
 }

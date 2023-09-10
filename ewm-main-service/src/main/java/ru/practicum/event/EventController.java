@@ -15,7 +15,7 @@ public class EventController {
 
     @GetMapping("events/{id}")
     public EventFullDto getById(@PathVariable Long id) {
-        return service.getById(id);
+        return service.getDtoById(id);
     }
 
     @GetMapping("users/{userId}/events")
@@ -34,20 +34,20 @@ public class EventController {
     @GetMapping("users/{userId}/events/{eventId}")
     public EventFullDto getById(@PathVariable Long userId,
                                 @PathVariable Long eventId) {
-        return service.getById(userId, eventId);
+        return service.getDtoById(userId, eventId);
     }
 
     @PatchMapping("users/{userId}/events/{eventId}")
     public EventFullDto updateByIdAndUserId(@PathVariable Long userId,
                                @PathVariable Long eventId,
                                @RequestBody UpdateEventUserRequest request) {
-        return service.updateByIdAndUserId(userId, eventId, request);
+        return service.update(userId, eventId, request);
     }
 
     @GetMapping("admin/events")
-    public List<EventFullDto> search(@RequestParam Integer[] users,
+    public List<EventFullDto> search(@RequestParam Long[] users,
                                      @RequestParam String[] states,
-                                     @RequestParam Integer[] categories,
+                                     @RequestParam Long[] categories,
                                      @RequestParam String rangeStart,
                                      @RequestParam String rangeEnd,
                                      @RequestParam(defaultValue = "0") Integer from,
@@ -63,7 +63,7 @@ public class EventController {
 
     @GetMapping("events")
     public List<EventShortDto> getAll(@RequestParam String text,
-                                      @RequestParam Integer[] categories,
+                                      @RequestParam Long[] categories,
                                       @RequestParam Boolean paid,
                                       @RequestParam String rangeStart,
                                       @RequestParam String rangeEnd,

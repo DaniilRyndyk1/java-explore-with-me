@@ -3,6 +3,7 @@ package ru.practicum.category.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import ru.practicum.Utils;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.dto.NewCategoryDto;
 import ru.practicum.category.mapper.CategoryMapper;
@@ -53,11 +54,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     public List<CategoryDto> getAll(@NotNull Integer from, @NotNull Integer size) {
-        if (from < 0 || size <= 0) {
-            throw new IllegalArgumentException("Неверное значение параметра");
-        }
-
-        var request = PageRequest.of(from / size, size);
+        var request = Utils.getPageRequest(from, size);
         return repository
                 .findAll(request)
                 .stream()
