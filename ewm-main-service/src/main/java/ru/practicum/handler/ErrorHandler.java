@@ -21,7 +21,7 @@ public class ErrorHandler {
                 e.getMessage(),
                 "The required object was not found.",
                 HttpStatus.NOT_FOUND,
-                LocalDateTime.now().format(formatter));
+                getTimestamp());
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
@@ -31,7 +31,7 @@ public class ErrorHandler {
                 e.getMessage(),
                 "The required object was not found.",
                 HttpStatus.NOT_FOUND,
-                LocalDateTime.now().format(formatter));
+                getTimestamp());
     }
 
     @ExceptionHandler(RequestFailedMeetConditionException.class)
@@ -41,13 +41,21 @@ public class ErrorHandler {
                 e.getMessage(),
                 "For the requested operation the conditions are not met.",
                 HttpStatus.FORBIDDEN,
-                LocalDateTime.now().format(formatter));
+                getTimestamp());
     }
 
-//    @ExceptionHandler(ConversionFailedException.class)
-//    @ResponseStatus(HttpStatus.BAD_REQUEST)
-//    public ApiError handleConversionFailedException(ConversionFailedException e) {
-//        return new ErrorResponse("Unknown state: " + e.getValue().toString());
-//    }
+    @ExceptionHandler(ConflictException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError handleConversionFailedException(ConflictException e) {
+        return new ApiError(
+                e.getMessage(),
+                "Integrity constraint has been violated.",
+                HttpStatus.CONFLICT,
+                getTimestamp());
+    }
+
+    private String getTimestamp() {
+        return LocalDateTime.now().format(formatter);
+    }
 }
 

@@ -6,9 +6,10 @@ import ru.practicum.participationRequest.enums.ParticipationRequestState;
 import ru.practicum.participationRequest.model.ParticipationRequest;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ParticipationRequestRepository extends JpaRepository<ParticipationRequest, Long> {
-    ParticipationRequest findFirstByRequester_IdAndEvent_Id(Long requesterId, Long eventId);
+    Optional<ParticipationRequest> findFirstByRequester_IdAndEvent_Id(Long requesterId, Long eventId);
     List<ParticipationRequest> findAllByRequester_Id(Long requesterId);
 
     @Query("SELECT r FROM ParticipationRequest r WHERE r.status like 'CONFIRMED' OR r.status like 'REJECTED'")

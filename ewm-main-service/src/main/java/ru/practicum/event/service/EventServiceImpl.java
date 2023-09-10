@@ -93,7 +93,7 @@ public class EventServiceImpl implements EventService {
         var state = event.getState();
         var stateAction = request.getStateAction();
 
-        if (!state.equals(EventState.WAITING) && stateAction.equals(EventStateAction.PUBLISH_EVENT)) {
+        if (!state.equals(EventState.PENDING) && stateAction.equals(EventStateAction.PUBLISH_EVENT)) {
             throw new UnsupportedOperationException("Cannot publish the event because it's not in the right state: " + state);
         }
 
