@@ -31,7 +31,6 @@ public class CategoryServiceImplTest {
 
     private CategoryDto category1;
     private CategoryDto category2;
-    private CategoryDto category3;
 
     @BeforeEach
     void setup() {
@@ -42,7 +41,7 @@ public class CategoryServiceImplTest {
     @Test
     void shouldAddCategory() {
         var originalSize = service.getAll(0, 10).size();
-        category3 = service.create(categoryDto3);
+        service.create(categoryDto3);
         var newSize = service.getAll(0, 10).size();
         assertEquals(originalSize + 1, newSize);
     }
@@ -84,7 +83,7 @@ public class CategoryServiceImplTest {
 
     @Test
     void shouldGetCategoryById() {
-        var dto = service.getById(category2.getId());
+        var dto = service.getDtoById(category2.getId());
         assertEquals(category2.getId(), dto.getId());
         assertEquals(category2.getName(), dto.getName());
     }
@@ -92,13 +91,13 @@ public class CategoryServiceImplTest {
     @Test
     void shouldNotGetCategoryByWrongId() {
         assertThrows(EntityNotFoundException.class,
-                () -> service.getById(999L));
+                () -> service.getDtoById(999L));
     }
 
     @Test
     void shouldNotGetCategoryByNullId() {
         assertThrows(InvalidDataAccessApiUsageException.class,
-                () -> service.getById(null));
+                () -> service.getDtoById(null));
     }
 
     @Test
@@ -145,7 +144,7 @@ public class CategoryServiceImplTest {
     void shouldUpdateCategory() {
         var dto = new CategoryDto(category1.getId(), "aaaaaoooooaaa");
         service.update(category1.getId(), dto);
-        var newDto = service.getById(category1.getId());
+        var newDto = service.getDtoById(category1.getId());
         assertNotNull(newDto);
         assertEquals(newDto.getId(), dto.getId());
         assertEquals(newDto.getName(), dto.getName());
@@ -162,7 +161,7 @@ public class CategoryServiceImplTest {
     void shouldNotUpdateCategoryWithNullName() {
         var dto = new CategoryDto(category1.getId(), null);
         service.update(category1.getId(), dto);
-        var newDto = service.getById(category1.getId());
+        var newDto = service.getDtoById(category1.getId());
         assertNotNull(newDto);
         assertEquals(newDto.getId(), dto.getId());
         assertEquals(newDto.getName(), dto.getName());

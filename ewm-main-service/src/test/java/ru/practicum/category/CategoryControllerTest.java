@@ -87,7 +87,7 @@ public class CategoryControllerTest {
 
     @Test
     void shouldGetById() throws Exception {
-        when(service.getById(any(Long.class)))
+        when(service.getDtoById(any(Long.class)))
                 .thenReturn(categoryDto);
 
         mvc.perform(get("/categories/1").accept(MediaType.APPLICATION_JSON))

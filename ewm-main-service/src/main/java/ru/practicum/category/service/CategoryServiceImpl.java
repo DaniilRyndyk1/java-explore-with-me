@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.dto.NewCategoryDto;
 import ru.practicum.category.mapper.CategoryMapper;
+import ru.practicum.category.model.Category;
 import ru.practicum.category.repository.CategoryRepository;
 import ru.practicum.handler.NotFoundException;
 
@@ -19,25 +20,36 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository repository;
     private final CategoryMapper mapper;
 
+    public CategoryDto getDtoById(@NotNull Long id) {
+        return mapper.toCategoryDto(getById(id));
+    }
+
+    public Category getById(@NotNull Long id) {
+        return repository.findById(id).orElseThrow(
+                () -> new NotFoundException("Category with id=" + id + " was not found")
+        );
+    }
+
     public CategoryDto create(@NotNull NewCategoryDto dto) {
-        var category = mapper.toCategory(-1L, dto);
-        category = repository.save(category);
-        return mapper.toCategoryDto(category);
+        return mapper.toCategoryDto(
+                repository.save(
+                        mapper.toCategory(-1L, dto)
+                )
+        );
     }
 
     public void delete(@NotNull Long categoryId) {
-        var category = repository.getById(categoryId);
-        repository.delete(category);
+        repository.delete(
+                repository.getById(categoryId)
+        );
     }
 
-    public CategoryDto update(@NotNull Long categoryId, @NotNull CategoryDto dto) {
-        var categoryOptional = repository.findById(categoryId);
-        if (categoryOptional.isEmpty()) {
-            throw new NotFoundException("Категория не найдена");
-        }
-        var category = mapper.toCategory(categoryId, dto);
-        category = repository.save(category);
-        return mapper.toCategoryDto(category);
+    public CategoryDto update(@NotNull Long id, @NotNull CategoryDto dto) {
+        return mapper.toCategoryDto(
+                repository.save(
+                        new Category(id, dto.getName())
+                )
+        );
     }
 
     public List<CategoryDto> getAll(@NotNull Integer from, @NotNull Integer size) {
@@ -45,16 +57,11 @@ public class CategoryServiceImpl implements CategoryService {
             throw new IllegalArgumentException("Неверное значение параметра");
         }
 
-        var pageRequest = PageRequest.of(from / size, size);
+        var request = PageRequest.of(from / size, size);
         return repository
-                .findAll(pageRequest)
+                .findAll(request)
                 .stream()
                 .map(mapper::toCategoryDto)
                 .collect(Collectors.toList());
-    }
-
-    public CategoryDto getById(@NotNull Long categoryId) {
-        var category = repository.getById(categoryId);
-        return mapper.toCategoryDto(category);
     }
 }
