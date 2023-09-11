@@ -29,8 +29,8 @@ public class UserControllerTest {
     @Autowired
     private MockMvc mvc;
 
-    private final String name = "Test";
-    private final String email = "abobus@ya.ru";
+    private final String name = "derekzuu";
+    private final String email = "abobus@yandex.ru";
 
     private final NewUserRequest newUserRequest = new NewUserRequest(name, email);
     private final UserDto userDto = new UserDto(10L, name, email);
@@ -50,6 +50,18 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.id", is(userDto.getId()), Long.class))
                 .andExpect(jsonPath("$.name", is(userDto.getName())))
                 .andExpect(jsonPath("$.email", is(userDto.getEmail())));
+    }
+
+    @Test
+    void shouldNotCreateWithBlankName() throws Exception {
+        var tempRequest = new NewUserRequest("", newUserRequest.getEmail() + "uu");
+
+        mvc.perform(post("/admin/users")
+                        .content(mapper.writeValueAsString(tempRequest))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -75,5 +87,11 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.[1].id", is(userDto2.getId()), Long.class))
                 .andExpect(jsonPath("$.[1].name", is(userDto2.getName())))
                 .andExpect(jsonPath("$.[1].email", is(userDto2.getEmail())));
+    }
+
+    @Test
+    void shouldNotGetAllWithoutIds() throws Exception {
+        mvc.perform(get("/admin/users?from=0&size=10").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 }

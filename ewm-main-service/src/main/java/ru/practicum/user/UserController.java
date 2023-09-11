@@ -13,7 +13,6 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping
-@Valid
 public class UserController {
     private final UserService service;
 
@@ -26,7 +25,7 @@ public class UserController {
 
     @PostMapping("admin/users")
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDto add(@RequestBody NewUserRequest dto) {
+    public UserDto add(@Valid @RequestBody NewUserRequest dto) {
         return service.add(dto);
     }
 
