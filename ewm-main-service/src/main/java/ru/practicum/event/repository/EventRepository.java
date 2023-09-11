@@ -3,12 +3,13 @@ package ru.practicum.event.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.event.enums.EventState;
 import ru.practicum.event.model.Event;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
     Page<Event> findAllByInitiator_Id(Long userId, Pageable pageRequest);
@@ -45,6 +46,8 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             LocalDateTime end,
             Pageable pageRequest);
 
+    @Modifying
     @Query("UPDATE Event e SET e.views = e.views + 1 WHERE e.id IN :ids")
-    void incrementViewsByIds (List<Long> ids);
+    @Transactional
+    void incrementViewsByIds (long[] ids);
 }

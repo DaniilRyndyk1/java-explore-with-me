@@ -240,9 +240,10 @@ public class EventServiceImpl implements EventService {
 
     public void incrementViews(@NotNull List<Event> events) {
         repository.incrementViewsByIds(
-                events.stream()
-                      .map(Event::getId)
-                      .collect(Collectors.toList())
+                events
+                        .stream()
+                        .mapToLong(Event::getId)
+                        .toArray()
         );
     }
 
