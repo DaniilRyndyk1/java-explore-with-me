@@ -4,7 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.event.model.Event;
 import ru.practicum.participationRequest.enums.ParticipationRequestState;
 import ru.practicum.participationRequest.model.ParticipationRequest;
 
@@ -38,10 +37,10 @@ public interface ParticipationRequestRepository extends JpaRepository<Participat
     @Modifying
     void setCanceledById(Long id);
 
-    @Query("SELECT r.event " +
-           "FROM ParticipationRequest r " +
-           "WHERE r.id = :requestId")
-    Event findEventByRequestId(Long requestId);
+//    @Query("SELECT r.event " +
+//           "FROM ParticipationRequest r " +
+//           "WHERE r.id = :requestId")
+//    Event findEventByRequestId(Long requestId);
 
     @Modifying
     @Query("UPDATE Event e " +
