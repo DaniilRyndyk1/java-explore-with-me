@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS request (
     created TIMESTAMP,
     event_id BIGINT NOT NULL,
     requester_id BIGINT NOT NULL,
-    state varchar(64)
+    status varchar(64)
 );
 
 ALTER TABLE events ADD CONSTRAINT events_category_fk FOREIGN KEY (category_id)
