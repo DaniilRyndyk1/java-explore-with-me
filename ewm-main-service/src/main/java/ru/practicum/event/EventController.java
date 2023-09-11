@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.event.dto.*;
+import ru.practicum.event.enums.EventState;
 import ru.practicum.event.service.EventService;
 
 import javax.validation.Valid;
@@ -49,7 +50,7 @@ public class EventController {
 
     @GetMapping("admin/events")
     public List<EventFullDto> search(@RequestParam Long[] users,
-                                     @RequestParam String[] states,
+                                     @RequestParam EventState[] states,
                                      @RequestParam Long[] categories,
                                      @RequestParam String rangeStart,
                                      @RequestParam String rangeEnd,

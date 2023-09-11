@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import ru.practicum.event.enums.EventState;
 import ru.practicum.event.model.Event;
 
 import java.time.LocalDateTime;
@@ -20,7 +21,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "AND e.eventDate <= :end ")
     Page<Event> findAllByAdminParams (
             Long[] ids,
-            String[] states,
+            EventState[] states,
             Long[] categories,
             LocalDateTime start,
             LocalDateTime end,

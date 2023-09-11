@@ -151,7 +151,7 @@ public class EventServiceImpl implements EventService {
     }
 
     public List<EventFullDto> search(Long[] users,
-                                     String[] states,
+                                     EventState[] states,
                                      Long[] categories,
                                      String rangeStart,
                                      String rangeEnd,

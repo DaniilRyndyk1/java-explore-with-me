@@ -3,6 +3,7 @@ package ru.practicum.event.service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import ru.practicum.event.dto.*;
+import ru.practicum.event.enums.EventState;
 import ru.practicum.event.model.Event;
 
 import javax.validation.constraints.NotNull;
@@ -28,7 +29,7 @@ public interface EventService {
                         @NotNull UpdateEventUserRequest request);
 
     List<EventFullDto> search(Long[] users,
-                              String[] states,
+                              EventState[] states,
                               Long[] categories,
                               String rangeStart,
                               String rangeEnd,
