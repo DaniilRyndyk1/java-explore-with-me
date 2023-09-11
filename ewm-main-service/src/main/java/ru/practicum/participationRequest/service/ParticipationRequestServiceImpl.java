@@ -2,7 +2,6 @@ package ru.practicum.participationRequest.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.*;
 import ru.practicum.event.enums.EventState;
 import ru.practicum.event.service.EventService;
 import ru.practicum.handler.ConflictException;
@@ -29,8 +28,34 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     private final UserService userService;
     private final EventService eventService;
 
-    @GetMapping("users/{userId}/requests")
-    public List<ParticipationRequestDto> getAll(@PathVariable Long userId) {
+    public ParticipationRequest getById(@NotNull Long id) {
+        var message = "Participation Request with id=" + id + " was not found";
+
+        return repository.findById(id).orElseThrow(
+                () -> new NotFoundException(message)
+        );
+    }
+
+    public ParticipationRequest getById(@NotNull Long userId,
+                                        @NotNull Long eventId) {
+        userService.getById(userId);
+        eventService.getById(eventId);
+
+        var message = "Participation Request with userId=" + userId + " and eventId=" + eventId + " was not found";
+
+        return repository.findFirstByRequester_IdAndEvent_Id(userId, eventId).orElseThrow(
+                () -> new NotFoundException(message)
+        );
+    }
+
+    public ParticipationRequestDto getDtoById(@NotNull Long userId,
+                                              @NotNull Long eventId) {
+        return mapper.toDto(
+                getById(userId, eventId)
+        );
+    }
+
+    public List<ParticipationRequestDto> getAll(@NotNull Long userId) {
         userService.getById(userId);
 
         return repository.findAllByRequester_Id(userId)
@@ -39,11 +64,11 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
                 .collect(Collectors.toList());
     }
 
-    @PostMapping("users/{userId}/requests")
     public ParticipationRequestDto create(@NotNull Long userId,
                                           @NotNull Long eventId) {
         var user = userService.getById(userId);
         var event = eventService.getById(eventId);
+
         if (repository.findFirstByRequester_IdAndEvent_Id(userId, eventId).isPresent()) {
             throw new ConflictException("could not execute statement; SQL [n/a]; constraint [uq_request]; nested exception is org.hibernate.exception.ConstraintViolationException: could not execute statement");
         }
@@ -56,56 +81,52 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
             throw new ConflictException("DEBUG"); //TODO найти правильное сообщение
         }
 
-        //TODO сделать проверку лимита участников
+        var hasParticipantLimit = event.getParticipantLimit() != 0L;
 
-        var state = ParticipationRequestState.WAITING;
+        if (hasParticipantLimit && event.getConfirmedRequests() >= event.getParticipantLimit()) {
+            throw new ConflictException("DEBUG"); //TODO найти правильное сообщение
+        }
+
+        var request = repository.save(
+                new ParticipationRequest(
+                        -1L,
+                        LocalDateTime.now(),
+                        event,
+                        user,
+                        ParticipationRequestState.WAITING
+                )
+        );
+
         if (!event.getRequestModeration()) {
-            state = ParticipationRequestState.CONFIRMED;
+            request.setStatus(ParticipationRequestState.CONFIRMED);
+            repository.incrementConfirmedRequestsById(request.getId());
         }
 
         return mapper.toDto(
-                repository.save(
-                        new ParticipationRequest(
-                                -1L,
-                                LocalDateTime.now(),
-                                event,
-                                user,
-                                state
-                        )
-                )
+                repository.save(request)
         );
     }
 
-    public ParticipationRequestDto cancel(@PathVariable Long userId,
-                                          @PathVariable Long requestId) {
+    public ParticipationRequestDto cancel(@NotNull Long userId,
+                                          @NotNull Long requestId) {
         userService.getById(userId);
-        repository.findById(requestId).orElseThrow(() -> new NotFoundException("DEBUG")); //TODO
+        getById(requestId);
+
         repository.setCanceledById(requestId);
-        return mapper.toDto(
-                repository.findById(requestId).get()
-        );
-    }
-
-    public ParticipationRequestDto get(@NotNull Long userId,
-                                       @NotNull Long eventId) {
-        userService.getById(userId);
-        eventService.getById(eventId);
-
-        return mapper.toDto(
-                repository.findFirstByRequester_IdAndEvent_Id(userId, eventId).orElseThrow(
-                        () -> new NotFoundException("DEBUG") // TODO
-                )
-        );
+        repository.decrementConfirmedRequestsById(requestId);
+        return mapper.toDto(getById(requestId));
     }
 
     public EventRequestStatusUpdateResult changeRequestsStatus(@NotNull Long userId,
                                                                @NotNull Long eventId,
                                                                @NotNull EventRequestStatusUpdateRequest request) {
-        userService.getById(userId);
-        eventService.getDtoById(eventId);
+        repository.updateStatusesByIds(
+                request.getRequestIds(),
+                request.getStatus(),
+                userId
+        );
 
-        repository.updateStatusesByIds(request.getRequestIds(), request.getStatus());
-        var requests = repository.findAllConfirmedOrRejected();
+        var requests = repository.findAllConfirmedOrRejected(userId, eventId);
 
         var confirmed = requests
                 .stream()

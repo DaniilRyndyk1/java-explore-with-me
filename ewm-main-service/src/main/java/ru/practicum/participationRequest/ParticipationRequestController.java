@@ -18,7 +18,7 @@ public class ParticipationRequestController {
     @GetMapping("users/{userId}/events/{eventId}/requests")
     public ParticipationRequestDto getRequest(@PathVariable Long userId,
                                               @PathVariable Long eventId) {
-        return service.get(userId, eventId);
+        return service.getDtoById(userId, eventId);
     }
 
     @PatchMapping("users/{userId}/events/{eventId}/requests")

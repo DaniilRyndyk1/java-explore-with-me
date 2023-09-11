@@ -32,7 +32,11 @@ public class EventServiceImpl implements EventService {
     private final CategoryMapper categoryMapper;
 
     public EventFullDto getDtoById(@NotNull Long id) {
-        return eventMapper.toFullDto(getById(id));
+        var event = getById(id);
+        if (!event.getState().equals(EventState.PUBLISHED)) {
+            throw new NotFoundException("Event with id=" + id + " was not found");
+        }
+        return eventMapper.toFullDto(event);
     }
 
     public Event getById(@NotNull Long id) {
@@ -218,6 +222,14 @@ public class EventServiceImpl implements EventService {
         }
 
         return events;
+    }
+
+    public void incrementViews(@NotNull Long eventId) {
+        repository.incrementViewsById(eventId);
+    }
+
+    public void decrementViews(@NotNull Long eventId) {
+        repository.decrementViewsById(eventId);
     }
 
     private Event setValuesFromRequest(UpdateEventUserRequest request, Event event) {

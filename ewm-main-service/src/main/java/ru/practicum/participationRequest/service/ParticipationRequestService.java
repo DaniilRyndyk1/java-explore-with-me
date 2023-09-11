@@ -15,8 +15,8 @@ public interface ParticipationRequestService {
                                    @RequestParam Long eventId);
     ParticipationRequestDto cancel(@PathVariable Long userId,
                                    @PathVariable Long requestId);
-    ParticipationRequestDto get(@NotNull Long userId,
-                                @NotNull Long eventId);
+    ParticipationRequestDto getDtoById(@NotNull Long userId,
+                                       @NotNull Long eventId);
     EventRequestStatusUpdateResult changeRequestsStatus(@NotNull Long userId,
                                                         @NotNull Long eventId,
                                                         @NotNull EventRequestStatusUpdateRequest request);

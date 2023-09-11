@@ -32,7 +32,7 @@ public class UpdateEventUserRequest {
 
     private LocationDto location;
     private Boolean paid;
-    private Integer participantLimit;
+    private Long participantLimit;
     private Boolean requestModeration;
     private EventStateAction stateAction;
 
