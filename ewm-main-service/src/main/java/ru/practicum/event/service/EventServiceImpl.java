@@ -170,12 +170,12 @@ public class EventServiceImpl implements EventService {
                 categories,
                 start,
                 end,
-                pageRequest);
+                pageRequest)
+                .stream()
+                .collect(Collectors.toList());
 
 
-        repository.incrementViewsByIds(
-                (Long[])events.stream().map(Event::getId).toArray()
-        );
+        incrementViews(events);
 
         return events
                 .stream()
@@ -230,9 +230,7 @@ public class EventServiceImpl implements EventService {
             }
         }
 
-        repository.incrementViewsByIds(
-                (Long[])events.stream().map(Event::getId).toArray()
-        );
+        incrementViews(events);
 
         return events
                 .stream()
@@ -242,7 +240,9 @@ public class EventServiceImpl implements EventService {
 
     public void incrementViews(@NotNull List<Event> events) {
         repository.incrementViewsByIds(
-                (Long[])events.stream().map(Event::getId).toArray()
+                events.stream()
+                      .map(Event::getId)
+                      .collect(Collectors.toList())
         );
     }
 

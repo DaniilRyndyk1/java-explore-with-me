@@ -8,6 +8,7 @@ import ru.practicum.event.enums.EventState;
 import ru.practicum.event.model.Event;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
     Page<Event> findAllByInitiator_Id(Long userId, Pageable pageRequest);
@@ -45,8 +46,5 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             Pageable pageRequest);
 
     @Query("UPDATE Event e SET e.views = e.views + 1 WHERE e.id IN :ids")
-    void incrementViewsByIds (Long[] ids);
-
-    @Query("UPDATE Event e SET e.views = e.views - 1 WHERE e.id = :eventId")
-    void decrementViewsById (Long eventId);
+    void incrementViewsByIds (List<Long> ids);
 }
