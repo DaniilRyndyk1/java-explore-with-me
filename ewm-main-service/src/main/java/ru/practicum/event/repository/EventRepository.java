@@ -47,7 +47,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             Pageable pageRequest);
 
     @Modifying
-    @Query("UPDATE Event e SET e.views = e.views + 1 WHERE e.id IN :ids")
     @Transactional
+    @Query("UPDATE Event e SET e.views = e.views + 1 WHERE e.id IN ?1")
     void incrementViewsByIds (long[] ids);
 }

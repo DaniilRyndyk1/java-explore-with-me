@@ -75,6 +75,7 @@ public class EventServiceImpl implements EventService {
 
         var event = eventMapper.toEvent(dto, category, user, location);
         event.setState(EventState.PENDING);
+        event.setViews(0L);
 
         return eventMapper.toFullDto(
                 repository.save(event)
@@ -117,10 +118,6 @@ public class EventServiceImpl implements EventService {
                         "DEBUG TODO 99" // TODO найти правильную фразу
                 )
         );
-
-        if (stateAction.equals(EventStateAction.PUBLISH_EVENT)) {
-            event.setState(EventState.PUBLISHED);
-        }
 
         return eventMapper.toFullDto(
                 setValuesFromRequest(request, event)
@@ -286,8 +283,12 @@ public class EventServiceImpl implements EventService {
             event.setRequestModeration(request.getRequestModeration());
         }
 
-        if (request.getStateAction().equals(EventStateAction.CANCEL_REVIEW)) {
+        var stateAction = request.getStateAction();
+
+        if (stateAction.equals(EventStateAction.CANCEL_REVIEW)) {
             event.setState(EventState.CANCELED);
+        } else if (stateAction.equals(EventStateAction.PUBLISH_EVENT)) {
+            event.setState(EventState.PUBLISHED);
         } else {
             event.setState(EventState.PENDING);
         } // TODO разобраться
