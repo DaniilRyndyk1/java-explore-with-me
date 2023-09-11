@@ -44,8 +44,8 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             LocalDateTime end,
             Pageable pageRequest);
 
-    @Query("UPDATE Event e SET e.views = e.views + 1 WHERE e.id = :eventId")
-    void incrementViewsById (Long eventId);
+    @Query("UPDATE Event e SET e.views = e.views + 1 WHERE e.id IN :ids")
+    void incrementViewsByIds (Long[] ids);
 
     @Query("UPDATE Event e SET e.views = e.views - 1 WHERE e.id = :eventId")
     void decrementViewsById (Long eventId);

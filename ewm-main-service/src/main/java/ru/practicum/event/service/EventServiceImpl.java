@@ -18,6 +18,7 @@ import ru.practicum.user.service.UserService;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,9 +41,11 @@ public class EventServiceImpl implements EventService {
     }
 
     public Event getById(@NotNull Long id) {
-        return repository.findById(id).orElseThrow(
+        var event = repository.findById(id).orElseThrow(
                 () -> new NotFoundException("Event with id=" + id + " was not found")
         );
+        incrementViews(List.of(event));
+        return event;
     }
 
     public List<EventShortDto> getAllByUser(@NotNull Long userId,
@@ -161,13 +164,20 @@ public class EventServiceImpl implements EventService {
         var start = LocalDateTime.parse(rangeStart, Utils.dateTimeFormatter);
         var end = LocalDateTime.parse(rangeEnd, Utils.dateTimeFormatter);
 
-        return repository.findAllByAdminParams(
+        var events = repository.findAllByAdminParams(
                 users,
                 states,
                 categories,
                 start,
                 end,
-                pageRequest)
+                pageRequest);
+
+
+        repository.incrementViewsByIds(
+                (Long[])events.stream().map(Event::getId).toArray()
+        );
+
+        return events
                 .stream()
                 .map(eventMapper::toFullDto)
                 .collect(Collectors.toList());
@@ -182,54 +192,58 @@ public class EventServiceImpl implements EventService {
                                       String sort,
                                       @NotNull Integer from,
                                       @NotNull Integer size) {
+
         var pageRequest = Utils.getPageRequest(from, size);
         var start = LocalDateTime.now();
         var end = start.plusYears(10000);
+
         if (rangeStart != null && rangeEnd != null) {
             start = LocalDateTime.parse(rangeStart, Utils.dateTimeFormatter);
             end = LocalDateTime.parse(rangeEnd, Utils.dateTimeFormatter);
         }
 
-        // TODO добавить разновидности функции
         var events = repository.findAllByUserParams(
                 text,
                 categories,
                 paid,
                 start,
                 end,
-                pageRequest)
-                .stream()
-                .map(eventMapper::toShortDto)
-                .collect(Collectors.toList());
+                pageRequest).toList();
 
-        if (onlyAvailable != null) {
-            if (onlyAvailable) {
-                // TODO реализовать запрос
-            } else {
-                // TODO реализовать запрос
-            }
+        if (onlyAvailable != null && onlyAvailable) {
+            events = events
+                    .stream()
+                    .filter(x -> x.getParticipantLimit() - x.getConfirmedRequests() > 0)
+                    .collect(Collectors.toList());
         }
 
         if (sort != null) {
             switch (sort) {
                 case "EVENT_DATE":
-                    // TODO реализовать запрос
+                    events.sort(Comparator.comparing(Event::getEventDate));
                     break;
                 case "VIEWS":
-                    // TODO реализовать запрос
+                    events.sort(Comparator.comparing(Event::getViews));
                     break;
+                default:
+                    throw new UnsupportedOperationException("Unsupported sort type");
             }
         }
 
-        return events;
+        repository.incrementViewsByIds(
+                (Long[])events.stream().map(Event::getId).toArray()
+        );
+
+        return events
+                .stream()
+                .map(eventMapper::toShortDto)
+                .collect(Collectors.toList());
     }
 
-    public void incrementViews(@NotNull Long eventId) {
-        repository.incrementViewsById(eventId);
-    }
-
-    public void decrementViews(@NotNull Long eventId) {
-        repository.decrementViewsById(eventId);
+    public void incrementViews(@NotNull List<Event> events) {
+        repository.incrementViewsByIds(
+                (Long[])events.stream().map(Event::getId).toArray()
+        );
     }
 
     private Event setValuesFromRequest(UpdateEventUserRequest request, Event event) {
