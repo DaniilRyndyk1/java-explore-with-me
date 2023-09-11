@@ -18,8 +18,7 @@ import ru.practicum.user.service.UserService;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -83,22 +82,22 @@ public class EventServiceImpl implements EventService {
     }
 
     public EventFullDto getDtoById(@NotNull Long userId,
-                                   @NotNull Long eventId) {
+                                   @NotNull Long id) {
         userService.getById(userId);
 
-        var event = getById(eventId);
+        var event = getById(id);
 
         if (!event.getInitiator().getId().equals(userId)) {
-            throw new NotFoundException("Event with id=" + eventId + " was not found");
+            throw new NotFoundException("Event with id=" + id + " was not found");
         }
 
         return eventMapper.toFullDto(event);
     }
 
-    public EventFullDto update(@NotNull Long eventId,
+    public EventFullDto update(@NotNull Long id,
                                @NotNull UpdateEventAdminRequest request) {
 
-        var event = getById(eventId);
+        var event = getById(id);
         var state = event.getState();
         var stateAction = request.getStateAction();
 
@@ -125,11 +124,11 @@ public class EventServiceImpl implements EventService {
     }
 
     public EventFullDto update(@NotNull Long userId,
-                               @NotNull Long eventId,
+                               @NotNull Long id,
                                @NotNull UpdateEventUserRequest request) {
         userService.getById(userId);
 
-        var event = getById(eventId);
+        var event = getById(id);
         var state = event.getState();
 
         if (!state.equals(EventState.CANCELED) && !state.equals(EventState.PENDING)) {
@@ -157,6 +156,7 @@ public class EventServiceImpl implements EventService {
                                      String rangeEnd,
                                      @NotNull Integer from,
                                      @NotNull Integer size) {
+
         var pageRequest = Utils.getPageRequest(from, size);
         var start = LocalDateTime.parse(rangeStart, Utils.dateTimeFormatter);
         var end = LocalDateTime.parse(rangeEnd, Utils.dateTimeFormatter);
@@ -242,6 +242,10 @@ public class EventServiceImpl implements EventService {
                         .mapToLong(Event::getId)
                         .toArray()
         );
+    }
+
+    public Set<Event> getAllByIds(List<Long> ids) {
+        return new HashSet<>(repository.findAllById(ids));
     }
 
     private Event setValuesFromRequest(UpdateEventUserRequest request, Event event) {

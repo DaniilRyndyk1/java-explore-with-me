@@ -1,5 +1,6 @@
 package ru.practicum.handler;
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -47,6 +48,16 @@ public class ErrorHandler {
     @ExceptionHandler(ConflictException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ApiError handleConversionFailedException(ConflictException e) {
+        return new ApiError(
+                e.getMessage(),
+                "Integrity constraint has been violated.",
+                HttpStatus.CONFLICT,
+                getTimestamp());
+    }
+
+    @ExceptionHandler(DataAccessException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError handleDataAccessException(DataAccessException e) {
         return new ApiError(
                 e.getMessage(),
                 "Integrity constraint has been violated.",

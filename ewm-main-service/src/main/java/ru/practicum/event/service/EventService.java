@@ -8,6 +8,7 @@ import ru.practicum.event.model.Event;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Set;
 
 public interface EventService {
     EventFullDto getDtoById(@NotNull Long id);
@@ -47,4 +48,6 @@ public interface EventService {
                                String sort,
                                @NotNull Integer from,
                                @NotNull Integer size);
+
+    Set<Event> getAllByIds(List<Long> ids);
 }
