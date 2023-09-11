@@ -1,8 +1,6 @@
 package ru.practicum.user.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.Utils;
 import ru.practicum.handler.NotFoundException;
@@ -13,6 +11,8 @@ import ru.practicum.user.model.User;
 import ru.practicum.user.repository.UserRepository;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,8 +26,11 @@ public class UserServerImpl implements UserService {
         );
     }
 
-    public Page<UserDto> getAll(Long[] ids, @NotNull Integer from, @NotNull Integer size) {
-        return repository.findAllByIdIn(ids, Utils.getPageRequest(from, size));
+    public List<UserDto> getAll(Long[] ids, @NotNull Integer from, @NotNull Integer size) {
+        return repository
+                .findAllByIdIn(ids, Utils.getPageRequest(from, size))
+                .stream()
+                .collect(Collectors.toList());
     }
 
     public void delete(@NotNull Long userId) {
