@@ -17,6 +17,18 @@ import java.util.List;
 public class CompilationController {
     private final CompilationService service;
 
+    @GetMapping("/compilations/{id}")
+    public CompilationDto getById(@PathVariable Long id) {
+        return service.getDtoById(id);
+    }
+
+    @GetMapping("/compilations")
+    public List<CompilationDto> getAll(@RequestParam Boolean pinned,
+                                       @RequestParam(defaultValue = "0") Integer from,
+                                       @RequestParam(defaultValue = "10") Integer size) {
+        return service.getAll(pinned, from, size);
+    }
+
     @PostMapping("admin/compilations")
     @ResponseStatus(HttpStatus.CREATED)
     public CompilationDto add(@RequestBody NewCompilationDto dto) {
@@ -31,19 +43,7 @@ public class CompilationController {
 
     @PatchMapping("admin/compilations/{id}")
     public CompilationDto update(@PathVariable Long id,
-                       @RequestBody UpdateCompilationRequest request) {
+                                 @RequestBody UpdateCompilationRequest request) {
         return service.update(id, request);
-    }
-
-    @GetMapping("/compilations")
-    public List<CompilationDto> getAll(@RequestParam Boolean pinned,
-                                       @RequestParam(defaultValue = "0") Integer from,
-                                       @RequestParam(defaultValue = "10") Integer size) {
-        return service.getAll(pinned, from, size);
-    }
-
-    @GetMapping("/compilations/{id}")
-    public CompilationDto getById(@PathVariable Long id) {
-        return service.getDtoById(id);
     }
 }
