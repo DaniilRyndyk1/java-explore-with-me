@@ -2,7 +2,6 @@ package ru.practicum.event;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.event.dto.*;
 import ru.practicum.event.enums.EventState;
@@ -45,7 +44,7 @@ public class EventController {
     @PatchMapping("users/{userId}/events/{eventId}")
     public EventFullDto updateByIdAndUserId(@PathVariable Long userId,
                                @PathVariable Long eventId,
-                               @RequestBody UpdateEventUserRequest request) {
+                               @Valid @RequestBody UpdateEventUserRequest request) {
         return service.update(userId, eventId, request);
     }
 
@@ -62,24 +61,20 @@ public class EventController {
 
     @PatchMapping("admin/events/{eventId}")
     public EventFullDto update(@PathVariable Long eventId,
-                               @RequestBody UpdateEventAdminRequest request) {
+                               @Valid @RequestBody UpdateEventAdminRequest request) {
         return service.update(eventId, request);
     }
 
     @GetMapping("events")
-    public ResponseEntity<List<EventShortDto>> getAll(@RequestParam(required = false) String text,
-                                                      @RequestParam(required = false) Long[] categories,
-                                                      @RequestParam(required = false) Boolean paid,
-                                                      @RequestParam(required = false) String rangeStart,
-                                                      @RequestParam(required = false) String rangeEnd,
-                                                      @RequestParam(defaultValue = "false") Boolean onlyAvailable,
-                                                      @RequestParam(required = false) String sort,
-                                                      @RequestParam(defaultValue = "0") Integer from,
-                                                      @RequestParam(defaultValue = "10") Integer size) {
-        var result = service.getAll(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
-        if (result.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+    public List<EventShortDto> getAll(@RequestParam(required = false) String text,
+                                      @RequestParam(required = false) Long[] categories,
+                                      @RequestParam(required = false) Boolean paid,
+                                      @RequestParam(required = false) String rangeStart,
+                                      @RequestParam(required = false) String rangeEnd,
+                                      @RequestParam(required = false, defaultValue = "false") Boolean onlyAvailable,
+                                      @RequestParam(required = false) String sort,
+                                      @RequestParam(defaultValue = "0") Integer from,
+                                      @RequestParam(defaultValue = "10") Integer size) {
+        return service.getAll(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
     }
 }

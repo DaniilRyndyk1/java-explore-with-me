@@ -13,13 +13,12 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping
-@Valid
 public class CategoryController {
     private final CategoryService service;
 
     @PostMapping("admin/categories")
     @ResponseStatus(code = HttpStatus.CREATED)
-    public CategoryDto create(@RequestBody NewCategoryDto dto) {
+    public CategoryDto create(@Valid @RequestBody NewCategoryDto dto) {
         return service.create(dto);
     }
 
@@ -32,7 +31,7 @@ public class CategoryController {
     @PatchMapping("admin/categories/{categoryId}")
     @ResponseStatus(code = HttpStatus.OK)
     public CategoryDto update(@PathVariable Long categoryId,
-                              @RequestBody CategoryDto dto) {
+                              @Valid @RequestBody CategoryDto dto) {
         return service.update(categoryId, dto);
     }
 
