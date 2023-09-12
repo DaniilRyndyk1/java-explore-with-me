@@ -366,7 +366,7 @@ public class EventControllerTest {
         );
 
         mvc.perform(get("/events").accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 }
