@@ -2,7 +2,6 @@ package ru.practicum.event.mapper;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.practicum.Utils;
 import ru.practicum.category.mapper.CategoryMapper;
 import ru.practicum.category.model.Category;
 import ru.practicum.event.dto.EventFullDto;
@@ -14,14 +13,14 @@ import ru.practicum.user.mapper.UserMapper;
 import ru.practicum.user.model.User;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+
+import static ru.practicum.Utils.dateTimeFormatter;
 
 @Component
 @RequiredArgsConstructor
 public class EventMapper {
     private final CategoryMapper categoryMapper;
     private final UserMapper userMapper;
-    private final DateTimeFormatter formatter = Utils.dateTimeFormatter;
 
     public EventFullDto toFullDto(Event event) {
         return new EventFullDto(
@@ -29,13 +28,13 @@ public class EventMapper {
                 event.getAnnotation(),
                 categoryMapper.toCategoryDto(event.getCategory()),
                 event.getConfirmedRequests(),
-                event.getCreatedOn().format(formatter),
+                event.getCreatedOn().format(dateTimeFormatter),
                 event.getDescription(),
-                event.getEventDate().format(formatter),
+                event.getEventDate().format(dateTimeFormatter),
                 userMapper.toUserShortDto(event.getInitiator()),
                 event.getLocation(),
                 event.getPaid(),
-                event.getPublishedOn() == null ? "" : event.getPublishedOn().format(formatter),
+                event.getPublishedOn() == null ? "" : event.getPublishedOn().format(dateTimeFormatter),
                 event.getState(),
                 event.getTitle(),
                 event.getViews()
@@ -47,7 +46,7 @@ public class EventMapper {
                 dto.getAnnotation(),
                 category,
                 dto.getDescription(),
-                LocalDateTime.parse(dto.getEventDate(), formatter),
+                LocalDateTime.parse(dto.getEventDate(), dateTimeFormatter),
                 initiator,
                 location,
                 dto.getPaid(),
@@ -60,35 +59,13 @@ public class EventMapper {
         return event;
     }
 
-//    public Event toEvent(EventFullDto dto, Category category, User user) {
-//        return new Event(
-//                dto.getId(),
-//                dto.getAnnotation(),
-//                category,
-//                dto.getConfirmedRequests(),
-//                LocalDateTime.parse(dto.getCreatedOn(), formatter),
-//                dto.getDescription(),
-//                LocalDateTime.parse(dto.getEventDate(), formatter),
-//                user,
-//                dto.getLocation(),
-//                dto.getPaid(),
-//                dto.getParticipantLimit(),
-//                LocalDateTime.parse(dto.getPublishedOn(), formatter),
-//                dto.getRequestModeration(),
-//                dto.getState(),
-//                dto.getTitle(),
-//                dto.getViews(),
-//                null
-//        );
-//    }
-
     public EventShortDto toShortDto(Event event) {
         return new EventShortDto(
                 event.getId(),
                 event.getAnnotation(),
                 categoryMapper.toCategoryDto(event.getCategory()),
                 event.getConfirmedRequests(),
-                event.getEventDate().format(formatter),
+                event.getEventDate().format(dateTimeFormatter),
                 userMapper.toUserShortDto(event.getInitiator()),
                 event.getPaid(),
                 event.getTitle(),
