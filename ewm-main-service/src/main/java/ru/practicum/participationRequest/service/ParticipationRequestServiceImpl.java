@@ -99,7 +99,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
 
         if (!event.getRequestModeration()) {
             request.setStatus(ParticipationRequestState.CONFIRMED);
-            repository.incrementConfirmedRequestsById(request.getId());
+            repository.incrementConfirmedRequestsByEventId(event.getId(), 1L);
         }
 
         return mapper.toDto(
@@ -110,21 +110,36 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     public ParticipationRequestDto cancel(@NotNull Long userId,
                                           @NotNull Long requestId) {
         userService.getById(userId);
-        getById(requestId);
+        var request = getById(requestId);
+
+        if (!request.getRequester().getId().equals(userId)) {
+            throw new NotFoundException("Participation Request with id=" + requestId + " was not found");
+        }
 
         repository.setCanceledById(requestId);
-        repository.decrementConfirmedRequestsById(requestId);
+        repository.decrementConfirmedRequestsByEventId(request.getEvent().getId(), 1L);
         return mapper.toDto(getById(requestId));
     }
 
     public EventRequestStatusUpdateResult changeRequestsStatus(@NotNull Long userId,
                                                                @NotNull Long eventId,
                                                                @NotNull EventRequestStatusUpdateRequest request) {
-        repository.updateStatusesByIds(
-                request.getRequestIds(),
-                request.getStatus(),
-                userId
-        );
+
+        var event = eventService.getById(eventId);
+        if (!event.getInitiator().getId().equals(userId)) {
+            throw new NotFoundException("DEBUG"); //TODO
+        }
+
+        var ids = request.getRequestIds();
+        var status = request.getStatus();
+
+        repository.updateStatusesByIds(ids, status);
+
+        if (status.equals(ParticipationRequestState.REJECTED)) {
+            repository.decrementConfirmedRequestsByEventId(eventId, (long) ids.size());
+        } else {
+            repository.incrementConfirmedRequestsByEventId(eventId, (long) ids.size());
+        }
 
         var requests = repository.findAllConfirmedOrRejected(userId, eventId);
 

@@ -25,40 +25,28 @@ public interface ParticipationRequestRepository extends JpaRepository<Participat
     @Transactional
     @Query("UPDATE ParticipationRequest r " +
             "SET r.status = :status " +
-            "WHERE r.id IN :ids " +
-            "AND r.event.initiator.id = :userId")
-    @Modifying
-    void updateStatusesByIds(List<Long> ids, ParticipationRequestState status, Long userId);
+            "WHERE r.id IN :ids ")
+    @Modifying(clearAutomatically = true)
+    void updateStatusesByIds(List<Long> ids, ParticipationRequestState status);
 
     @Transactional
     @Query("UPDATE ParticipationRequest r " +
-            "SET r.status = 'CANCELED' " +
+            "SET r.status = 'REJECTED' " +
             "WHERE r.id = :id")
-    @Modifying
+    @Modifying(clearAutomatically = true)
     void setCanceledById(Long id);
 
-//    @Query("SELECT r.event " +
-//           "FROM ParticipationRequest r " +
-//           "WHERE r.id = :requestId")
-//    Event findEventByRequestId(Long requestId);
-
-    @Modifying
     @Query("UPDATE Event e " +
-           "SET e.confirmedRequests = e.confirmedRequests + 1 " +
-           "WHERE e.id = (" +
-            "   SELECT r.event.id" +
-            "   FROM ParticipationRequest r" +
-            "   WHERE r.id = :requestId)")
+           "SET e.confirmedRequests = e.confirmedRequests + :value " +
+           "WHERE e.id = :eventId")
     @Transactional
-    void incrementConfirmedRequestsById (Long requestId);
+    @Modifying(clearAutomatically = true)
+    void incrementConfirmedRequestsByEventId(Long eventId, Long value);
 
-    @Modifying
     @Query("UPDATE Event e " +
-            "SET e.confirmedRequests = e.confirmedRequests - 1 " +
-            "WHERE e.id = (" +
-            "   SELECT r.event.id" +
-            "   FROM ParticipationRequest r" +
-            "   WHERE r.id = :requestId)")
+            "SET e.confirmedRequests = e.confirmedRequests - :value " +
+            "WHERE e.id = :eventId")
     @Transactional
-    void decrementConfirmedRequestsById (Long requestId);
+    @Modifying(clearAutomatically = true)
+    void decrementConfirmedRequestsByEventId(Long eventId, Long value);
 }

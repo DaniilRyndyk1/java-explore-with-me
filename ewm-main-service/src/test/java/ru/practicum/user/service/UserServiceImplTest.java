@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @ActiveProfiles("test")
 public class UserServiceImplTest {
-    private final UserServerImpl service;
+    private final UserServiceImpl service;
     private final String name1 = "Arnold";
     private final String name2 = "arni@yandex.ru";
     private final String email1 = "Danil";
