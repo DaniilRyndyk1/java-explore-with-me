@@ -174,7 +174,7 @@ public class EventControllerTest {
                 event.getEventDate(),
                 new LocationDto(event.getLocation().getLat(), event.getLocation().getLon()),
                 event.getPaid(),
-                event.getParticipantLimit().longValue(),
+                event.getParticipantLimit(),
                 event.getRequestModeration(),
                 event.getTitle()
         );
@@ -245,10 +245,23 @@ public class EventControllerTest {
 
     @Test
     void shouldUpdateByIds() throws Exception {
+        var request = new UpdateEventUserRequest(
+                event.getAnnotation(),
+                null,
+                event.getDescription(),
+                event.getEventDate(),
+                null,
+                null,
+                null,
+                null,
+                null,
+                event.getTitle()
+        );
+
         when(service.update(any(Long.class), any(Long.class), any())).thenReturn(event);
 
         mvc.perform(patch("/users/1/events/1")
-                        .content(mapper.writeValueAsString(new UpdateEventUserRequest()))
+                        .content(mapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -277,18 +290,6 @@ public class EventControllerTest {
 
     @Test
     void shouldSearch() throws Exception {
-        var eventShortDto = new EventShortDto(
-                event.getId(),
-                event.getAnnotation(),
-                event.getCategory(),
-                event.getConfirmedRequests(),
-                event.getEventDate(),
-                event.getInitiator(),
-                event.getPaid(),
-                event.getTitle(),
-                event.getViews()
-        );
-
         when(userService.getById(any(Long.class))).thenReturn(user);
         when(service.search(
                 any(Long[].class),
@@ -316,11 +317,25 @@ public class EventControllerTest {
 
     @Test
     void shouldUpdateByAdmin() throws Exception {
+
+        var request = new UpdateEventAdminRequest(
+                event.getAnnotation(),
+                null,
+                event.getDescription(),
+                event.getEventDate(),
+                null,
+                null,
+                null,
+                null,
+                null,
+                event.getTitle()
+        );
+
         when(service.update(any(Long.class), any(UpdateEventAdminRequest.class)))
                 .thenReturn(event);
 
         mvc.perform(patch("/admin/events/1")
-                        .content(mapper.writeValueAsString(new UpdateEventAdminRequest()))
+                        .content(mapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -338,11 +353,25 @@ public class EventControllerTest {
 
     @Test
     void shouldUpdateByAdminWithNotFoundEventId() throws Exception {
+
+        var request = new UpdateEventAdminRequest(
+                event.getAnnotation(),
+                null,
+                event.getDescription(),
+                event.getEventDate(),
+                null,
+                null,
+                null,
+                null,
+                null,
+                event.getTitle()
+        );
+
         when(service.update(any(Long.class), any(UpdateEventAdminRequest.class)))
                 .thenThrow(NotFoundException.class);
 
         mvc.perform(patch("/admin/events/1")
-                        .content(mapper.writeValueAsString(new UpdateEventAdminRequest()))
+                        .content(mapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
@@ -353,20 +382,8 @@ public class EventControllerTest {
 
     @Test
     void shouldGetAll() throws Exception {
-        var eventShortDto = new EventShortDto(
-                event.getId(),
-                event.getAnnotation(),
-                event.getCategory(),
-                event.getConfirmedRequests(),
-                event.getEventDate(),
-                event.getInitiator(),
-                event.getPaid(),
-                event.getTitle(),
-                event.getViews()
-        );
-
         mvc.perform(get("/events").accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 }
