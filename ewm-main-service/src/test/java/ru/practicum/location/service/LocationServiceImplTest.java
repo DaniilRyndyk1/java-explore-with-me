@@ -32,6 +32,7 @@ public class LocationServiceImplTest {
     void shouldGetByLatAndLon() {
         var original = service.create(locationDto2);
         var location = service.getByLatAndLon(25f, 25f);
+        assertNotNull(location);
         assertEquals(original.getLat(), location.getLat());
         assertEquals(original.getLon(), location.getLon());
     }
@@ -39,6 +40,7 @@ public class LocationServiceImplTest {
     @Test
     void shouldGetById() {
         var location = service.getById(location1.getId(), 25f, 25f);
+        assertNotNull(location);
         assertEquals(location1.getLat(), location.getLat());
         assertEquals(location1.getLon(), location.getLon());
     }
@@ -46,6 +48,7 @@ public class LocationServiceImplTest {
     @Test
     void shouldCreate() {
         var location = service.create(locationDto2);
+        assertNotNull(location);
         assertEquals(locationDto2.getLat(), location.getLat());
         assertEquals(locationDto2.getLon(), location.getLon());
     }
@@ -55,6 +58,7 @@ public class LocationServiceImplTest {
         var lat = 50f;
         var lon = 10f;
         var location = service.getByLatAndLon(lat, lon);
+        assertNotNull(location);
         assertEquals(location1.getId() + 1, location.getId());
         assertEquals(lat, location.getLat());
         assertEquals(lon, location.getLon());
@@ -66,6 +70,7 @@ public class LocationServiceImplTest {
         var lon = 10f;
         var newId = location1.getId() + 1;
         var location = service.getById(newId, lat, lon);
+        assertNotNull(location);
         assertEquals(newId, location.getId());
         assertEquals(lat, location.getLat());
         assertEquals(lon, location.getLon());
