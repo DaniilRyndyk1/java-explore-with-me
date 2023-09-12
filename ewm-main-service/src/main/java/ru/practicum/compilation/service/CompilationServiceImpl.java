@@ -47,8 +47,10 @@ public class CompilationServiceImpl implements CompilationService {
 
         var events = eventService.getAllByIds(dto.getEvents());
 
+        var compilation = compilationMapper.toCompilation(dto, events);
+
         return compilationMapper.toDto(
-                compilationMapper.toCompilation(dto, events),
+                repository.save(compilation),
                 events
                         .stream()
                         .map(eventMapper::toShortDto)
