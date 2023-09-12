@@ -14,7 +14,6 @@ import ru.practicum.event.service.EventService;
 import ru.practicum.handler.NotFoundException;
 
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,7 +32,7 @@ public class CompilationServiceImpl implements CompilationService {
                 .getEvents()
                 .stream()
                 .map(eventMapper::toShortDto)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
 
         return compilationMapper.toDto(compilation, events);
     }
@@ -53,7 +52,7 @@ public class CompilationServiceImpl implements CompilationService {
                 events
                         .stream()
                         .map(eventMapper::toShortDto)
-                        .collect(Collectors.toList())
+                        .collect(Collectors.toSet())
         );
     }
 
@@ -65,7 +64,7 @@ public class CompilationServiceImpl implements CompilationService {
     public CompilationDto update(@NotNull Long id,
                                  @NotNull UpdateCompilationRequest request) {
         getById(id);
-        var events = new HashSet<>(eventService.getAllByIds(request.getEvents()));
+        var events = eventService.getAllByIds(request.getEvents());
 
         var compilation = new Compilation(
                 id,
@@ -76,7 +75,7 @@ public class CompilationServiceImpl implements CompilationService {
 
         return compilationMapper.toDto(
                 compilation,
-                events.stream().map(eventMapper::toShortDto).collect(Collectors.toList())
+                events.stream().map(eventMapper::toShortDto).collect(Collectors.toSet())
         );
     }
 
@@ -92,7 +91,7 @@ public class CompilationServiceImpl implements CompilationService {
                         .getEvents()
                         .stream()
                         .map(eventMapper::toShortDto)
-                        .collect(Collectors.toList())))
+                        .collect(Collectors.toSet())))
                 .collect(Collectors.toList());
     }
 }

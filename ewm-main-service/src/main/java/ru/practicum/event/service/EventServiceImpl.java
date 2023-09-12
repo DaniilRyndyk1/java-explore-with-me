@@ -21,6 +21,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static ru.practicum.Utils.dateTimeFormatter;
+
 @Service
 @RequiredArgsConstructor
 public class EventServiceImpl implements EventService {
@@ -158,8 +160,8 @@ public class EventServiceImpl implements EventService {
                                      @NotNull Integer size) {
 
         var pageRequest = Utils.getPageRequest(from, size);
-        var start = LocalDateTime.parse(rangeStart, Utils.dateTimeFormatter);
-        var end = LocalDateTime.parse(rangeEnd, Utils.dateTimeFormatter);
+        var start = LocalDateTime.parse(rangeStart, dateTimeFormatter);
+        var end = LocalDateTime.parse(rangeEnd, dateTimeFormatter);
 
         var events = repository.findAllByAdminParams(
                 users,
@@ -195,8 +197,8 @@ public class EventServiceImpl implements EventService {
         var end = start.plusYears(10000);
 
         if (rangeStart != null && rangeEnd != null) {
-            start = LocalDateTime.parse(rangeStart, Utils.dateTimeFormatter);
-            end = LocalDateTime.parse(rangeEnd, Utils.dateTimeFormatter);
+            start = LocalDateTime.parse(rangeStart, dateTimeFormatter);
+            end = LocalDateTime.parse(rangeEnd, dateTimeFormatter);
         }
 
         var events = repository.findAllByUserParams(
@@ -244,7 +246,7 @@ public class EventServiceImpl implements EventService {
         );
     }
 
-    public Set<Event> getAllByIds(List<Long> ids) {
+    public Set<Event> getAllByIds(Set<Long> ids) {
         return new HashSet<>(repository.findAllById(ids));
     }
 
@@ -310,7 +312,7 @@ public class EventServiceImpl implements EventService {
                                                       String errorMessage) {
         var dateRaw = request.getEventDate();
         if (dateRaw != null) {
-            var date = LocalDateTime.parse(dateRaw, Utils.dateTimeFormatter);
+            var date = LocalDateTime.parse(dateRaw, dateTimeFormatter);
 
             if (LocalDateTime.now().plusHours(hours).isAfter(date)) {
                 throw new UnsupportedOperationException(errorMessage);

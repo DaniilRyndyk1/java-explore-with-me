@@ -49,5 +49,5 @@ public interface EventService {
                                @NotNull Integer from,
                                @NotNull Integer size);
 
-    Set<Event> getAllByIds(List<Long> ids);
+    Set<Event> getAllByIds(Set<Long> ids);
 }

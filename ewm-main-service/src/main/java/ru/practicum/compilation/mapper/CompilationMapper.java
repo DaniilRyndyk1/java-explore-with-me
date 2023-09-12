@@ -8,20 +8,19 @@ import ru.practicum.compilation.model.Compilation;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.model.Event;
 
-import java.util.List;
 import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
 public class CompilationMapper {
-    public Compilation toCompilation(CompilationDto dto, Set<Event> events) {
-        return new Compilation(
-                dto.getId(),
-                events,
-                dto.getTitle(),
-                dto.getPinned()
-        );
-    }
+//    public Compilation toCompilation(CompilationDto dto, Set<Event> events) {
+//        return new Compilation(
+//                dto.getId(),
+//                events,
+//                dto.getTitle(),
+//                dto.getPinned()
+//        );
+//    }
 
     public Compilation toCompilation(NewCompilationDto dto, Set<Event> events) {
         return new Compilation(
@@ -32,7 +31,7 @@ public class CompilationMapper {
         );
     }
 
-    public CompilationDto toDto(Compilation compilation, List<EventShortDto> events) {
+    public CompilationDto toDto(Compilation compilation, Set<EventShortDto> events) {
         return new CompilationDto(
                 compilation.getId(),
                 events,
