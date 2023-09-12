@@ -1,7 +1,7 @@
 package ru.practicum.event.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.event.enums.EventState;
 import ru.practicum.location.model.Location;
@@ -12,7 +12,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Getter
 public class EventFullDto {
     private final Long id;
@@ -47,13 +47,13 @@ public class EventFullDto {
 
     @NotNull
     private final Boolean paid;
-    private final Integer participantLimit = 0;
+    private final Long participantLimit;
 
     @NotEmpty
     @NotBlank
     @Size(min = 19, max = 19)
     private final String publishedOn;
-    private final Boolean requestModeration = true;
+    private final Boolean requestModeration;
     private final EventState state;
 
     @NotEmpty

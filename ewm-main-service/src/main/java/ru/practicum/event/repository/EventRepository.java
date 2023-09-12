@@ -16,9 +16,9 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     @Query("SELECT e " +
             "FROM Event e " +
-            "WHERE e.initiator.id IN :ids " +
-            "AND e.state IN :states " +
-            "AND e.category.id IN :categories " +
+            "WHERE (e.initiator.id IN :ids OR :idsSize = 0) " +
+            "AND (e.state IN :states OR :statesSize = 0) " +
+            "AND (e.category.id IN :categories OR :categoriesSize = 0) " +
             "AND e.eventDate >= :start " +
             "AND e.eventDate <= :end ")
     Page<Event> findAllByAdminParams (
@@ -27,23 +27,30 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             Long[] categories,
             LocalDateTime start,
             LocalDateTime end,
+            Integer idsSize,
+            Integer statesSize,
+            Integer categoriesSize,
             Pageable pageRequest);
 
     @Query("SELECT e " +
             "FROM Event e " +
             "WHERE e.state = 'PUBLISHED' " +
-            "AND (LOWER(e.annotation) like '*:text*' " +
-            "OR LOWER(e.description) like '*:text*') " +
-            "AND e.paid = :paid " +
+            "AND (LOWER(e.annotation) LIKE '*:text*' " +
+            "OR LOWER(e.description) LIKE '*:text*' " +
+            "OR :isTextNull = true) " +
+            "AND (e.paid = :paid OR :isPaidNull = true)" +
             "AND e.eventDate >= :start " +
             "AND e.eventDate <= :end " +
-            "AND e.category.id IN :categories ")
+            "AND (e.category.id IN :categories OR :categoriesSize = 0)")
     Page<Event> findAllByUserParams (
             String text,
             Long[] categories,
             Boolean paid,
             LocalDateTime start,
             LocalDateTime end,
+            Boolean isPaidNull,
+            Boolean isTextNull,
+            Integer categoriesSize,
             Pageable pageRequest);
 
     @Transactional

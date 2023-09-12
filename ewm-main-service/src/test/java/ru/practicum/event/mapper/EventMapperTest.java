@@ -118,9 +118,9 @@ public class EventMapperTest {
         );
         assertNotNull(result);
         assertEquals(result.getAnnotation(), eventFullDto.getAnnotation());
-        assertEquals(result.getConfirmedRequests(), 0L);
+        assertNull(result.getConfirmedRequests());
         assertEquals(result.getCategory().getId(), eventFullDto.getCategory().getId());
-        assertEquals(result.getCreatedOn().format(dateTimeFormatter), eventFullDto.getCreatedOn());
+        assertNull(result.getCreatedOn());
         assertEquals(result.getDescription(), eventFullDto.getDescription());
         assertEquals(result.getEventDate().format(dateTimeFormatter), eventFullDto.getEventDate());
         assertEquals(result.getInitiator().getId(), eventFullDto.getInitiator().getId());

@@ -72,7 +72,9 @@ public class EventControllerTest {
                 new UserShortDto(1L, user.getName()),
                 new Location(1L, locationDto.getLat(), locationDto.getLon()),
                 paid,
+                participantLimit,
                 publishedOnRaw,
+                requestModeration,
                 state,
                 title,
                 0L
@@ -99,7 +101,7 @@ public class EventControllerTest {
                 .andExpect(jsonPath("$.location.lat", is(event.getLocation().getLat()), Float.class))
                 .andExpect(jsonPath("$.location.lon", is(event.getLocation().getLon()), Float.class))
                 .andExpect(jsonPath("$.paid", is(event.getPaid())))
-                .andExpect(jsonPath("$.participantLimit", is(event.getParticipantLimit()), Integer.class))
+                .andExpect(jsonPath("$.participantLimit", is(event.getParticipantLimit()), Long.class))
                 .andExpect(jsonPath("$.publishedOn", is(event.getPublishedOn())))
                 .andExpect(jsonPath("$.requestModeration", is(event.getRequestModeration())))
                 .andExpect(jsonPath("$.state", is("PENDING")))
@@ -222,7 +224,7 @@ public class EventControllerTest {
                 .andExpect(jsonPath("$.location.lat", is(event.getLocation().getLat()), Float.class))
                 .andExpect(jsonPath("$.location.lon", is(event.getLocation().getLon()), Float.class))
                 .andExpect(jsonPath("$.paid", is(event.getPaid())))
-                .andExpect(jsonPath("$.participantLimit", is(event.getParticipantLimit()), Integer.class))
+                .andExpect(jsonPath("$.participantLimit", is(event.getParticipantLimit()), Long.class))
                 .andExpect(jsonPath("$.publishedOn", is(event.getPublishedOn())))
                 .andExpect(jsonPath("$.requestModeration", is(event.getRequestModeration())))
                 .andExpect(jsonPath("$.state", is("PENDING")))

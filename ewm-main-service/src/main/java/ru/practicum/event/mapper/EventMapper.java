@@ -34,7 +34,9 @@ public class EventMapper {
                 userMapper.toUserShortDto(event.getInitiator()),
                 event.getLocation(),
                 event.getPaid(),
+                event.getParticipantLimit(),
                 event.getPublishedOn() == null ? "" : event.getPublishedOn().format(dateTimeFormatter),
+                event.getRequestModeration(),
                 event.getState(),
                 event.getTitle(),
                 event.getViews()
@@ -42,21 +44,25 @@ public class EventMapper {
     }
 
     public Event toEvent(NewEventDto dto, Category category, User initiator, Location location) {
-        var event = new Event(
+        return new Event(
+                null,
                 dto.getAnnotation(),
                 category,
+                null,
+                null,
                 dto.getDescription(),
                 LocalDateTime.parse(dto.getEventDate(), dateTimeFormatter),
                 initiator,
                 location,
                 dto.getPaid(),
-                dto.getTitle()
+                dto.getParticipantLimit(),
+                null,
+                dto.getRequestModeration(),
+                null,
+                dto.getTitle(),
+                null,
+                null
         );
-        event.setParticipantLimit(dto.getParticipantLimit());
-        event.setRequestModeration(dto.getRequestModeration());
-        event.setCreatedOn(LocalDateTime.now());
-        event.setConfirmedRequests(0L);
-        return event;
     }
 
     public EventShortDto toShortDto(Event event) {

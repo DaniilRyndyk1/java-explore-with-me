@@ -15,8 +15,8 @@ public class TestData {
     public static final String username = "DanilaSuper";
     public static final String email = "DanilaSuper@yandex.ru";
     public static final String description = "description_________________________";
-    public static final String eventDateRaw = "2023-09-10 19:25:55";
-    public static final String publishedOnRaw = "2023-09-10 02:25:55";
+    public static final String eventDateRaw = "2023-09-20 19:25:55";
+    public static final String publishedOnRaw = "2023-09-20 02:25:55";
     public static final LocalDateTime eventDate = LocalDateTime.parse(eventDateRaw, dateTimeFormatter);
     public static final LocalDateTime publishedOn = LocalDateTime.parse(publishedOnRaw, dateTimeFormatter);
     public static final EventState state = EventState.PENDING;

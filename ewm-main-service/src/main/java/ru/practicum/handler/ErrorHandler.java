@@ -35,16 +35,6 @@ public class ErrorHandler {
                 getTimestamp());
     }
 
-//    @ExceptionHandler(RequestFailedMeetConditionException.class)
-//    @ResponseStatus(HttpStatus.FORBIDDEN)
-//    public ApiError handleRequestFailedMeetConditionException(RequestFailedMeetConditionException e) {
-//        return new ApiError(
-//                e.getMessage(),
-//                "For the requested operation the conditions are not met.",
-//                HttpStatus.FORBIDDEN,
-//                getTimestamp());
-//    }
-
     @ExceptionHandler(ConflictException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ApiError handleConversionFailedException(ConflictException e) {

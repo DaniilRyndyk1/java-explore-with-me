@@ -77,6 +77,8 @@ public class EventServiceImpl implements EventService {
         var event = eventMapper.toEvent(dto, category, user, location);
         event.setState(EventState.PENDING);
         event.setViews(0L);
+        event.setCreatedOn(LocalDateTime.now());
+        event.setConfirmedRequests(0L);
 
         return eventMapper.toFullDto(
                 repository.save(event)
@@ -160,8 +162,13 @@ public class EventServiceImpl implements EventService {
                                      @NotNull Integer size) {
 
         var pageRequest = Utils.getPageRequest(from, size);
-        var start = LocalDateTime.parse(rangeStart, dateTimeFormatter);
-        var end = LocalDateTime.parse(rangeEnd, dateTimeFormatter);
+
+        var start = LocalDateTime.now();
+        var end = start.plusYears(10000);
+        if (rangeStart != null && rangeEnd != null) {
+            start = LocalDateTime.parse(rangeStart, dateTimeFormatter);
+            end = LocalDateTime.parse(rangeEnd, dateTimeFormatter);
+        }
 
         var events = repository.findAllByAdminParams(
                 users,
@@ -169,6 +176,9 @@ public class EventServiceImpl implements EventService {
                 categories,
                 start,
                 end,
+                users == null ? 0 : users.length,
+                states == null ? 0 : states.length,
+                categories == null ? 0 : categories.length,
                 pageRequest)
                 .stream()
                 .collect(Collectors.toList());
@@ -207,7 +217,10 @@ public class EventServiceImpl implements EventService {
                 paid,
                 start,
                 end,
-                pageRequest).toList();
+                paid == null,
+                text == null,
+                categories == null? 0 : categories.length,
+                pageRequest).stream().collect(Collectors.toList());
 
         if (onlyAvailable != null && onlyAvailable) {
             events = events
@@ -247,7 +260,11 @@ public class EventServiceImpl implements EventService {
     }
 
     public Set<Event> getAllByIds(Set<Long> ids) {
-        return new HashSet<>(repository.findAllById(ids));
+        var result = new HashSet<Event>();
+        for (Long id : ids) {
+            result.add(getById(id));
+        }
+        return result;
     }
 
     private Event setValuesFromRequest(UpdateEventUserRequest request, Event event) {

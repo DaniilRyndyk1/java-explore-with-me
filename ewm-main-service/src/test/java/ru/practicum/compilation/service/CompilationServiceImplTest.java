@@ -15,13 +15,9 @@ import ru.practicum.compilation.dto.NewCompilationDto;
 import ru.practicum.compilation.dto.UpdateCompilationRequest;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.NewEventDto;
-import ru.practicum.event.mapper.EventMapper;
 import ru.practicum.event.service.EventServiceImpl;
 import ru.practicum.handler.NotFoundException;
-import ru.practicum.location.service.LocationServiceImpl;
 import ru.practicum.user.dto.NewUserRequest;
-import ru.practicum.user.mapper.UserMapper;
-import ru.practicum.user.model.User;
 import ru.practicum.user.service.UserServiceImpl;
 
 import java.util.Set;
@@ -38,37 +34,25 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CompilationServiceImplTest {
     private final CompilationServiceImpl service;
     private final EventServiceImpl eventService;
-    private final EventMapper eventMapper;
     private final UserServiceImpl userService;
-    private final UserMapper userMapper;
     private final CategoryServiceImpl categoryService;
-    private final LocationServiceImpl locationService;
 
-    private User user;
-    private User user2;
-    private User user3;
-    private CategoryDto category;
-    private EventFullDto event;
     private EventFullDto event2;
     private CompilationDto compilationDto;
     private CompilationDto compilationDto2;
-    private CompilationDto compilationDto3;
 
     @BeforeEach
     void setup() {
-        var userDto = userService.add(new NewUserRequest("Danila", "konosuba@ya.ru"));
-        user = userMapper.toUser(userDto.getId(), newUserRequest);
+        var user = userService.add(new NewUserRequest("Danila", "konosuba@ya.ru"));
 
-        userDto = userService.add(new NewUserRequest("Nikita", "bebe@ya.ru"));
-        user2 = userMapper.toUser(userDto.getId(), newUserRequest);
+        userService.add(new NewUserRequest("Nikita", "bebe@ya.ru"));
 
-        userDto = userService.add(new NewUserRequest("Nikita2", "bebe2@ya.ru"));
-        user3 = userMapper.toUser(userDto.getId(), newUserRequest);
+        userService.add(new NewUserRequest("Nikita2", "bebe2@ya.ru"));
 
         var categoryDto = new NewCategoryDto("The best");
-        category = categoryService.create(categoryDto);
+        CategoryDto category = categoryService.create(categoryDto);
 
-        event = eventService.create(user.getId(),
+        EventFullDto event = eventService.create(user.getId(),
                 new NewEventDto(
                         annotation,
                         category.getId(),
@@ -104,12 +88,6 @@ public class CompilationServiceImplTest {
                 Set.of(event2.getId()),
                 false,
                 "super good 2"
-        ));
-
-        compilationDto3 = service.add(new NewCompilationDto(
-                Set.of(event2.getId()),
-                true,
-                "super good 3"
         ));
     }
 
@@ -158,17 +136,6 @@ public class CompilationServiceImplTest {
         assertEquals(newCompilation.getPinned(), result.getPinned());
         assertEquals(newCompilation.getTitle(), result.getTitle());
     }
-
-//    @Test
-//    void shouldNotCreateWithNotFoundEvent() {
-//        var newCompilation = new NewCompilationDto(
-//                Set.of(999L),
-//                false,
-//                "best 2"
-//        );
-//        assertThrows(NotFoundException.class,
-//                () -> service.add(newCompilation));
-//    }
 
     @Test
     void shouldDelete() {

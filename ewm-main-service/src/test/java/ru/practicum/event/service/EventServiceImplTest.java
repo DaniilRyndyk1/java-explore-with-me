@@ -5,17 +5,26 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.dto.NewCategoryDto;
 import ru.practicum.category.service.CategoryServiceImpl;
-import ru.practicum.event.dto.EventFullDto;
+import ru.practicum.event.dto.*;
+import ru.practicum.event.enums.EventState;
+import ru.practicum.event.enums.EventStateAction;
+import ru.practicum.event.mapper.EventMapper;
 import ru.practicum.handler.NotFoundException;
+import ru.practicum.location.service.LocationServiceImpl;
+import ru.practicum.user.dto.NewUserRequest;
+import ru.practicum.user.mapper.UserMapper;
+import ru.practicum.user.model.User;
+import ru.practicum.user.service.UserServiceImpl;
 
-import javax.validation.ConstraintViolationException;
+import java.time.LocalDateTime;
+
+import static ru.practicum.Utils.dateTimeFormatter;
+import static ru.practicum.event.TestData.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,153 +34,443 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("test")
 public class EventServiceImplTest {
     private final EventServiceImpl service;
+    private final EventMapper eventMapper;
+    private final UserServiceImpl userService;
+    private final UserMapper userMapper;
+    private final CategoryServiceImpl categoryService;
+    private final LocationServiceImpl locationService;
 
-    //private final Event categoryDto = new NewCategoryDto("theatre");
-    private final NewCategoryDto categoryDto2 = new NewCategoryDto("cinema");
-    private final NewCategoryDto categoryDto3 = new NewCategoryDto("outdoor");
-
-    private EventFullDto category1;
-    private EventFullDto category2;
+    private User user;
+    private User user2;
+    private User user3;
+    private CategoryDto category;
+    private EventFullDto event;
+    private EventFullDto event2;
+//    private CompilationDto compilationDto;
 
     @BeforeEach
     void setup() {
-        //service.add()
-        //category2 = service.create(categoryDto2);
+        var userDto = userService.add(new NewUserRequest("Danila", "konosuba@ya.ru"));
+        user = userMapper.toUser(userDto.getId(), newUserRequest);
+
+        userDto = userService.add(new NewUserRequest("Nikita", "bebe@ya.ru"));
+        user2 = userMapper.toUser(userDto.getId(), newUserRequest);
+
+        userDto = userService.add(new NewUserRequest("Nikita2", "bebe2@ya.ru"));
+        user3 = userMapper.toUser(userDto.getId(), newUserRequest);
+
+        var categoryDto = new NewCategoryDto("The best");
+        category = categoryService.create(categoryDto);
+
+        event = service.create(user.getId(),
+                new NewEventDto(
+                        annotation,
+                        category.getId(),
+                        description,
+                        eventDateRaw,
+                        locationDto,
+                        paid,
+                        3L,
+                        true,
+                        title
+                ));
+
+        event = service.update(event.getId(), new UpdateEventAdminRequest(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                EventStateAction.PUBLISH_EVENT,
+                null
+        ));
+
+        event2 = service.create(user.getId(),
+                new NewEventDto(
+                        annotation + "!",
+                        category.getId(),
+                        description + "!",
+                        eventDateRaw,
+                        locationDto,
+                        paid,
+                        3L,
+                        true,
+                        title + "!"
+                ));
     }
 
-//    @Test
-//    void shouldAddCategory() {
-//        var originalSize = service.getAll(0, 10).size();
-//        service.create(categoryDto3);
-//        var newSize = service.getAll(0, 10).size();
-//        assertEquals(originalSize + 1, newSize);
-//    }
+    @Test
+    void getDtoById() {
+        var result = service.getDtoById(event.getId());
+        assertNotNull(result);
+        assertEquals(event.getId(), result.getId());
+        assertEquals(event.getTitle(), result.getTitle());
+        assertEquals(event.getAnnotation(), result.getAnnotation());
+        assertEquals(event.getEventDate(), result.getEventDate());
+        assertEquals(event.getPaid(), result.getPaid());
+        assertEquals(event.getCategory().getId(), result.getCategory().getId());
+        assertEquals(event.getInitiator().getId(), result.getInitiator().getId());
+        assertEquals(event.getLocation().getLat(), result.getLocation().getLat());
+        assertEquals(event.getLocation().getLon(), result.getLocation().getLon());
+        assertEquals(event.getState(), result.getState());
+        assertEquals(event.getViews(), result.getViews());
+        assertEquals(event.getConfirmedRequests(), result.getConfirmedRequests());
+        assertEquals(event.getCreatedOn(), result.getCreatedOn());
+        assertEquals(event.getParticipantLimit(), result.getParticipantLimit());
+        assertEquals(event.getRequestModeration(), result.getRequestModeration());
+    }
 
-//    @Test
-//    void shouldNotAddCategoryWithSameName() {
-//        assertThrows(DataIntegrityViolationException.class,
-//                () -> service.create(categoryDto));
-//    }
-//
-//    @Test
-//    void shouldNotAddCategoryWithNullName() {
-//        var categoryDto3 = new NewCategoryDto(null);
-//        assertThrows(ConstraintViolationException.class,
-//                () -> service.create(categoryDto3));
-//    }
-//
-//    @Test
-//    void shouldDeleteCategory() {
-//        var originalSize = service.getAll(0, 10).size();
-//        service.delete(category1.getId());
-//        var newSize = service.getAll(0, 10).size();
-//        assertEquals(originalSize - 1, newSize);
-//    }
-//
-//    @Test
-//    void shouldNotDeleteCategoryWithWrongId() {
-//        var originalSize = service.getAll(0, 10).size();
-//        service.delete(999L);
-//        var newSize = service.getAll(0, 10).size();
-//        assertEquals(originalSize, newSize);
-//    }
-//
-//    @Test
-//    void shouldNotDeleteCategoryWithNullId() {
-//        assertThrows(InvalidDataAccessApiUsageException.class,
-//                () -> service.delete(null));
-//    }
-//
-//    @Test
-//    void shouldGetCategoryById() {
-//        var dto = service.getDtoById(category2.getId());
-//        assertEquals(category2.getId(), dto.getId());
-//        assertEquals(category2.getName(), dto.getName());
-//    }
-//
-//    @Test
-//    void shouldNotGetCategoryByWrongId() {
-//        assertThrows(NotFoundException.class,
-//                () -> service.getDtoById(999L));
-//    }
-//
-//    @Test
-//    void shouldNotGetCategoryByNullId() {
-//        assertThrows(InvalidDataAccessApiUsageException.class,
-//                () -> service.getDtoById(null));
-//    }
-//
-//    @Test
-//    void shouldGetAllCategories() {
-//        var DTOs = service.getAll(0, 10);
-//        assertEquals(2, DTOs.size());
-//        assertEquals(DTOs.get(0).getId(), category1.getId());
-//        assertEquals(DTOs.get(0).getName(), category1.getName());
-//        assertEquals(DTOs.get(1).getId(), category2.getId());
-//        assertEquals(DTOs.get(1).getName(), category2.getName());
-//    }
-//
-//    @Test
-//    void shouldNotGetAllCategoriesWithFromNegative() {
-//        assertThrows(IllegalArgumentException.class,
-//                () -> service.getAll(-5, 10));
-//    }
-//
-//    @Test
-//    void shouldNotGetAllCategoriesWithSizeNegative() {
-//        assertThrows(IllegalArgumentException.class,
-//                () -> service.getAll(0, -10));
-//    }
-//
-//    @Test
-//    void shouldNotGetAllCategoriesWithSizeEqualsZero() {
-//        assertThrows(IllegalArgumentException.class,
-//                () -> service.getAll(0, 0));
-//    }
-//
-//    @Test
-//    void shouldNotGetAllCategoriesWithNullSize() {
-//        assertThrows(NullPointerException.class,
-//                () -> service.getAll(0, null));
-//    }
-//
-//    @Test
-//    void shouldNotGetAllCategoriesWithNullFrom() {
-//        assertThrows(NullPointerException.class,
-//                () -> service.getAll(null, 10));
-//    }
-//
-//    @Test
-//    void shouldUpdateCategory() {
-//        var dto = new CategoryDto(category1.getId(), "aaaaaoooooaaa");
-//        service.update(category1.getId(), dto);
-//        var newDto = service.getDtoById(category1.getId());
-//        assertNotNull(newDto);
-//        assertEquals(newDto.getId(), dto.getId());
-//        assertEquals(newDto.getName(), dto.getName());
-//    }
-//
-//    @Test
-//    void shouldNotUpdateCategoryWithWrongId() {
-//        var dto = new CategoryDto(999L, "aaaaaoooooaaa");
-//        assertThrows(NotFoundException.class,
-//                () -> service.update(999L, dto));
-//    }
-//
-//    @Test
-//    void shouldNotUpdateCategoryWithNullName() {
-//        var dto = new CategoryDto(category1.getId(), null);
-//        service.update(category1.getId(), dto);
-//        var newDto = service.getDtoById(category1.getId());
-//        assertNotNull(newDto);
-//        assertEquals(newDto.getId(), dto.getId());
-//        assertEquals(newDto.getName(), dto.getName());
-//    }
-//
-//    @Test
-//    void shouldNotUpdateCategoryWithNullId() {
-//        var dto = new CategoryDto(null, "test");
-//        assertThrows(InvalidDataAccessApiUsageException.class,
-//                () -> service.update(null, dto));
-//    }
+    @Test
+    void shouldNotGetDtoByIdWithNotFoundId() {
+        assertThrows(NotFoundException.class,
+                () -> service.getDtoById(event.getId() - 1));
+    }
+
+    @Test
+    void shouldNotGetNotPublishedDtoById() {
+        assertThrows(NotFoundException.class,
+                () -> service.getDtoById(event2.getId()));
+    }
+
+    @Test
+    void shouldGetById() {
+        var result = service.getById(event.getId());
+        assertNotNull(result);
+        assertEquals(event.getId(), result.getId());
+        assertEquals(event.getTitle(), result.getTitle());
+        assertEquals(event.getAnnotation(), result.getAnnotation());
+        assertEquals(event.getEventDate(), result.getEventDate().format(dateTimeFormatter));
+        assertEquals(event.getPaid(), result.getPaid());
+        assertEquals(event.getCategory().getId(), result.getCategory().getId());
+        assertEquals(event.getInitiator().getId(), result.getInitiator().getId());
+        assertEquals(event.getLocation().getLat(), result.getLocation().getLat());
+        assertEquals(event.getLocation().getLon(), result.getLocation().getLon());
+        assertEquals(event.getState(), result.getState());
+        assertEquals(event.getViews(), result.getViews());
+        assertEquals(event.getConfirmedRequests(), result.getConfirmedRequests());
+        assertEquals(event.getCreatedOn(), result.getCreatedOn().format(dateTimeFormatter));
+        assertEquals(event.getParticipantLimit().longValue(), result.getParticipantLimit());
+        assertEquals(event.getRequestModeration(), result.getRequestModeration());
+    }
+
+    @Test
+    void shouldNotGetByIdWithNotFoundId() {
+        assertThrows(NotFoundException.class,
+                () -> service.getDtoById(event.getId() - 1));
+    }
+
+    @Test
+    void shouldGetByIds() {
+        var result = service.getDtoById(user.getId(), event.getId());
+        assertNotNull(result);
+        assertEquals(event.getId(), result.getId());
+        assertEquals(event.getTitle(), result.getTitle());
+        assertEquals(event.getAnnotation(), result.getAnnotation());
+        assertEquals(event.getEventDate(), result.getEventDate());
+        assertEquals(event.getPaid(), result.getPaid());
+        assertEquals(event.getCategory().getId(), result.getCategory().getId());
+        assertEquals(event.getInitiator().getId(), result.getInitiator().getId());
+        assertEquals(event.getLocation().getLat(), result.getLocation().getLat());
+        assertEquals(event.getLocation().getLon(), result.getLocation().getLon());
+        assertEquals(event.getState(), result.getState());
+        assertEquals(event.getViews(), result.getViews());
+        assertEquals(event.getConfirmedRequests(), result.getConfirmedRequests());
+        assertEquals(event.getCreatedOn(), result.getCreatedOn());
+        assertEquals(event.getParticipantLimit().longValue(), result.getParticipantLimit());
+        assertEquals(event.getRequestModeration(), result.getRequestModeration());
+    }
+
+    @Test
+    void shouldNotGetByIdsWithNotFoundUserId() {
+        assertThrows(NotFoundException.class,
+                () -> service.getDtoById(user.getId() - 1, event.getId()));
+    }
+
+    @Test
+    void shouldNotGetByIdsWithNotFoundEventId() {
+        assertThrows(NotFoundException.class,
+                () -> service.getDtoById(user.getId(), event.getId() - 1));
+    }
+
+    @Test
+    void shouldNotGetByIdsWithNotInitiatorUserId() {
+        assertThrows(NotFoundException.class,
+                () -> service.getDtoById(user2.getId(), event.getId()));
+    }
+
+    @Test
+    void shouldGetAllByUser() {
+        var result = service.getAllByUser(user.getId(), 0, 10);
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals(event.getId(), result.get(0).getId());
+        assertEquals(event2.getId(), result.get(1).getId());
+    }
+
+    @Test
+    void create() {
+
+    }
+
+    @Test
+    void shouldNotAdminUpdateWhenStateNotPendingAndWePublishEvent() {
+        assertThrows(UnsupportedOperationException.class,
+                () -> service.update(event.getId(), new UpdateEventAdminRequest(
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        EventStateAction.PUBLISH_EVENT,
+                        null
+                ))
+        );
+    }
+
+    @Test
+    void shouldNotAdminUpdateWhenStatePublishedAndWeCancelReview() {
+        assertThrows(UnsupportedOperationException.class,
+                () -> service.update(event.getId(), new UpdateEventAdminRequest(
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        EventStateAction.CANCEL_REVIEW,
+                        null
+                ))
+        );
+    }
+
+    @Test
+    void shouldUserUpdate() {
+        var result = service.update(user.getId(), event2.getId(), new UpdateEventUserRequest(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                EventStateAction.PUBLISH_EVENT,
+                null
+        ));
+        assertNotNull(result);
+        assertEquals(event2.getId(), result.getId());
+        assertEquals(event2.getTitle(), result.getTitle());
+        assertEquals(event2.getAnnotation(), result.getAnnotation());
+        assertEquals(event2.getEventDate(), result.getEventDate());
+        assertEquals(event2.getPaid(), result.getPaid());
+        assertEquals(event2.getCategory().getId(), result.getCategory().getId());
+        assertEquals(event2.getInitiator().getId(), result.getInitiator().getId());
+        assertEquals(event2.getLocation().getLat(), result.getLocation().getLat());
+        assertEquals(event2.getLocation().getLon(), result.getLocation().getLon());
+        assertEquals(EventState.PUBLISHED, result.getState());
+        assertEquals(event2.getViews(), result.getViews());
+        assertEquals(event2.getConfirmedRequests(), result.getConfirmedRequests());
+        assertEquals(event2.getCreatedOn(), result.getCreatedOn());
+        assertEquals(event2.getParticipantLimit().longValue(), result.getParticipantLimit());
+        assertEquals(event2.getRequestModeration(), result.getRequestModeration());
+    }
+
+    @Test
+    void shouldNotAdminUpdateWhenStateIsPublished() {
+        assertThrows(UnsupportedOperationException.class,
+                () -> service.update(user.getId(), event.getId(), new UpdateEventUserRequest(
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        EventStateAction.PUBLISH_EVENT,
+                        null
+                ))
+        );
+    }
+
+    @Test
+    void shouldSearch() {
+        var list = service.search(
+                new Long[] {user.getId()},
+                null,
+                null,
+                LocalDateTime.now().minusDays(100).format(dateTimeFormatter),
+                LocalDateTime.now().plusDays(100).format(dateTimeFormatter),
+                0,
+                15
+        );
+        assertNotNull(list);
+        assertEquals(2, list.size());
+
+        var result = list.get(0);
+
+        assertEquals(event.getId(), result.getId());
+        assertEquals(event.getTitle(), result.getTitle());
+        assertEquals(event.getAnnotation(), result.getAnnotation());
+        assertEquals(event.getEventDate(), result.getEventDate());
+        assertEquals(event.getPaid(), result.getPaid());
+        assertEquals(event.getCategory().getId(), result.getCategory().getId());
+        assertEquals(event.getInitiator().getId(), result.getInitiator().getId());
+        assertEquals(event.getLocation().getLat(), result.getLocation().getLat());
+        assertEquals(event.getLocation().getLon(), result.getLocation().getLon());
+        assertEquals(event.getState(), result.getState());
+        assertEquals(event.getViews(), result.getViews());
+        assertEquals(event.getConfirmedRequests(), result.getConfirmedRequests());
+        assertEquals(event.getCreatedOn(), result.getCreatedOn());
+        assertEquals(event.getParticipantLimit().longValue(), result.getParticipantLimit());
+        assertEquals(event.getRequestModeration(), result.getRequestModeration());
+    }
+
+    @Test
+    void shouldSearchWithoutRange() {
+        var list = service.search(
+                new Long[] {user.getId()},
+                null,
+                null,
+                null,
+                null,
+                0,
+                15
+        );
+        assertNotNull(list);
+        assertEquals(2, list.size());
+
+        var result = list.get(0);
+
+        assertEquals(event.getId(), result.getId());
+        assertEquals(event.getTitle(), result.getTitle());
+        assertEquals(event.getAnnotation(), result.getAnnotation());
+        assertEquals(event.getEventDate(), result.getEventDate());
+        assertEquals(event.getPaid(), result.getPaid());
+        assertEquals(event.getCategory().getId(), result.getCategory().getId());
+        assertEquals(event.getInitiator().getId(), result.getInitiator().getId());
+        assertEquals(event.getLocation().getLat(), result.getLocation().getLat());
+        assertEquals(event.getLocation().getLon(), result.getLocation().getLon());
+        assertEquals(event.getState(), result.getState());
+        assertEquals(event.getViews(), result.getViews());
+        assertEquals(event.getConfirmedRequests(), result.getConfirmedRequests());
+        assertEquals(event.getCreatedOn(), result.getCreatedOn());
+        assertEquals(event.getParticipantLimit().longValue(), result.getParticipantLimit());
+        assertEquals(event.getRequestModeration(), result.getRequestModeration());
+    }
+
+    @Test
+    void shouldGetAll() {
+        var list = service.getAll(
+                null,
+                null,
+                null,
+                null,
+                null,
+                false,
+                "EVENT_DATE",
+                0,
+                15
+        );
+
+        assertNotNull(list);
+        assertEquals(1, list.size());
+
+        var result = list.get(0);
+
+        assertEquals(event.getId(), result.getId());
+        assertEquals(event.getTitle(), result.getTitle());
+        assertEquals(event.getAnnotation(), result.getAnnotation());
+        assertEquals(event.getEventDate(), result.getEventDate());
+        assertEquals(event.getPaid(), result.getPaid());
+        assertEquals(event.getCategory().getId(), result.getCategory().getId());
+        assertEquals(event.getInitiator().getId(), result.getInitiator().getId());
+        assertEquals(event.getViews(), result.getViews());
+        assertEquals(event.getConfirmedRequests(), result.getConfirmedRequests());
+    }
+
+    @Test
+    void shouldGetAllWithOnlyAvailable() {
+        var list = service.getAll(
+                null,
+                null,
+                null,
+                null,
+                null,
+                true,
+                "EVENT_DATE",
+                0,
+                15
+        );
+
+        assertNotNull(list);
+        assertEquals(1, list.size());
+
+        var result = list.get(0);
+
+        assertEquals(event.getId(), result.getId());
+        assertEquals(event.getTitle(), result.getTitle());
+        assertEquals(event.getAnnotation(), result.getAnnotation());
+        assertEquals(event.getEventDate(), result.getEventDate());
+        assertEquals(event.getPaid(), result.getPaid());
+        assertEquals(event.getCategory().getId(), result.getCategory().getId());
+        assertEquals(event.getInitiator().getId(), result.getInitiator().getId());
+        assertEquals(event.getViews(), result.getViews());
+        assertEquals(event.getConfirmedRequests(), result.getConfirmedRequests());
+    }
+
+    @Test
+    void shouldGetAllWithRange() {
+        var list = service.getAll(
+                null,
+                null,
+                null,
+                LocalDateTime.now().minusDays(100).format(dateTimeFormatter),
+                LocalDateTime.now().plusDays(100).format(dateTimeFormatter),
+                false,
+                "VIEWS",
+                0,
+                15
+        );
+
+        assertNotNull(list);
+        assertEquals(1, list.size());
+
+        var result = list.get(0);
+
+        assertEquals(event.getId(), result.getId());
+        assertEquals(event.getTitle(), result.getTitle());
+        assertEquals(event.getAnnotation(), result.getAnnotation());
+        assertEquals(event.getEventDate(), result.getEventDate());
+        assertEquals(event.getPaid(), result.getPaid());
+        assertEquals(event.getCategory().getId(), result.getCategory().getId());
+        assertEquals(event.getInitiator().getId(), result.getInitiator().getId());
+        assertEquals(event.getViews(), result.getViews());
+        assertEquals(event.getConfirmedRequests(), result.getConfirmedRequests());
+    }
+
+    @Test
+    void shouldGetWithUnsupportedSortType() {
+        assertThrows(UnsupportedOperationException.class,
+                () -> service.getAll(
+                        null,
+                        null,
+                        null,
+                        LocalDateTime.now().minusDays(100).format(dateTimeFormatter),
+                        LocalDateTime.now().plusDays(100).format(dateTimeFormatter),
+                        false,
+                        "ERRRRRROR",
+                        0,
+                        15
+                )
+        );
+    }
 }
