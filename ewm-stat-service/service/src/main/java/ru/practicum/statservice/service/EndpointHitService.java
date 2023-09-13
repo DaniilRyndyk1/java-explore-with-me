@@ -9,6 +9,7 @@ import ru.practicum.statservice.repository.EndpointHitRepository;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 
 @Service
@@ -22,6 +23,10 @@ public class EndpointHitService {
                                                      LocalDateTime end,
                                                      String[] uris,
                                                      Boolean unique) {
+
+        if (end.isBefore(start)) {
+            throw new DateTimeParseException("", null, 0);
+        }
 
         if (uris == null) {
             if (unique) {
