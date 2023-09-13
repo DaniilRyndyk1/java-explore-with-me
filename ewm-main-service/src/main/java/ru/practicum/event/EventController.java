@@ -58,11 +58,11 @@ public class EventController {
     }
 
     @GetMapping("admin/events")
-    public List<EventFullDto> search(@RequestParam Long[] users,
-                                     @RequestParam EventState[] states,
-                                     @RequestParam Long[] categories,
-                                     @RequestParam String rangeStart,
-                                     @RequestParam String rangeEnd,
+    public List<EventFullDto> search(@RequestParam(required = false) Long[] users,
+                                     @RequestParam(required = false) EventState[] states,
+                                     @RequestParam(required = false) Long[] categories,
+                                     @RequestParam(required = false) String rangeStart,
+                                     @RequestParam(required = false) String rangeEnd,
                                      @RequestParam(defaultValue = "0") Integer from,
                                      @RequestParam(defaultValue = "10") Integer size) {
         return service.search(users, states, categories, rangeStart, rangeEnd, from, size);
