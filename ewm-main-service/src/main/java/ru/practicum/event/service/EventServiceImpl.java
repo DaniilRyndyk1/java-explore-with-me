@@ -330,13 +330,15 @@ public class EventServiceImpl implements EventService {
 
         var stateAction = request.getStateAction();
 
-        if (stateAction.equals(EventStateAction.CANCEL_REVIEW)) {
-            event.setState(EventState.CANCELED);
-        } else if (stateAction.equals(EventStateAction.PUBLISH_EVENT)) {
-            event.setState(EventState.PUBLISHED);
-        } else {
-            event.setState(EventState.PENDING);
-        } // TODO разобраться
+        if (stateAction != null) {
+            if (stateAction.equals(EventStateAction.CANCEL_REVIEW)) {
+                event.setState(EventState.CANCELED);
+            } else if (stateAction.equals(EventStateAction.PUBLISH_EVENT)) {
+                event.setState(EventState.PUBLISHED);
+            } else {
+                event.setState(EventState.PENDING);
+            }
+        }
 
         if (request.getTitle() != null) {
             event.setTitle(request.getTitle());
