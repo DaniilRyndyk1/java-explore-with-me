@@ -36,8 +36,8 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     @Query("SELECT e " +
             "FROM Event e " +
             "WHERE e.state = 'PUBLISHED' " +
-            "AND (LOWER(e.annotation) LIKE '*:text*' " +
-            "OR LOWER(e.description) LIKE '*:text*' " +
+            "AND (LOWER(e.annotation) LIKE %:text% " +
+            "OR LOWER(e.description) LIKE %:text% " +
             "OR :isTextNull = true) " +
             "AND (e.paid = :paid OR :isPaidNull = true)" +
             "AND e.eventDate >= :start " +

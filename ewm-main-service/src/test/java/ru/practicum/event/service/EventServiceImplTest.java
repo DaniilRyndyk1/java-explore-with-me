@@ -284,7 +284,7 @@ public class EventServiceImplTest {
 
     @Test
     void shouldNotAdminUpdateWhenStateIsPublished() {
-        assertThrows(UnsupportedOperationException.class,
+        assertThrows(ConflictException.class,
                 () -> service.update(user.getId(), event.getId(), new UpdateEventUserRequest(
                         null,
                         null,

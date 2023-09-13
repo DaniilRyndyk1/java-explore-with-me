@@ -12,7 +12,6 @@ import ru.practicum.Utils;
 import ru.practicum.category.model.Category;
 import ru.practicum.compilation.dto.UpdateCompilationRequest;
 import ru.practicum.event.model.Event;
-import ru.practicum.handler.NotFoundException;
 import ru.practicum.location.model.Location;
 import ru.practicum.participationRequest.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.participationRequest.dto.EventRequestStatusUpdateResult;
@@ -86,31 +85,6 @@ public class ParticipationRequestControllerTest {
                 user.getId(),
                 request.getStatus()
         );
-    }
-
-    @Test
-    void shouldGetByIds() throws Exception {
-        when(service.getDtoById(any(Long.class), any(Long.class))).thenReturn(requestDto);
-
-        mvc.perform(get("/users/1/events/2/requests").accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id", is(requestDto.getId()), Long.class))
-                .andExpect(jsonPath("$.created", is(requestDto.getCreated())))
-                .andExpect(jsonPath("$.event", is(requestDto.getEvent()), Long.class))
-                .andExpect(jsonPath("$.requester", is(requestDto.getRequester()), Long.class))
-                .andExpect(jsonPath("$.status", is(requestDto.getStatus().name())));
-    }
-
-    @Test
-    void shouldNotGetByIdsWithNotFoundId() throws Exception {
-        when(service.getDtoById(any(Long.class), any(Long.class))).thenThrow(NotFoundException.class);
-
-        mvc.perform(get("/users/1/events/2/requests").accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.status", is("NOT_FOUND")))
-                .andExpect(jsonPath("$.reason", is("The required object was not found.")));
     }
 
     @Test

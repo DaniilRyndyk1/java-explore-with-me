@@ -21,5 +21,5 @@ public interface ParticipationRequestService {
                                                         @NotNull Long eventId,
                                                         @NotNull EventRequestStatusUpdateRequest request);
 
-
+    List<ParticipationRequestDto> getAllByInitiatorIdAndEventId(@NotNull Long userId, @NotNull Long eventId);
 }

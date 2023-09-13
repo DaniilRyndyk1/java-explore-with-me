@@ -237,7 +237,7 @@ public class EventServiceImpl implements EventService {
         }
 
         var events = repository.findAllByUserParams(
-                text,
+                text == null? "" : text.toLowerCase(),
                 categories,
                 paid,
                 start,

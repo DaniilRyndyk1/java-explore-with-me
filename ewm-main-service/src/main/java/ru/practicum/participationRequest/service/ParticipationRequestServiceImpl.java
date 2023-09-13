@@ -55,6 +55,20 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         );
     }
 
+    public List<ParticipationRequestDto> getAllByInitiatorIdAndEventId(@NotNull Long userId, @NotNull Long eventId) {
+        userService.getById(userId);
+        var event = eventService.getById(eventId);
+
+        if (!event.getInitiator().getId().equals(userId)) {
+            throw new NotFoundException("Event with id=" + eventId + " was not found");
+        }
+
+        return repository.findAllByEvent_Id(eventId)
+                .stream()
+                .map(mapper::toDto)
+                .collect(Collectors.toList());
+    }
+
     public List<ParticipationRequestDto> getAll(@NotNull Long userId) {
         userService.getById(userId);
 
@@ -127,7 +141,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
 
         var event = eventService.getById(eventId);
         if (!event.getInitiator().getId().equals(userId)) {
-            throw new NotFoundException("User isn't initiator"); //TODO
+            throw new NotFoundException("User isn't initiator");
         }
 
         var ids = request.getRequestIds();
@@ -159,7 +173,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
 
         var rejected = requests
                 .stream()
-                .filter(x -> x.getStatus().equals(ParticipationRequestState.CANCELED))
+                .filter(x -> x.getStatus().equals(ParticipationRequestState.REJECTED))
                 .map(mapper::toDto)
                 .collect(Collectors.toList());
 

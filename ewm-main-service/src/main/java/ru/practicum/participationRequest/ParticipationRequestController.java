@@ -17,9 +17,9 @@ public class ParticipationRequestController {
     private final ParticipationRequestService service;
 
     @GetMapping("users/{userId}/events/{eventId}/requests")
-    public ParticipationRequestDto getRequest(@PathVariable Long userId,
-                                              @PathVariable Long eventId) {
-        return service.getDtoById(userId, eventId);
+    public List<ParticipationRequestDto> getRequestsByInitiatorAndEvent(@PathVariable Long userId,
+                                                                        @PathVariable Long eventId) {
+        return service.getAllByInitiatorIdAndEventId(userId, eventId);
     }
 
     @PatchMapping("users/{userId}/events/{eventId}/requests")

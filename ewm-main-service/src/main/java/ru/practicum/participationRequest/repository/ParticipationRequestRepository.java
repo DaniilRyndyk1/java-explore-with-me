@@ -13,6 +13,7 @@ import java.util.Optional;
 public interface ParticipationRequestRepository extends JpaRepository<ParticipationRequest, Long> {
     Optional<ParticipationRequest> findFirstByRequester_IdAndEvent_Id(Long userId, Long eventId);
     List<ParticipationRequest> findAllByRequester_Id(Long userId);
+    List<ParticipationRequest> findAllByEvent_Id(Long eventId);
 
     @Query("SELECT r " +
             "FROM ParticipationRequest r " +

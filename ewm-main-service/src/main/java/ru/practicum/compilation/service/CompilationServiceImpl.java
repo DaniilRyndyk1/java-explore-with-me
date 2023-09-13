@@ -71,18 +71,20 @@ public class CompilationServiceImpl implements CompilationService {
 
     public CompilationDto update(@NotNull Long id,
                                  @NotNull UpdateCompilationRequest request) {
-        getById(id);
+        var compilation = getById(id);
         Set<Event> events = Set.of();
         if (request.getEvents() != null) {
             events = eventService.getAllByIds(request.getEvents());
         }
 
-        var compilation = new Compilation(
+        compilation = new Compilation(
                 id,
-                events,
-                request.getTitle(),
-                request.getPinned()
+                request.getEvents() == null? compilation.getEvents() : events,
+                request.getTitle() == null? compilation.getTitle() : request.getTitle(),
+                request.getPinned() != null && request.getPinned()
         );
+
+        compilation = repository.save(compilation);
 
         return compilationMapper.toDto(
                 compilation,
