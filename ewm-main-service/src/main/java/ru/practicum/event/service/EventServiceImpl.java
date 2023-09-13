@@ -127,7 +127,7 @@ public class EventServiceImpl implements EventService {
         }
 
 
-        event.setPublishedOn(
+        event.setEventDate(
                 getUpdateRequestCorrectDate(
                         request,
                         event.getEventDate(),
