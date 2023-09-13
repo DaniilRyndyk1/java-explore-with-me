@@ -14,6 +14,7 @@ import ru.practicum.event.enums.EventState;
 import ru.practicum.handler.NotFoundException;
 import ru.practicum.location.dto.LocationDto;
 import ru.practicum.location.model.Location;
+import ru.practicum.statservice.StatClient;
 import ru.practicum.user.dto.UserShortDto;
 import ru.practicum.user.model.User;
 import ru.practicum.user.service.UserService;
@@ -36,6 +37,8 @@ public class EventControllerTest {
 
     @MockBean
     private UserService userService;
+    @MockBean
+    private StatClient client;
     @MockBean
     private EventServiceImpl service;
     @Autowired

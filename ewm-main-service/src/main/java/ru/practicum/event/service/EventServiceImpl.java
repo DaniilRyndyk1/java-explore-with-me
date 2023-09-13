@@ -261,23 +261,27 @@ public class EventServiceImpl implements EventService {
 
     public void setViews(@NotNull List<Event> events) {
         for (Event event : events) {
-            var hits = client.getHitsWithParams(
+            var hitsMono = client.getHitsWithParams(
                     LocalDateTime.now().minusHours(100),
                     LocalDateTime.now().plusHours(100),
                     new String[] {"/events/" + event.getId()},
                     true
-            ).block();
-
-            if (hits == null) {
-                throw new UnsupportedOperationException("DEBUG"); // посмотреть сообщение
-            }
-
-            var views = hits.size();
-
-            repository.setViewsById(
-                    event.getId(),
-                    views
             );
+
+            if (hitsMono != null) {
+                var hits = hitsMono.block();
+
+                if (hits == null) {
+                    throw new UnsupportedOperationException("DEBUG"); // посмотреть сообщение
+                }
+
+                var views = hits.size();
+
+                repository.setViewsById(
+                        event.getId(),
+                        views
+                );
+            }
         }
     }
 

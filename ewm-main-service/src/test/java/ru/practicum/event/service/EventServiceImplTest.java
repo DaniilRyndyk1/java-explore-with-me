@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.category.dto.CategoryDto;
@@ -14,6 +15,7 @@ import ru.practicum.event.dto.*;
 import ru.practicum.event.enums.EventState;
 import ru.practicum.event.enums.EventStateAction;
 import ru.practicum.handler.NotFoundException;
+import ru.practicum.statservice.StatClient;
 import ru.practicum.user.dto.NewUserRequest;
 import ru.practicum.user.mapper.UserMapper;
 import ru.practicum.user.model.User;
@@ -35,6 +37,9 @@ public class EventServiceImplTest {
     private final UserServiceImpl userService;
     private final UserMapper userMapper;
     private final CategoryServiceImpl categoryService;
+
+    @MockBean
+    private StatClient client;
 
     private User user;
     private User user2;
