@@ -80,6 +80,12 @@ public class EventServiceImpl implements EventService {
                 categoryService.getDtoById(categoryId)
         );
 
+        var eventDate = LocalDateTime.parse(dto.getEventDate(), dateTimeFormatter);
+
+        if (LocalDateTime.now().isAfter(eventDate)) {
+            throw new ValidationException("Incorrect date");
+        }
+
         var event = eventMapper.toEvent(dto, category, user, location);
         event.setState(EventState.PENDING);
         event.setViews(0L);
@@ -123,8 +129,8 @@ public class EventServiceImpl implements EventService {
                 getUpdateRequestCorrectDate(
                         request,
                         event.getEventDate(),
-                        1L,
-                        "DEBUG TODO 99" // TODO найти правильную фразу
+                        1L
+                        // TODO найти правильную фразу
                 )
         );
 
@@ -149,8 +155,8 @@ public class EventServiceImpl implements EventService {
                 getUpdateRequestCorrectDate(
                         request,
                         event.getEventDate(),
-                        2L,
-                        "DEBUG TODO 99" // TODO найти правильную фразу
+                        2L
+                        // TODO найти правильную фразу
                 )
         );
         
@@ -353,14 +359,13 @@ public class EventServiceImpl implements EventService {
 
     private LocalDateTime getUpdateRequestCorrectDate(UpdateEventUserRequest request,
                                                       LocalDateTime eventDate,
-                                                      Long hours,
-                                                      String errorMessage) {
+                                                      Long hours) {
         var dateRaw = request.getEventDate();
         if (dateRaw != null) {
             var date = LocalDateTime.parse(dateRaw, dateTimeFormatter);
 
             if (LocalDateTime.now().plusHours(hours).isAfter(date)) {
-                throw new ValidationException(errorMessage);
+                throw new ValidationException("Incorrect date");
             }
 
             return date;
