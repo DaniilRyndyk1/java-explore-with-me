@@ -21,7 +21,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "AND (e.category.id IN :categories OR :categoriesSize = 0) " +
             "AND e.eventDate >= :start " +
             "AND e.eventDate <= :end " +
-            "ORDER BY e.eventDate")
+            "ORDER BY e.id")
     Page<Event> findAllByAdminParams (
             Long[] ids,
             EventState[] states,
@@ -42,7 +42,8 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "AND (e.paid = :paid OR :isPaidNull = true)" +
             "AND e.eventDate >= :start " +
             "AND e.eventDate <= :end " +
-            "AND (e.category.id IN :categories OR :categoriesSize = 0)")
+            "AND (e.category.id IN :categories OR :categoriesSize = 0) " +
+            "ORDER BY e.id")
     Page<Event> findAllByUserParams (
             String text,
             Long[] categories,
