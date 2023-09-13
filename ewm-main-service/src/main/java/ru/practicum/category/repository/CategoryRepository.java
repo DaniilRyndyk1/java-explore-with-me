@@ -6,7 +6,7 @@ import ru.practicum.category.model.Category;
 
 public interface CategoryRepository extends JpaRepository<Category, Long> {
     @Query("SELECT count(e.id) " +
-            "FROM Event e" +
+            "FROM Event e " +
             "WHERE e.category.id = :categoryId")
-    Long getCountOfEventsByCategory(Long categoryId);
+    Long countEventsByCategory(Long categoryId);
 }

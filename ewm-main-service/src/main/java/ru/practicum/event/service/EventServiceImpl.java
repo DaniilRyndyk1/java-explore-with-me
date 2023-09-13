@@ -12,6 +12,7 @@ import ru.practicum.event.enums.EventStateAction;
 import ru.practicum.event.mapper.EventMapper;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.repository.EventRepository;
+import ru.practicum.handler.ConflictException;
 import ru.practicum.handler.NotFoundException;
 import ru.practicum.handler.ValidationException;
 import ru.practicum.location.service.LocationService;
@@ -118,19 +119,19 @@ public class EventServiceImpl implements EventService {
         var stateAction = request.getStateAction();
 
         if (!state.equals(EventState.PENDING) && stateAction.equals(EventStateAction.PUBLISH_EVENT)) {
-            throw new UnsupportedOperationException("Cannot publish the event because it's not in the right state: " + state);
+            throw new ConflictException("Cannot publish the event because it's not in the right state: " + state);
         }
 
         if (state.equals(EventState.PUBLISHED) && stateAction.equals(EventStateAction.CANCEL_REVIEW)) {
             throw new UnsupportedOperationException("Cannot cancel the event because it's not in the right state: " + state);
         }
 
+
         event.setPublishedOn(
                 getUpdateRequestCorrectDate(
                         request,
                         event.getEventDate(),
                         1L
-                        // TODO найти правильную фразу
                 )
         );
 

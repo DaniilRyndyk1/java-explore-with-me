@@ -14,6 +14,7 @@ import ru.practicum.category.service.CategoryServiceImpl;
 import ru.practicum.event.dto.*;
 import ru.practicum.event.enums.EventState;
 import ru.practicum.event.enums.EventStateAction;
+import ru.practicum.handler.ConflictException;
 import ru.practicum.handler.NotFoundException;
 import ru.practicum.statservice.StatClient;
 import ru.practicum.user.dto.NewUserRequest;
@@ -215,7 +216,7 @@ public class EventServiceImplTest {
 
     @Test
     void shouldNotAdminUpdateWhenStateNotPendingAndWePublishEvent() {
-        assertThrows(UnsupportedOperationException.class,
+        assertThrows(ConflictException.class,
                 () -> service.update(event.getId(), new UpdateEventAdminRequest(
                         null,
                         null,

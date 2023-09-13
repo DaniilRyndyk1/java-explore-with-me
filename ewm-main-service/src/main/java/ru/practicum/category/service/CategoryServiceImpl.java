@@ -40,7 +40,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     public void delete(@NotNull Long categoryId) {
-        var eventsCount = repository.getCountOfEventsByCategory(categoryId);
+        var eventsCount = repository.countEventsByCategory(categoryId);
         if (eventsCount != 0) {
             throw new ConflictException("The category is not empty");
         }
