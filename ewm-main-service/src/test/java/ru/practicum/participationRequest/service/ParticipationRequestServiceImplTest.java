@@ -347,13 +347,13 @@ public class ParticipationRequestServiceImplTest {
     void shouldUpdateRequestsStatuses() {
         var updateRequest = new EventRequestStatusUpdateRequest(
                 List.of(request2.getId()),
-                ParticipationRequestState.CANCELED
+                ParticipationRequestState.CONFIRMED
         );
         var result = service.changeRequestsStatus(user.getId(), event.getId(), updateRequest);
         assertNotNull(result);
-        assertEquals(0, result.getConfirmedRequests().size());
-        assertEquals(1, result.getRejectedRequests().size());
-        assertEquals(request2.getId(), result.getRejectedRequests().get(0).getId());
+        assertEquals(1, result.getConfirmedRequests().size());
+        assertEquals(0, result.getRejectedRequests().size());
+        assertEquals(request2.getId(), result.getConfirmedRequests().get(0).getId());
     }
 
     @Test
