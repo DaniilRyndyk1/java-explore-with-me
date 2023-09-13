@@ -8,6 +8,7 @@ import ru.practicum.category.dto.NewCategoryDto;
 import ru.practicum.category.mapper.CategoryMapper;
 import ru.practicum.category.model.Category;
 import ru.practicum.category.repository.CategoryRepository;
+import ru.practicum.handler.ConflictException;
 import ru.practicum.handler.NotFoundException;
 
 import javax.validation.constraints.NotNull;
@@ -39,6 +40,10 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     public void delete(@NotNull Long categoryId) {
+        var eventsCount = repository.getCountOfEventsByCategory(categoryId);
+        if (eventsCount != 0) {
+            throw new ConflictException("The category is not empty");
+        }
         repository.delete(
                 repository.getById(categoryId)
         );
