@@ -55,6 +55,16 @@ public class ErrorHandler {
                 getTimestamp());
     }
 
+    @ExceptionHandler(ValidationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleValidationException(ValidationException e) {
+        return new ApiError(
+                e.getMessage(),
+                "Incorrectly made request.",
+                HttpStatus.BAD_REQUEST,
+                getTimestamp());
+    }
+
     private String getTimestamp() {
         return LocalDateTime.now().format(formatter);
     }

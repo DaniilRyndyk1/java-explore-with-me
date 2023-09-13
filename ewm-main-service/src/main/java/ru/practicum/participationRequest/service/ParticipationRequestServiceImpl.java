@@ -97,7 +97,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
                 )
         );
 
-        if (!event.getRequestModeration()) {
+        if (!event.getRequestModeration() || event.getParticipantLimit() == 0) {
             request.setStatus(ParticipationRequestState.CONFIRMED);
             repository.incrementConfirmedRequestsByEventId(event.getId(), 1L);
         }

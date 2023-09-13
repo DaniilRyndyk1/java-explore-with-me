@@ -12,8 +12,8 @@ import ru.practicum.event.enums.EventStateAction;
 import ru.practicum.event.mapper.EventMapper;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.repository.EventRepository;
-import ru.practicum.handler.ConflictException;
 import ru.practicum.handler.NotFoundException;
+import ru.practicum.handler.ValidationException;
 import ru.practicum.location.service.LocationService;
 import ru.practicum.statservice.StatClient;
 import ru.practicum.statservice.dto.EndpointHitInputDto;
@@ -217,7 +217,7 @@ public class EventServiceImpl implements EventService {
             start = LocalDateTime.parse(rangeStart, dateTimeFormatter);
             end = LocalDateTime.parse(rangeEnd, dateTimeFormatter);
             if (end.isBefore(start)) {
-                throw new ConflictException("End date mush be after start date");
+                throw new ValidationException("End date mush be after start date");
             }
         }
 
