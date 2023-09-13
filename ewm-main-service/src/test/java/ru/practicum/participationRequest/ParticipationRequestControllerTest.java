@@ -41,9 +41,6 @@ public class ParticipationRequestControllerTest {
     @Autowired
     private MockMvc mvc;
 
-    private User user;
-    private Event event;
-    private ParticipationRequest request;
     private ParticipationRequestDto requestDto;
 
     @BeforeEach
@@ -68,13 +65,13 @@ public class ParticipationRequestControllerTest {
                 null
         );
 
-        user = new User(
+        User user = new User(
                 1L,
                 "best activities",
                 "bbbbb@ya.ru"
         );
 
-        request = new ParticipationRequest(
+        ParticipationRequest request = new ParticipationRequest(
                 1L,
                 LocalDateTime.now(),
                 event,
