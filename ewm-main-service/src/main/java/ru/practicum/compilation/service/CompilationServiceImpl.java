@@ -72,6 +72,7 @@ public class CompilationServiceImpl implements CompilationService {
     public CompilationDto update(@NotNull Long id,
                                  @NotNull UpdateCompilationRequest request) {
         var compilation = getById(id);
+
         Set<Event> events = Set.of();
         if (request.getEvents() != null) {
             events = eventService.getAllByIds(request.getEvents());
@@ -84,10 +85,8 @@ public class CompilationServiceImpl implements CompilationService {
                 request.getPinned() != null && request.getPinned()
         );
 
-        compilation = repository.save(compilation);
-
         return compilationMapper.toDto(
-                compilation,
+                repository.save(compilation),
                 events.stream().map(eventMapper::toShortDto).collect(Collectors.toSet())
         );
     }

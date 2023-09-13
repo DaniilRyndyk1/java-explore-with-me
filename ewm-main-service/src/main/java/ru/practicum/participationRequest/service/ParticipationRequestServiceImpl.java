@@ -29,10 +29,8 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     private final EventService eventService;
 
     public ParticipationRequest getById(@NotNull Long id) {
-        var message = "Participation Request with id=" + id + " was not found";
-
         return repository.findById(id).orElseThrow(
-                () -> new NotFoundException(message)
+                () -> new NotFoundException("Request with id=" + id + " was not found")
         );
     }
 
@@ -41,10 +39,8 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         userService.getById(userId);
         eventService.getById(eventId);
 
-        var message = "Participation Request with userId=" + userId + " and eventId=" + eventId + " was not found";
-
         return repository.findFirstByRequester_IdAndEvent_Id(userId, eventId).orElseThrow(
-                () -> new NotFoundException(message)
+                () -> new NotFoundException("Request with userId=" + userId + " and eventId=" + eventId + " was not found")
         );
     }
 
@@ -88,17 +84,17 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         }
 
         if (user.getId().equals(event.getInitiator().getId())) {
-            throw new ConflictException("DEBUG TODO 77"); //TODO найти правильное сообщение
+            throw new ConflictException("User is initiator");
         }
 
         if (event.getState().equals(EventState.PENDING)) {
-            throw new ConflictException("DEBUG TODO 81"); //TODO найти правильное сообщение
+            throw new ConflictException("Event in PENDING state");
         }
 
         var hasParticipantLimit = event.getParticipantLimit() != 0L;
 
         if (hasParticipantLimit && event.getConfirmedRequests() >= event.getParticipantLimit()) {
-            throw new ConflictException("DEBUG TODO 87"); //TODO найти правильное сообщение
+            throw new ConflictException("Limit is full");
         }
 
         var request = repository.save(
@@ -127,7 +123,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         var request = getById(requestId);
 
         if (!request.getRequester().getId().equals(userId)) {
-            throw new NotFoundException("Participation Request with id=" + requestId + " was not found");
+            throw new NotFoundException("Request with id=" + requestId + " was not found");
         }
 
         repository.setCanceledById(requestId);
@@ -157,10 +153,12 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
 
         repository.updateStatusesByIds(ids, status);
 
+        var size = (long) ids.size();
+
         if (status.equals(ParticipationRequestState.CANCELED)) {
-            repository.decrementConfirmedRequestsByEventId(eventId, (long) ids.size());
+            repository.decrementConfirmedRequestsByEventId(eventId, size);
         } else {
-            repository.incrementConfirmedRequestsByEventId(eventId, (long) ids.size());
+            repository.incrementConfirmedRequestsByEventId(eventId, size);
         }
 
         var requests = repository.findAllConfirmedOrRejected(userId, eventId);

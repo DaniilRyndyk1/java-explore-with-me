@@ -117,17 +117,18 @@ public class EventServiceImpl implements EventService {
         var event = getById(id);
         var state = event.getState();
         var stateAction = request.getStateAction();
+        var errorMessage = "Cannot publish the event because it's not in the right state: " + state;
 
         if (!state.equals(EventState.PENDING) && stateAction.equals(EventStateAction.PUBLISH_EVENT)) {
-            throw new ConflictException("Cannot publish the event because it's not in the right state: " + state);
+            throw new ConflictException(errorMessage);
         }
 
         if (state.equals(EventState.PUBLISHED) && stateAction.equals(EventStateAction.REJECT_EVENT)) {
-            throw new ConflictException("Cannot publish the event because it's not in the right state: " + state);
+            throw new ConflictException(errorMessage);
         }
 
         if (state.equals(EventState.PUBLISHED) && stateAction.equals(EventStateAction.CANCEL_REVIEW)) {
-            throw new UnsupportedOperationException("Cannot cancel the event because it's not in the right state: " + state);
+            throw new UnsupportedOperationException(errorMessage);
         }
 
 
@@ -165,7 +166,6 @@ public class EventServiceImpl implements EventService {
                         request,
                         event.getEventDate(),
                         2L
-                        // TODO найти правильную фразу
                 )
         );
         

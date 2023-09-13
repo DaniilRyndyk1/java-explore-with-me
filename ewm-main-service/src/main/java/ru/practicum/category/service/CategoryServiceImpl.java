@@ -41,9 +41,11 @@ public class CategoryServiceImpl implements CategoryService {
 
     public void delete(@NotNull Long categoryId) {
         var eventsCount = repository.countEventsByCategory(categoryId);
+
         if (eventsCount != 0) {
             throw new ConflictException("The category is not empty");
         }
+
         repository.delete(
                 repository.getById(categoryId)
         );
@@ -51,6 +53,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     public CategoryDto update(@NotNull Long id, @NotNull CategoryDto dto) {
         getById(id);
+
         return mapper.toCategoryDto(
                 repository.save(
                         new Category(id, dto.getName())

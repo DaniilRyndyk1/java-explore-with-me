@@ -13,15 +13,6 @@ import java.util.Set;
 @Component
 @RequiredArgsConstructor
 public class CompilationMapper {
-//    public Compilation toCompilation(CompilationDto dto, Set<Event> events) {
-//        return new Compilation(
-//                dto.getId(),
-//                events,
-//                dto.getTitle(),
-//                dto.getPinned()
-//        );
-//    }
-
     public Compilation toCompilation(NewCompilationDto dto, Set<Event> events) {
         return new Compilation(
                 -1L,

@@ -12,9 +12,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter
 public class NewCompilationDto {
-
     private Set<Long> events;
-
     private Boolean pinned = false;
 
     @Size(min = 1, max = 50)
