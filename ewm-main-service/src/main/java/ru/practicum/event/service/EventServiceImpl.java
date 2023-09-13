@@ -38,10 +38,14 @@ public class EventServiceImpl implements EventService {
 
     public EventFullDto getDtoById(@NotNull Long id) {
         var event = getById(id);
+
         if (!event.getState().equals(EventState.PUBLISHED)) {
             throw new NotFoundException("Event with id=" + id + " was not found");
         }
-        return eventMapper.toFullDto(event);
+
+        setViews(List.of(event));
+
+        return eventMapper.toFullDto(getById(id));
     }
 
     public Event getById(@NotNull Long id) {
@@ -261,27 +265,19 @@ public class EventServiceImpl implements EventService {
 
     public void setViews(@NotNull List<Event> events) {
         for (Event event : events) {
-            var hitsMono = client.getHitsWithParams(
+            var hits = client.getHitsWithParams(
                     LocalDateTime.now().minusHours(100),
                     LocalDateTime.now().plusHours(100),
                     new String[] {"/events/" + event.getId()},
                     true
             );
 
-            if (hitsMono != null) {
-                var hits = hitsMono.block();
+            var views = hits.size();
 
-                if (hits == null) {
-                    throw new UnsupportedOperationException("DEBUG"); // посмотреть сообщение
-                }
-
-                var views = hits.size();
-
-                repository.setViewsById(
-                        event.getId(),
-                        views
-                );
-            }
+            repository.setViewsById(
+                    event.getId(),
+                    (long) views
+            );
         }
     }
 

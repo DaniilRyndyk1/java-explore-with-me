@@ -56,5 +56,5 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     @Transactional
     @Query("UPDATE Event e SET e.views = :value WHERE e.id = :id")
     @Modifying(clearAutomatically = true)
-    void setViewsById(Long id, Integer value);
+    void setViewsById(Long id, Long value);
 }
