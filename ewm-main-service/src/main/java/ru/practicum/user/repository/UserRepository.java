@@ -10,6 +10,6 @@ import ru.practicum.user.model.User;
 public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT new ru.practicum.user.dto.UserDto(u.id, u.name, u.email) " +
             "FROM User u " +
-            "WHERE (u.id IN ids OR idsLength = 0)")
+            "WHERE (u.id IN :ids OR idsLength = 0)")
     Page<UserDto> findAllByIdIn(Long[] ids, Integer idsLength, Pageable pageRequest);
 }
