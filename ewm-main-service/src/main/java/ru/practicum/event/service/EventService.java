@@ -47,7 +47,8 @@ public interface EventService {
                                Boolean onlyAvailable,
                                String sort,
                                @NotNull Integer from,
-                               @NotNull Integer size);
+                               @NotNull Integer size,
+                               @NotNull String ip);
 
     Set<Event> getAllByIds(Set<Long> ids);
 }

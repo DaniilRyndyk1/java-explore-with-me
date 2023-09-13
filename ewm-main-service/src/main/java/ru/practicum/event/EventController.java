@@ -6,18 +6,27 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.event.dto.*;
 import ru.practicum.event.enums.EventState;
 import ru.practicum.event.service.EventService;
+import ru.practicum.statservice.StatClient;
+import ru.practicum.statservice.dto.EndpointHitInputDto;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.List;
+
+import static ru.practicum.Utils.dateTimeFormatter;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping
 public class EventController {
     private final EventService service;
+    private final StatClient client;
 
     @GetMapping("events/{id}")
-    public EventFullDto getById(@PathVariable Long id) {
+    public EventFullDto getById(@PathVariable Long id,
+                                HttpServletRequest request) {
+        createHit(request);
         return service.getDtoById(id);
     }
 
@@ -74,7 +83,30 @@ public class EventController {
                                       @RequestParam(required = false, defaultValue = "false") Boolean onlyAvailable,
                                       @RequestParam(required = false) String sort,
                                       @RequestParam(defaultValue = "0") Integer from,
-                                      @RequestParam(defaultValue = "10") Integer size) {
-        return service.getAll(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
+                                      @RequestParam(defaultValue = "10") Integer size,
+                                      HttpServletRequest request) {
+        createHit(request);
+        return service.getAll(
+                text,
+                categories,
+                paid,
+                rangeStart,
+                rangeEnd,
+                onlyAvailable,
+                sort,
+                from,
+                size,
+                request.getRemoteAddr());
+    }
+
+    private void createHit(HttpServletRequest request) {
+        client.createHit(
+                new EndpointHitInputDto(
+                        "ewm",
+                        request.getRequestURI(),
+                        request.getRemoteAddr(),
+                        LocalDateTime.now().format(dateTimeFormatter)
+                )
+        );
     }
 }

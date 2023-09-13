@@ -14,6 +14,8 @@ import ru.practicum.event.model.Event;
 import ru.practicum.event.repository.EventRepository;
 import ru.practicum.handler.NotFoundException;
 import ru.practicum.location.service.LocationService;
+import ru.practicum.statservice.StatClient;
+import ru.practicum.statservice.dto.EndpointHitInputDto;
 import ru.practicum.user.service.UserService;
 
 import javax.validation.constraints.NotNull;
@@ -32,6 +34,7 @@ public class EventServiceImpl implements EventService {
     private final EventRepository repository;
     private final EventMapper eventMapper;
     private final CategoryMapper categoryMapper;
+    private final StatClient client;
 
     public EventFullDto getDtoById(@NotNull Long id) {
         var event = getById(id);
@@ -42,11 +45,9 @@ public class EventServiceImpl implements EventService {
     }
 
     public Event getById(@NotNull Long id) {
-        var event = repository.findById(id).orElseThrow(
+        return repository.findById(id).orElseThrow(
                 () -> new NotFoundException("Event with id=" + id + " was not found")
         );
-        incrementViews(List.of(event));
-        return event;
     }
 
     public List<EventShortDto> getAllByUser(@NotNull Long userId,
@@ -184,7 +185,7 @@ public class EventServiceImpl implements EventService {
                 .collect(Collectors.toList());
 
 
-        incrementViews(events);
+        setViews(events);
 
         return events
                 .stream()
@@ -200,7 +201,8 @@ public class EventServiceImpl implements EventService {
                                       Boolean onlyAvailable,
                                       String sort,
                                       @NotNull Integer from,
-                                      @NotNull Integer size) {
+                                      @NotNull Integer size,
+                                      @NotNull String ip) {
 
         var pageRequest = Utils.getPageRequest(from, size);
         var start = LocalDateTime.now();
@@ -222,6 +224,13 @@ public class EventServiceImpl implements EventService {
                 categories == null? 0 : categories.length,
                 pageRequest).stream().collect(Collectors.toList());
 
+        events.forEach(x -> client.createHit(new EndpointHitInputDto(
+                "ewn",
+                "/events/" + x.getId(),
+                ip,
+                LocalDateTime.now().format(dateTimeFormatter)
+        )));
+
         if (onlyAvailable != null && onlyAvailable) {
             events = events
                     .stream()
@@ -242,7 +251,7 @@ public class EventServiceImpl implements EventService {
             }
         }
 
-        incrementViews(events);
+        setViews(events);
 
         return events
                 .stream()
@@ -250,13 +259,26 @@ public class EventServiceImpl implements EventService {
                 .collect(Collectors.toList());
     }
 
-    public void incrementViews(@NotNull List<Event> events) {
-        repository.incrementViewsByIds(
-                events
-                        .stream()
-                        .mapToLong(Event::getId)
-                        .toArray()
-        );
+    public void setViews(@NotNull List<Event> events) {
+        for (Event event : events) {
+            var hits = client.getHitsWithParams(
+                    LocalDateTime.now().minusHours(100),
+                    LocalDateTime.now().plusHours(100),
+                    new String[] {"/events/" + event.getId()},
+                    true
+            ).block();
+
+            if (hits == null) {
+                throw new UnsupportedOperationException("DEBUG"); // посмотреть сообщение
+            }
+
+            var views = hits.size();
+
+            repository.setViewsById(
+                    event.getId(),
+                    views
+            );
+        }
     }
 
     public Set<Event> getAllByIds(Set<Long> ids) {

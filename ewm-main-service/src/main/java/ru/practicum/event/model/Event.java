@@ -36,7 +36,7 @@ public class Event {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @Column(name = "confirmed_requests")
+//    @Column(name = "confirmed_requests")
     private Long confirmedRequests;
 
     @Column(name = "created_on")
