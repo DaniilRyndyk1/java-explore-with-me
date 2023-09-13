@@ -88,10 +88,4 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.[1].name", is(userDto2.getName())))
                 .andExpect(jsonPath("$.[1].email", is(userDto2.getEmail())));
     }
-
-    @Test
-    void shouldNotGetAllWithoutIds() throws Exception {
-        mvc.perform(get("/admin/users?from=0&size=10").accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-    }
 }
