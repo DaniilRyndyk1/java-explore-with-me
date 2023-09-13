@@ -65,6 +65,16 @@ public class ErrorHandler {
                 getTimestamp());
     }
 
+    @ExceptionHandler(UnsupportedOperationException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ApiError handleUnsupportedOperationException(UnsupportedOperationException e) {
+        return new ApiError(
+                e.getMessage(),
+                "For the requested operation the conditions are not met.",
+                HttpStatus.FORBIDDEN,
+                getTimestamp());
+    }
+
     private String getTimestamp() {
         return LocalDateTime.now().format(formatter);
     }

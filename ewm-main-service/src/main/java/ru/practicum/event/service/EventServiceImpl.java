@@ -360,7 +360,7 @@ public class EventServiceImpl implements EventService {
             var date = LocalDateTime.parse(dateRaw, dateTimeFormatter);
 
             if (LocalDateTime.now().plusHours(hours).isAfter(date)) {
-                throw new UnsupportedOperationException(errorMessage);
+                throw new ValidationException(errorMessage);
             }
 
             return date;

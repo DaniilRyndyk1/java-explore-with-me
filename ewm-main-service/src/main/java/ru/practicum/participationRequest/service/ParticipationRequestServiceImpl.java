@@ -74,17 +74,17 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         }
 
         if (user.getId().equals(event.getInitiator().getId())) {
-            throw new ConflictException("DEBUG"); //TODO найти правильное сообщение
+            throw new ConflictException("DEBUG TODO 77"); //TODO найти правильное сообщение
         }
 
         if (event.getState().equals(EventState.PENDING)) {
-            throw new ConflictException("DEBUG"); //TODO найти правильное сообщение
+            throw new ConflictException("DEBUG TODO 81"); //TODO найти правильное сообщение
         }
 
         var hasParticipantLimit = event.getParticipantLimit() != 0L;
 
         if (hasParticipantLimit && event.getConfirmedRequests() >= event.getParticipantLimit()) {
-            throw new ConflictException("DEBUG"); //TODO найти правильное сообщение
+            throw new ConflictException("DEBUG TODO 87"); //TODO найти правильное сообщение
         }
 
         var request = repository.save(
