@@ -8,7 +8,6 @@ import ru.practicum.participationRequest.dto.EventRequestStatusUpdateResult;
 import ru.practicum.participationRequest.dto.ParticipationRequestDto;
 import ru.practicum.participationRequest.service.ParticipationRequestService;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -26,7 +25,7 @@ public class ParticipationRequestController {
     @PatchMapping("users/{userId}/events/{eventId}/requests")
     public EventRequestStatusUpdateResult changeRequestsStatus(@PathVariable Long userId,
                                                                @PathVariable Long eventId,
-                                                               @Valid @RequestBody EventRequestStatusUpdateRequest request) {
+                                                               @RequestBody EventRequestStatusUpdateRequest request) {
         return service.changeRequestsStatus(userId, eventId, request);
     }
 
