@@ -20,7 +20,8 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "AND (e.state IN :states OR :statesSize = 0) " +
             "AND (e.category.id IN :categories OR :categoriesSize = 0) " +
             "AND e.eventDate >= :start " +
-            "AND e.eventDate <= :end ")
+            "AND e.eventDate <= :end " +
+            "ORDER BY e.eventDate")
     Page<Event> findAllByAdminParams (
             Long[] ids,
             EventState[] states,
