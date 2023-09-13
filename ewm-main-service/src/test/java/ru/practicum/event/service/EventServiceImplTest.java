@@ -13,9 +13,7 @@ import ru.practicum.category.service.CategoryServiceImpl;
 import ru.practicum.event.dto.*;
 import ru.practicum.event.enums.EventState;
 import ru.practicum.event.enums.EventStateAction;
-import ru.practicum.event.mapper.EventMapper;
 import ru.practicum.handler.NotFoundException;
-import ru.practicum.location.service.LocationServiceImpl;
 import ru.practicum.user.dto.NewUserRequest;
 import ru.practicum.user.mapper.UserMapper;
 import ru.practicum.user.model.User;
@@ -34,19 +32,14 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("test")
 public class EventServiceImplTest {
     private final EventServiceImpl service;
-    private final EventMapper eventMapper;
     private final UserServiceImpl userService;
     private final UserMapper userMapper;
     private final CategoryServiceImpl categoryService;
-    private final LocationServiceImpl locationService;
 
     private User user;
     private User user2;
-    private User user3;
-    private CategoryDto category;
     private EventFullDto event;
     private EventFullDto event2;
-//    private CompilationDto compilationDto;
 
     @BeforeEach
     void setup() {
@@ -57,10 +50,10 @@ public class EventServiceImplTest {
         user2 = userMapper.toUser(userDto.getId(), newUserRequest);
 
         userDto = userService.add(new NewUserRequest("Nikita2", "bebe2@ya.ru"));
-        user3 = userMapper.toUser(userDto.getId(), newUserRequest);
+        userMapper.toUser(userDto.getId(), newUserRequest);
 
         var categoryDto = new NewCategoryDto("The best");
-        category = categoryService.create(categoryDto);
+        CategoryDto category = categoryService.create(categoryDto);
 
         event = service.create(user.getId(),
                 new NewEventDto(
@@ -378,7 +371,8 @@ public class EventServiceImplTest {
                 false,
                 "EVENT_DATE",
                 0,
-                15
+                15,
+                "0.0.0.0"
         );
 
         assertNotNull(list);
@@ -408,7 +402,8 @@ public class EventServiceImplTest {
                 true,
                 "EVENT_DATE",
                 0,
-                15
+                15,
+                "0.0.0.0"
         );
 
         assertNotNull(list);
@@ -438,7 +433,8 @@ public class EventServiceImplTest {
                 false,
                 "VIEWS",
                 0,
-                15
+                15,
+                "0.0.0.0"
         );
 
         assertNotNull(list);
@@ -469,7 +465,8 @@ public class EventServiceImplTest {
                         false,
                         "ERRRRRROR",
                         0,
-                        15
+                        15,
+                        "0.0.0.0"
                 )
         );
     }
