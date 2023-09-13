@@ -11,11 +11,13 @@ import ru.practicum.compilation.mapper.CompilationMapper;
 import ru.practicum.compilation.model.Compilation;
 import ru.practicum.compilation.repository.CompilationRepository;
 import ru.practicum.event.mapper.EventMapper;
+import ru.practicum.event.model.Event;
 import ru.practicum.event.service.EventService;
 import ru.practicum.handler.NotFoundException;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,7 +48,10 @@ public class CompilationServiceImpl implements CompilationService {
 
     public CompilationDto add(@NotNull NewCompilationDto dto) {
 
-        var events = eventService.getAllByIds(dto.getEvents());
+        Set<Event> events = Set.of();
+        if (dto.getEvents() != null) {
+            events = eventService.getAllByIds(dto.getEvents());
+        }
 
         var compilation = compilationMapper.toCompilation(dto, events);
 
