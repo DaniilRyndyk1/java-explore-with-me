@@ -327,7 +327,7 @@ public class ParticipationRequestServiceImplTest {
         assertEquals(request.getEvent(), result.getEvent());
         assertEquals(request.getRequester(), result.getRequester());
         assertEquals(request.getCreated(), result.getCreated());
-        assertEquals(ParticipationRequestState.REJECTED, result.getStatus());
+        assertEquals(ParticipationRequestState.CANCELED, result.getStatus());
     }
 
 
@@ -347,7 +347,7 @@ public class ParticipationRequestServiceImplTest {
     void shouldUpdateRequestsStatuses() {
         var updateRequest = new EventRequestStatusUpdateRequest(
                 List.of(request2.getId()),
-                ParticipationRequestState.REJECTED
+                ParticipationRequestState.CANCELED
         );
         var result = service.changeRequestsStatus(user.getId(), event.getId(), updateRequest);
         assertNotNull(result);
@@ -360,7 +360,7 @@ public class ParticipationRequestServiceImplTest {
     void shouldNotUpdateWithWrongEvent() {
         var updateRequest = new EventRequestStatusUpdateRequest(
                 List.of(request2.getId()),
-                ParticipationRequestState.REJECTED
+                ParticipationRequestState.CANCELED
         );
         assertThrows(NotFoundException.class,
                 () -> service.changeRequestsStatus(user.getId(), event.getId() - 1, updateRequest));
@@ -370,7 +370,7 @@ public class ParticipationRequestServiceImplTest {
     void shouldNotUpdateWithNotInitiatorUserId() {
         var updateRequest = new EventRequestStatusUpdateRequest(
                 List.of(request2.getId()),
-                ParticipationRequestState.REJECTED
+                ParticipationRequestState.CANCELED
         );
         assertThrows(NotFoundException.class,
                 () -> service.changeRequestsStatus(user3.getId(), event.getId(), updateRequest));

@@ -79,7 +79,7 @@ public class ParticipationRequestControllerTest {
                 LocalDateTime.now(),
                 event,
                 user,
-                ParticipationRequestState.WAITING
+                ParticipationRequestState.PENDING
         );
 
         requestDto = new ParticipationRequestDto(

@@ -28,7 +28,7 @@ public class ParticipationRequestMapperTest {
             LocalDateTime.now(),
             new Event(),
             new User(),
-            ParticipationRequestState.WAITING
+            ParticipationRequestState.PENDING
     );
 
     @Test

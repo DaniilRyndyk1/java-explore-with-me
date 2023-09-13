@@ -1,7 +1,7 @@
 package ru.practicum.participationRequest.enums;
 
 public enum ParticipationRequestState {
-    WAITING,
+    PENDING,
     CONFIRMED,
-    REJECTED
+    CANCELED
 }

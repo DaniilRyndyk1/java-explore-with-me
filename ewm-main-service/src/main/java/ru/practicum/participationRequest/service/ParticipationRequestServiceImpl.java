@@ -93,7 +93,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
                         LocalDateTime.now(),
                         event,
                         user,
-                        ParticipationRequestState.WAITING
+                        ParticipationRequestState.PENDING
                 )
         );
 
@@ -135,7 +135,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
 
         repository.updateStatusesByIds(ids, status);
 
-        if (status.equals(ParticipationRequestState.REJECTED)) {
+        if (status.equals(ParticipationRequestState.CANCELED)) {
             repository.decrementConfirmedRequestsByEventId(eventId, (long) ids.size());
         } else {
             repository.incrementConfirmedRequestsByEventId(eventId, (long) ids.size());
@@ -151,7 +151,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
 
         var rejected = requests
                 .stream()
-                .filter(x -> x.getStatus().equals(ParticipationRequestState.REJECTED))
+                .filter(x -> x.getStatus().equals(ParticipationRequestState.CANCELED))
                 .map(mapper::toDto)
                 .collect(Collectors.toList());
 
