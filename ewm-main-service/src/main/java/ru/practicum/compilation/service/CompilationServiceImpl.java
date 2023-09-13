@@ -1,6 +1,7 @@
 package ru.practicum.compilation.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import ru.practicum.Utils;
 import ru.practicum.compilation.dto.CompilationDto;
@@ -86,8 +87,15 @@ public class CompilationServiceImpl implements CompilationService {
                                        @NotNull Integer size) {
         var pageRequest = Utils.getPageRequest(from, size);
 
-        return repository
-                .getAllByPinned(pinned, pageRequest)
+        Page<Compilation> compilations;
+
+        if (pinned == null) {
+            compilations = repository.findAll(pageRequest);
+        } else {
+            compilations = repository.findAllByPinned(pinned, pageRequest);
+        }
+
+        return compilations
                 .stream()
                 .map(x -> compilationMapper.toDto(x, x
                         .getEvents()

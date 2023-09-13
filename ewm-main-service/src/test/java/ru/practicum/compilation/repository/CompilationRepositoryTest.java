@@ -6,18 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import ru.practicum.Utils;
-import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.model.Category;
 import ru.practicum.category.repository.CategoryRepository;
-import ru.practicum.compilation.dto.NewCompilationDto;
 import ru.practicum.compilation.model.Compilation;
-import ru.practicum.compilation.repository.CompilationRepository;
-import ru.practicum.event.dto.NewEventDto;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.repository.EventRepository;
 import ru.practicum.location.model.Location;
 import ru.practicum.location.repository.LocationRepository;
-import ru.practicum.user.dto.UserDto;
 import ru.practicum.user.model.User;
 import ru.practicum.user.repository.UserRepository;
 
@@ -26,7 +21,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static ru.practicum.Utils.dateTimeFormatter;
 import static ru.practicum.event.TestData.*;
 
 
@@ -93,7 +87,7 @@ public class CompilationRepositoryTest {
     @Test
     void shouldFindAllByPinned() {
         var pageable = Utils.getPageRequest(0, 10);
-        var result = repository.getAllByPinned(false, pageable).stream().collect(Collectors.toList());
+        var result = repository.findAllByPinned(false, pageable).stream().collect(Collectors.toList());
 
         assertNotNull(result);
         assertEquals(1, result.size());;

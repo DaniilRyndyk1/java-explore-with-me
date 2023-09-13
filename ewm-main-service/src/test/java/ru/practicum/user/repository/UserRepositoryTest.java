@@ -36,7 +36,7 @@ public class UserRepositoryTest {
     void shouldFindAllByIdIn() {
         var ids = new Long[] {user1.getId(), user2.getId()};
         var page = Utils.getPageRequest(0, 10);
-        var result = repository.findAllByIdIn(ids, page).stream().collect(Collectors.toList());
+        var result = repository.findAllByIdIn(ids, ids.length, page).stream().collect(Collectors.toList());
         assertNotNull(result);
         assertEquals(2, result.size());
         assertEquals(user1.getId(), result.get(0).getId());
