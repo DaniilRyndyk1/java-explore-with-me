@@ -2,8 +2,9 @@ package ru.practicum.statservice;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.practicum.statservice.dto.EndpointHitInputDto;
 import ru.practicum.statservice.dto.EndpointHitResultDto;
@@ -18,25 +19,17 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class StatClient {
     private final DateTimeFormatter formatter =
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    private final String BASE_URL;
-    private final HttpClient client;
-
-    @Autowired
-    public StatClient(Environment env) {
-        client = HttpClient.newBuilder()
-                .version(HttpClient.Version.HTTP_1_1)
-                .connectTimeout(Duration.ofMillis(1000))
-                .build();
-        var uriPropertyName = "stat-server.url";
-        if (env.containsProperty(uriPropertyName)) {
-            this.BASE_URL = env.getProperty(uriPropertyName);
-        } else {
-            this.BASE_URL = "http://localhost:9090/";
-        }
-    }
+    @Value("${stat-server.url}")
+    private String BASE_URL;
+    private final HttpClient client = HttpClient.newBuilder()
+            .version(HttpClient.Version.HTTP_1_1)
+            .connectTimeout(Duration.ofMillis(100))
+            .build();
 
     public void createHit(EndpointHitInputDto hit) {
         try {
@@ -46,9 +39,8 @@ public class StatClient {
                     .POST(HttpRequest.BodyPublishers.ofString(getJson(hit)))
                     .build();
 
-            client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                    .thenApply(HttpResponse::body)
-                    .thenAccept(System.out::println);
+            var body = client.send(request, HttpResponse.BodyHandlers.ofString());
+            log.debug(body.body());
         } catch (Exception exception) {
             throw new RuntimeException(exception.getMessage());
         }
@@ -84,7 +76,7 @@ public class StatClient {
                     .GET()
                     .build();
 
-            var stream = client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).get();
+            var stream = client.send(request, HttpResponse.BodyHandlers.ofString());
 
             ObjectMapper mapper = new ObjectMapper();
 

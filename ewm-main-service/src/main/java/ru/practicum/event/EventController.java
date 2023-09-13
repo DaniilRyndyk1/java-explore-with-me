@@ -65,6 +65,7 @@ public class EventController {
                                      @RequestParam(required = false) String rangeEnd,
                                      @RequestParam(defaultValue = "0") Integer from,
                                      @RequestParam(defaultValue = "10") Integer size) {
+        System.out.println("TEST");
         return service.search(users, states, categories, rangeStart, rangeEnd, from, size);
     }
 

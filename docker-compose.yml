@@ -9,7 +9,8 @@ services:
       - db
       - stats-server
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/postgres
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db/postgres
+
 
   stats-server:
     container_name: stats-server
@@ -19,7 +20,7 @@ services:
     depends_on:
       - db2
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db2:5432/postgres
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db2/postgres
 
   db:
     container_name: db
