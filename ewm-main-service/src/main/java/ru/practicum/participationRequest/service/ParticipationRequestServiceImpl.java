@@ -127,11 +127,19 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
 
         var event = eventService.getById(eventId);
         if (!event.getInitiator().getId().equals(userId)) {
-            throw new NotFoundException("DEBUG"); //TODO
+            throw new NotFoundException("User isn't initiator"); //TODO
         }
 
         var ids = request.getRequestIds();
         var status = request.getStatus();
+
+        if (ids.size() > event.getParticipantLimit() - event.getConfirmedRequests()) {
+            throw new ConflictException("Limit is reached");
+        }
+
+        if (repository.countCanceledRequestsByIds(ids) > 0) {
+            throw new ConflictException("One of requests were canceled");
+        }
 
         repository.updateStatusesByIds(ids, status);
 

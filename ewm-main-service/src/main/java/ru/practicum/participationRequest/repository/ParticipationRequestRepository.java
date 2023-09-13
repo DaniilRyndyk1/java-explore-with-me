@@ -22,6 +22,12 @@ public interface ParticipationRequestRepository extends JpaRepository<Participat
             "AND r.event.id = :eventId")
     List<ParticipationRequest> findAllConfirmedOrRejected(Long userId, Long eventId);
 
+    @Query("SELECT count(r) " +
+            "FROM ParticipationRequest r " +
+            "WHERE r.id IN :ids " +
+            "AND r.status = 'CANCELED'")
+    Long countCanceledRequestsByIds(List<Long> ids);
+
     @Transactional
     @Query("UPDATE ParticipationRequest r " +
             "SET r.status = :status " +

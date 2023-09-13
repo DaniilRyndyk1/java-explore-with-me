@@ -122,6 +122,10 @@ public class EventServiceImpl implements EventService {
             throw new ConflictException("Cannot publish the event because it's not in the right state: " + state);
         }
 
+        if (state.equals(EventState.PUBLISHED) && stateAction.equals(EventStateAction.REJECT_EVENT)) {
+            throw new ConflictException("Cannot publish the event because it's not in the right state: " + state);
+        }
+
         if (state.equals(EventState.PUBLISHED) && stateAction.equals(EventStateAction.CANCEL_REVIEW)) {
             throw new UnsupportedOperationException("Cannot cancel the event because it's not in the right state: " + state);
         }
@@ -147,6 +151,10 @@ public class EventServiceImpl implements EventService {
 
         var event = getById(id);
         var state = event.getState();
+
+        if (state.equals(EventState.PUBLISHED)) {
+            throw new ConflictException("Cannot publish the event because it's not in the right state: " + state);
+        }
 
         if (!state.equals(EventState.CANCELED) && !state.equals(EventState.PENDING)) {
             throw new UnsupportedOperationException("Only pending or canceled events can be changed");
@@ -342,12 +350,21 @@ public class EventServiceImpl implements EventService {
         var stateAction = request.getStateAction();
 
         if (stateAction != null) {
-            if (stateAction.equals(EventStateAction.CANCEL_REVIEW)) {
-                event.setState(EventState.CANCELED);
-            } else if (stateAction.equals(EventStateAction.PUBLISH_EVENT)) {
-                event.setState(EventState.PUBLISHED);
-            } else {
-                event.setState(EventState.PENDING);
+            switch (stateAction) {
+                case PUBLISH_EVENT:
+                    event.setState(EventState.PUBLISHED);
+                    break;
+                case REJECT_EVENT:
+                    event.setState(EventState.CANCELED);
+                    break;
+                case SEND_TO_REVIEW:
+                    event.setState(EventState.PENDING);
+                    break;
+                case CANCEL_REVIEW:
+                    event.setState(EventState.CANCELED);
+                    break;
+                default:
+                    throw new ValidationException("Not found event state action");
             }
         }
 

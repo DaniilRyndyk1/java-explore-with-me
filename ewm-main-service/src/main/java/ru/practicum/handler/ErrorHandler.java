@@ -37,7 +37,7 @@ public class ErrorHandler {
 
     @ExceptionHandler(ConflictException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ApiError handleConversionFailedException(ConflictException e) {
+    public ApiError handleConflictException(ConflictException e) {
         return new ApiError(
                 e.getMessage(),
                 "Integrity constraint has been violated.",
