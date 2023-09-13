@@ -315,21 +315,21 @@ public class EventServiceImplTest {
 
         var result = list.get(0);
 
-        assertEquals(event2.getId(), result.getId());
-        assertEquals(event2.getTitle(), result.getTitle());
-        assertEquals(event2.getAnnotation(), result.getAnnotation());
-        assertEquals(event2.getEventDate(), result.getEventDate());
-        assertEquals(event2.getPaid(), result.getPaid());
-        assertEquals(event2.getCategory().getId(), result.getCategory().getId());
-        assertEquals(event2.getInitiator().getId(), result.getInitiator().getId());
-        assertEquals(event2.getLocation().getLat(), result.getLocation().getLat());
-        assertEquals(event2.getLocation().getLon(), result.getLocation().getLon());
-        assertEquals(event2.getState(), result.getState());
-        assertEquals(event2.getViews(), result.getViews());
-        assertEquals(event2.getConfirmedRequests(), result.getConfirmedRequests());
-        assertEquals(event2.getCreatedOn(), result.getCreatedOn());
-        assertEquals(event2.getParticipantLimit().longValue(), result.getParticipantLimit());
-        assertEquals(event2.getRequestModeration(), result.getRequestModeration());
+        assertEquals(event.getId(), result.getId());
+        assertEquals(event.getTitle(), result.getTitle());
+        assertEquals(event.getAnnotation(), result.getAnnotation());
+        assertEquals(event.getEventDate(), result.getEventDate());
+        assertEquals(event.getPaid(), result.getPaid());
+        assertEquals(event.getCategory().getId(), result.getCategory().getId());
+        assertEquals(event.getInitiator().getId(), result.getInitiator().getId());
+        assertEquals(event.getLocation().getLat(), result.getLocation().getLat());
+        assertEquals(event.getLocation().getLon(), result.getLocation().getLon());
+        assertEquals(event.getState(), result.getState());
+        assertEquals(event.getViews(), result.getViews());
+        assertEquals(event.getConfirmedRequests(), result.getConfirmedRequests());
+        assertEquals(event.getCreatedOn(), result.getCreatedOn());
+        assertEquals(event.getParticipantLimit().longValue(), result.getParticipantLimit());
+        assertEquals(event.getRequestModeration(), result.getRequestModeration());
     }
 
     @Test
@@ -348,21 +348,21 @@ public class EventServiceImplTest {
 
         var result = list.get(0);
 
-        assertEquals(event2.getId(), result.getId());
-        assertEquals(event2.getTitle(), result.getTitle());
-        assertEquals(event2.getAnnotation(), result.getAnnotation());
-        assertEquals(event2.getEventDate(), result.getEventDate());
-        assertEquals(event2.getPaid(), result.getPaid());
-        assertEquals(event2.getCategory().getId(), result.getCategory().getId());
-        assertEquals(event2.getInitiator().getId(), result.getInitiator().getId());
-        assertEquals(event2.getLocation().getLat(), result.getLocation().getLat());
-        assertEquals(event2.getLocation().getLon(), result.getLocation().getLon());
-        assertEquals(event2.getState(), result.getState());
-        assertEquals(event2.getViews(), result.getViews());
-        assertEquals(event2.getConfirmedRequests(), result.getConfirmedRequests());
-        assertEquals(event2.getCreatedOn(), result.getCreatedOn());
-        assertEquals(event2.getParticipantLimit().longValue(), result.getParticipantLimit());
-        assertEquals(event2.getRequestModeration(), result.getRequestModeration());
+        assertEquals(event.getId(), result.getId());
+        assertEquals(event.getTitle(), result.getTitle());
+        assertEquals(event.getAnnotation(), result.getAnnotation());
+        assertEquals(event.getEventDate(), result.getEventDate());
+        assertEquals(event.getPaid(), result.getPaid());
+        assertEquals(event.getCategory().getId(), result.getCategory().getId());
+        assertEquals(event.getInitiator().getId(), result.getInitiator().getId());
+        assertEquals(event.getLocation().getLat(), result.getLocation().getLat());
+        assertEquals(event.getLocation().getLon(), result.getLocation().getLon());
+        assertEquals(event.getState(), result.getState());
+        assertEquals(event.getViews(), result.getViews());
+        assertEquals(event.getConfirmedRequests(), result.getConfirmedRequests());
+        assertEquals(event.getCreatedOn(), result.getCreatedOn());
+        assertEquals(event.getParticipantLimit().longValue(), result.getParticipantLimit());
+        assertEquals(event.getRequestModeration(), result.getRequestModeration());
     }
 
     @Test
