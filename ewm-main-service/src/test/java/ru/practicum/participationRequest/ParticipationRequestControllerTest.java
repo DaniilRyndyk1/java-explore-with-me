@@ -60,8 +60,7 @@ public class ParticipationRequestControllerTest {
                 false,
                 state,
                 title,
-                0L,
-                null
+                0L
         );
 
         User user = new User(

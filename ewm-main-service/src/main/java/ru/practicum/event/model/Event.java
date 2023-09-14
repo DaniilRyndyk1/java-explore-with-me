@@ -74,7 +74,7 @@ public class Event {
     private Long views;
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "events", cascade = { CascadeType.ALL })
-    private Set<Compilation> compilations = new HashSet<>();
+    private final Set<Compilation> compilations = new HashSet<>();
 
     public Event(String annotation,
                  Category category,

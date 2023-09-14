@@ -83,8 +83,7 @@ public class EventMapperTest {
                 false,
                 state,
                 title,
-                0L,
-                null
+                0L
         );
     }
 

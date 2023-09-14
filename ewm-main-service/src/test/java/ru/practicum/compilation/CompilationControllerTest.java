@@ -65,8 +65,7 @@ public class CompilationControllerTest {
                 false,
                 state,
                 title,
-                0L,
-                null
+                0L
         );
 
         compilation = new Compilation(

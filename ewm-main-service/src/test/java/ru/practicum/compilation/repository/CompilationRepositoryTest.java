@@ -69,8 +69,7 @@ public class CompilationRepositoryTest {
                         false,
                         state,
                         title,
-                        0L,
-                        null
+                        0L
                 )
         );
 
