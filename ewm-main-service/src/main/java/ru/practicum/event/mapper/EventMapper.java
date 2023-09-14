@@ -44,25 +44,18 @@ public class EventMapper {
     }
 
     public Event toEvent(NewEventDto dto, Category category, User initiator, Location location) {
-        return new Event(
-                null,
-                dto.getAnnotation(),
-                category,
-                null,
-                null,
-                dto.getDescription(),
-                LocalDateTime.parse(dto.getEventDate(), dateTimeFormatter),
-                initiator,
-                location,
-                dto.getPaid(),
-                dto.getParticipantLimit(),
-                null,
-                dto.getRequestModeration(),
-                null,
-                dto.getTitle(),
-                null,
-                null
-        );
+        return Event.builder()
+                .annotation(dto.getAnnotation())
+                .category(category)
+                .description(dto.getDescription())
+                .eventDate(LocalDateTime.parse(dto.getEventDate(), dateTimeFormatter))
+                .initiator(initiator)
+                .location(location)
+                .paid(dto.getPaid())
+                .participantLimit(dto.getParticipantLimit())
+                .requestModeration(dto.getRequestModeration())
+                .title(dto.getTitle())
+                .build();
     }
 
     public EventShortDto toShortDto(Event event) {
