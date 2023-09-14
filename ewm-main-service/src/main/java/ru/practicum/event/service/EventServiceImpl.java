@@ -185,9 +185,6 @@ public class EventServiceImpl implements EventService {
                 categories,
                 start,
                 end,
-                users == null ? 0 : users.length,
-                states == null ? 0 : states.length,
-                categories == null ? 0 : categories.length,
                 pageRequest)
                 .stream()
                 .collect(Collectors.toList());
@@ -230,9 +227,6 @@ public class EventServiceImpl implements EventService {
                 paid,
                 start,
                 end,
-                paid == null,
-                text == null,
-                categories == null? 0 : categories.length,
                 pageRequest).stream().collect(Collectors.toList());
 
         events.forEach(x -> client.createHit(new EndpointHitInputDto(

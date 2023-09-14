@@ -26,7 +26,7 @@ public class UserServiceImpl implements UserService {
 
     public List<UserDto> getAll(Long[] ids, @NotNull Integer from, @NotNull Integer size) {
         return repository
-                .findAllByIdIn(ids, ids == null? 0 : ids.length, Utils.getPageRequest(from, size))
+                .findAllByIdIn(ids, Utils.getPageRequest(from, size))
                 .stream()
                 .collect(Collectors.toList());
     }

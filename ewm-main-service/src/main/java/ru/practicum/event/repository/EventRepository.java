@@ -19,9 +19,9 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     @Query("SELECT e " +
             "FROM Event e " +
-            "WHERE (e.initiator.id IN :ids OR :idsSize = 0) " +
-            "AND (e.state IN :states OR :statesSize = 0) " +
-            "AND (e.category.id IN :categories OR :categoriesSize = 0) " +
+            "WHERE (e.initiator.id IN :ids OR coalesce(:ids, null) IS null) " +
+            "AND (e.state IN :states OR coalesce(:states, null) IS null) " +
+            "AND (e.category.id IN :categories OR coalesce(:categories, null) IS null) " +
             "AND e.eventDate >= :start " +
             "AND e.eventDate <= :end " +
             "ORDER BY e.id")
@@ -31,9 +31,6 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             Long[] categories,
             LocalDateTime start,
             LocalDateTime end,
-            Integer idsSize,
-            Integer statesSize,
-            Integer categoriesSize,
             Pageable pageRequest);
 
     @Query("SELECT e " +
@@ -41,11 +38,11 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "WHERE e.state = 'PUBLISHED' " +
             "AND (LOWER(e.annotation) LIKE %:text% " +
             "OR LOWER(e.description) LIKE %:text% " +
-            "OR :isTextNull = true) " +
-            "AND (e.paid = :paid OR :isPaidNull = true)" +
+            "OR coalesce(:text, null) IS null) " +
+            "AND (e.paid = :paid OR coalesce(:paid, null) IS null)" +
             "AND e.eventDate >= :start " +
             "AND e.eventDate <= :end " +
-            "AND (e.category.id IN :categories OR :categoriesSize = 0) " +
+            "AND (e.category.id IN :categories OR coalesce(:categories, null) IS null) " +
             "ORDER BY e.id")
     Page<Event> findAllByUserParams (
             String text,
@@ -53,9 +50,6 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             Boolean paid,
             LocalDateTime start,
             LocalDateTime end,
-            Boolean isPaidNull,
-            Boolean isTextNull,
-            Integer categoriesSize,
             Pageable pageRequest);
 
     @Transactional
