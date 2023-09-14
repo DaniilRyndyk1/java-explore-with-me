@@ -89,7 +89,7 @@ public class CompilationRepositoryTest {
         var result = repository.findAllByPinned(false, pageable).stream().collect(Collectors.toList());
 
         assertNotNull(result);
-        assertEquals(1, result.size());;
+        assertEquals(1, result.size());
         assertEquals(compilation.getId(), result.get(0).getId());
         assertEquals(compilation.getTitle(), result.get(0).getTitle());
         assertEquals(compilation.getPinned(), result.get(0).getPinned());
