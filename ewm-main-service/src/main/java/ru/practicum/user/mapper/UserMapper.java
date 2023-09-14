@@ -17,6 +17,13 @@ public class UserMapper {
                 dto.getEmail());
     }
 
+    public User toUser(NewUserRequest dto) {
+        return new User(
+                -1L,
+                dto.getName(),
+                dto.getEmail());
+    }
+
     public UserDto toUserDto(User user) {
         return new UserDto(
                 user.getId(),

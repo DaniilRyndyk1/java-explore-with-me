@@ -21,7 +21,7 @@ public class UserServiceImpl implements UserService {
     private final UserMapper mapper;
 
     public UserDto add(@NotNull NewUserRequest dto) {
-        return mapper.toUserDto(repository.save(mapper.toUser(-1L, dto)));
+        return mapper.toUserDto(repository.save(mapper.toUser(dto)));
     }
 
     public List<UserDto> getAll(Long[] ids, @NotNull Integer from, @NotNull Integer size) {
