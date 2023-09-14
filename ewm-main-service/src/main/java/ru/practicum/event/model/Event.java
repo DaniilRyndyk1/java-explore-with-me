@@ -8,9 +8,6 @@ import ru.practicum.location.model.Location;
 import ru.practicum.user.model.User;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -26,12 +23,9 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty
-    @NotBlank
     @Column(name = "annotation", nullable = false)
     private String annotation;
 
-    @NotNull
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
@@ -45,21 +39,17 @@ public class Event {
     @Column(name = "description")
     private String description;
 
-    @NotNull
     @Column(name = "event_date", nullable = false)
     private LocalDateTime eventDate;
 
-    @NotNull
     @ManyToOne
     @JoinColumn(name = "initiator_id")
     private User initiator;
 
-    @NotNull
     @ManyToOne
     @JoinColumn(name = "location_id")
     private Location location;
 
-    @NotNull
     @Column(name = "paid", nullable = false)
     private Boolean paid;
 
@@ -76,8 +66,6 @@ public class Event {
     @Enumerated(EnumType.STRING)
     private EventState state;
 
-    @NotEmpty
-    @NotBlank
     @Column(name = "title", nullable = false)
     private String title;
 

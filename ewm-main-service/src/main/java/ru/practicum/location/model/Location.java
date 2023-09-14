@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "location")
@@ -19,11 +18,9 @@ public class Location {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
     @Column(name = "lat", nullable = false)
     private float lat;
 
-    @NotNull
     @Column(name = "lon", nullable = false)
     private float lon;
 }

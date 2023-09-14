@@ -7,7 +7,6 @@ import lombok.Setter;
 import ru.practicum.event.model.Event;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -36,11 +35,9 @@ public class Compilation {
     )
     private Set<Event> events = new HashSet<>();
 
-    @NotNull
     @Column(name = "title", nullable = false)
     private String title;
 
-    @NotNull
     @Column(name = "pinned", nullable = false)
     private Boolean pinned;
 }
