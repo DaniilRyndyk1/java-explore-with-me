@@ -10,10 +10,11 @@ import ru.practicum.event.enums.EventState;
 import ru.practicum.event.model.Event;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
     Page<Event> findAllByInitiator_Id(Long userId, Pageable pageRequest);
-
+    Set<Event> findAllByIdIn(Set<Long> ids);
     @Query("SELECT e " +
             "FROM Event e " +
             "WHERE (e.initiator.id IN :ids OR :idsSize = 0) " +

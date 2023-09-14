@@ -286,11 +286,7 @@ public class EventServiceImpl implements EventService {
     }
 
     public Set<Event> getAllByIds(Set<Long> ids) {
-        var result = new HashSet<Event>();
-        for (Long id : ids) {
-            result.add(getById(id));
-        }
-        return result;
+        return repository.findAllByIdIn(ids);
     }
 
     private Event setValuesFromRequest(UpdateEventUserRequest request, Event event) {
