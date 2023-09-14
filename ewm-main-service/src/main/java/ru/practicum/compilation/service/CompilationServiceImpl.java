@@ -62,7 +62,10 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     public void delete(@NotNull Long id) {
-        repository.delete(getById(id));
+        if (!repository.existsById(id)) {
+            throw new NotFoundException("Compilation with id=" + id + " was not found");
+        }
+        repository.deleteById(id);
     }
 
     public CompilationDto update(@NotNull Long id,

@@ -37,14 +37,18 @@ public class CategoryServiceImpl implements CategoryService {
         );
     }
 
-    public void delete(@NotNull Long categoryId) {
-        var eventsCount = repository.countEventsByCategory(categoryId);
+    public void delete(@NotNull Long id) {
+        var eventsCount = repository.countEventsByCategory(id);
 
         if (eventsCount != 0) {
             throw new ConflictException("The category is not empty");
         }
 
-        repository.delete(repository.getById(categoryId));
+        if (!repository.existsById(id)) {
+            throw new NotFoundException("Category with id=" + id + " was not found");
+        }
+
+        repository.deleteById(id);
     }
 
     public CategoryDto update(@NotNull Long id, @NotNull CategoryDto dto) {
@@ -52,9 +56,7 @@ public class CategoryServiceImpl implements CategoryService {
             throw new NotFoundException("Category with id=" + id + " was not found");
         }
 
-        return mapper.toCategoryDto(
-                repository.save(new Category(id, dto.getName()))
-        );
+        return mapper.toCategoryDto(repository.save(new Category(id, dto.getName())));
     }
 
     public List<CategoryDto> getAll(@NotNull Integer from, @NotNull Integer size) {

@@ -31,8 +31,9 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
     }
 
-    public void delete(@NotNull Long userId) {
-        repository.delete(repository.getById(userId));
+    public void delete(@NotNull Long id) {
+        checkExistsById(id);
+        repository.deleteById(id);
     }
 
     public User getById(@NotNull Long userId) {
