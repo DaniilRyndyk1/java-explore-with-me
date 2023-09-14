@@ -13,7 +13,7 @@ import ru.practicum.compilation.repository.CompilationRepository;
 import ru.practicum.event.mapper.EventMapper;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.service.EventService;
-import ru.practicum.handler.NotFoundException;
+import ru.practicum.handler.EntityNotFoundException;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -42,7 +42,7 @@ public class CompilationServiceImpl implements CompilationService {
 
     public Compilation getById(@NotNull Long id) {
         return repository.findById(id).orElseThrow(
-                () -> new NotFoundException("Compilation with id=" + id + " was not found")
+                () -> new EntityNotFoundException("Compilation with id=" + id + " was not found")
         );
     }
 
@@ -63,7 +63,7 @@ public class CompilationServiceImpl implements CompilationService {
 
     public void delete(@NotNull Long id) {
         if (!repository.existsById(id)) {
-            throw new NotFoundException("Compilation with id=" + id + " was not found");
+            throw new EntityNotFoundException("Compilation with id=" + id + " was not found");
         }
         repository.deleteById(id);
     }

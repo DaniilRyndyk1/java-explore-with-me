@@ -17,7 +17,7 @@ import ru.practicum.compilation.model.Compilation;
 import ru.practicum.compilation.service.CompilationService;
 import ru.practicum.event.dto.*;
 import ru.practicum.event.model.Event;
-import ru.practicum.handler.NotFoundException;
+import ru.practicum.handler.EntityNotFoundException;
 import ru.practicum.location.model.Location;
 import ru.practicum.user.dto.UserShortDto;
 import ru.practicum.user.model.User;
@@ -118,7 +118,7 @@ public class CompilationControllerTest {
     @Test
     void shouldNotGetByIdWithNotFoundId() throws Exception {
         when(service.getDtoById(any(Long.class)))
-                .thenThrow(NotFoundException.class);
+                .thenThrow(EntityNotFoundException.class);
 
         mvc.perform(get("/compilations/999").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())

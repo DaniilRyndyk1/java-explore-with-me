@@ -11,7 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.event.dto.*;
 import ru.practicum.event.enums.EventState;
-import ru.practicum.handler.NotFoundException;
+import ru.practicum.handler.EntityNotFoundException;
 import ru.practicum.location.dto.LocationDto;
 import ru.practicum.location.model.Location;
 import ru.practicum.statservice.StatClient;
@@ -115,7 +115,7 @@ public class EventControllerTest {
     @Test
     void shouldNotGetByIdWithWrongId() throws Exception {
         when(service.getDtoById(any(Long.class)))
-                .thenThrow(NotFoundException.class);
+                .thenThrow(EntityNotFoundException.class);
 
         mvc.perform(get("/events/999").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
@@ -237,7 +237,7 @@ public class EventControllerTest {
 
     @Test
     void shouldNotGetByIdWithWrongUserId() throws Exception {
-        when(service.getDtoById(any(Long.class), any(Long.class))).thenThrow(NotFoundException.class);
+        when(service.getDtoById(any(Long.class), any(Long.class))).thenThrow(EntityNotFoundException.class);
 
         mvc.perform(get("/users/1/events/999").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
@@ -282,7 +282,7 @@ public class EventControllerTest {
 
     @Test
     void shouldNotUpdateWithNotFoundIds() throws Exception {
-        when(service.update(any(Long.class), any(Long.class), any())).thenThrow(NotFoundException.class);
+        when(service.update(any(Long.class), any(Long.class), any())).thenThrow(EntityNotFoundException.class);
 
         mvc.perform(patch("/users/1/events/1")
                         .content(mapper.writeValueAsString(newEventDto))
@@ -371,7 +371,7 @@ public class EventControllerTest {
         );
 
         when(service.update(any(Long.class), any(UpdateEventAdminRequest.class)))
-                .thenThrow(NotFoundException.class);
+                .thenThrow(EntityNotFoundException.class);
 
         mvc.perform(patch("/admin/events/1")
                         .content(mapper.writeValueAsString(request))

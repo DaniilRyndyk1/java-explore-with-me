@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -15,9 +14,9 @@ public class ErrorHandler {
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    @ExceptionHandler(NotFoundException.class)
+    @ExceptionHandler(EntityNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ApiError handlerNotFoundException(NotFoundException e) {
+    public ApiError handlerNotFoundException(EntityNotFoundException e) {
         return new ApiError(
                 e.getMessage(),
                 "The required object was not found.",
@@ -25,9 +24,9 @@ public class ErrorHandler {
                 getTimestamp());
     }
 
-    @ExceptionHandler(EntityNotFoundException.class)
+    @ExceptionHandler(javax.persistence.EntityNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ApiError handlerEntityNotFoundException(EntityNotFoundException e) {
+    public ApiError handlerEntityNotFoundException(javax.persistence.EntityNotFoundException e) {
         return new ApiError(
                 e.getMessage(),
                 "The required object was not found.",

@@ -11,7 +11,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.dto.NewCategoryDto;
-import ru.practicum.handler.NotFoundException;
+import ru.practicum.handler.EntityNotFoundException;
 
 import javax.validation.ConstraintViolationException;
 
@@ -89,7 +89,7 @@ public class CategoryServiceImplTest {
 
     @Test
     void shouldNotGetCategoryByWrongId() {
-        assertThrows(NotFoundException.class,
+        assertThrows(EntityNotFoundException.class,
                 () -> service.getDtoById(999L));
     }
 
@@ -152,7 +152,7 @@ public class CategoryServiceImplTest {
     @Test
     void shouldNotUpdateCategoryWithWrongId() {
         var dto = new CategoryDto(999L, "aaaaaoooooaaa");
-        assertThrows(NotFoundException.class,
+        assertThrows(EntityNotFoundException.class,
                 () -> service.update(999L, dto));
     }
 

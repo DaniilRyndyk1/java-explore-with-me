@@ -17,7 +17,7 @@ import ru.practicum.event.enums.EventStateAction;
 import ru.practicum.event.mapper.EventMapper;
 import ru.practicum.event.service.EventServiceImpl;
 import ru.practicum.handler.ConflictException;
-import ru.practicum.handler.NotFoundException;
+import ru.practicum.handler.EntityNotFoundException;
 import ru.practicum.location.service.LocationServiceImpl;
 import ru.practicum.participationRequest.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.participationRequest.dto.ParticipationRequestDto;
@@ -151,37 +151,37 @@ public class ParticipationRequestServiceImplTest {
 
     @Test
     void shouldNotGetDtoByIdsWithUserNotFoundId() {
-        assertThrows(NotFoundException.class,
+        assertThrows(EntityNotFoundException.class,
                 () -> service.getDtoById(user.getId() - 1, event.getId()));
     }
 
     @Test
     void shouldNotGetDtoByIdsWithEventNotFoundId() {
-        assertThrows(NotFoundException.class,
+        assertThrows(EntityNotFoundException.class,
                 () -> service.getDtoById(user.getId(), event.getId() - 1));
     }
 
     @Test
     void shouldNotGetByIdsWithUserNotFoundId() {
-        assertThrows(NotFoundException.class,
+        assertThrows(EntityNotFoundException.class,
                 () -> service.getById(user.getId() - 1, event.getId()));
     }
 
     @Test
     void shouldNotGetByIdsWithEventNotFoundId() {
-        assertThrows(NotFoundException.class,
+        assertThrows(EntityNotFoundException.class,
                 () -> service.getById(user.getId(), event.getId() - 1));
     }
 
     @Test
     void shouldNotGetByIdsWithRequestNotFoundId() {
-        assertThrows(NotFoundException.class,
+        assertThrows(EntityNotFoundException.class,
                 () -> service.getById(user.getId(), event.getId()));
     }
 
     @Test
     void shouldNotGetByIdWithNotFoundId() {
-        assertThrows(NotFoundException.class,
+        assertThrows(EntityNotFoundException.class,
                 () -> service.getById(request.getId() - 1));
     }
 
@@ -201,7 +201,7 @@ public class ParticipationRequestServiceImplTest {
 
     @Test
     void shouldGetAllWithWrongId() {
-        assertThrows(NotFoundException.class,
+        assertThrows(EntityNotFoundException.class,
                 () -> service.getAll(user.getId() - 1));
     }
 
@@ -254,7 +254,7 @@ public class ParticipationRequestServiceImplTest {
 
     @Test
     void shouldNotCreateWithWrongUser() {
-        assertThrows(NotFoundException.class,
+        assertThrows(EntityNotFoundException.class,
                 () -> service.create(user.getId() - 1, event.getId()));
     }
 
@@ -263,7 +263,7 @@ public class ParticipationRequestServiceImplTest {
         var userDto = userService.add(new NewUserRequest("Nikita3", "333bebe@ya.ru"));
         var user3 = userMapper.toUser(userDto.getId(), newUserRequest);
 
-        assertThrows(NotFoundException.class,
+        assertThrows(EntityNotFoundException.class,
                 () -> service.create(user3.getId(), event.getId() - 1));
     }
 
@@ -333,13 +333,13 @@ public class ParticipationRequestServiceImplTest {
 
     @Test
     void shouldNotCancelWithWrongUserId() {
-        assertThrows(NotFoundException.class,
+        assertThrows(EntityNotFoundException.class,
                 () -> service.cancel(user.getId() - 1, request.getId()));
     }
 
     @Test
     void shouldNotCancelWithUserIdNotRequester() {
-        assertThrows(NotFoundException.class,
+        assertThrows(EntityNotFoundException.class,
                 () -> service.cancel(user3.getId(), request.getId()));
     }
 
@@ -362,7 +362,7 @@ public class ParticipationRequestServiceImplTest {
                 List.of(request2.getId()),
                 ParticipationRequestState.CANCELED
         );
-        assertThrows(NotFoundException.class,
+        assertThrows(EntityNotFoundException.class,
                 () -> service.changeRequestsStatus(user.getId(), event.getId() - 1, updateRequest));
     }
 
@@ -372,7 +372,7 @@ public class ParticipationRequestServiceImplTest {
                 List.of(request2.getId()),
                 ParticipationRequestState.CANCELED
         );
-        assertThrows(NotFoundException.class,
+        assertThrows(EntityNotFoundException.class,
                 () -> service.changeRequestsStatus(user3.getId(), event.getId(), updateRequest));
     }
 }

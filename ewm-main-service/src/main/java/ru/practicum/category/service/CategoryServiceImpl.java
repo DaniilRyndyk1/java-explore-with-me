@@ -9,7 +9,7 @@ import ru.practicum.category.mapper.CategoryMapper;
 import ru.practicum.category.model.Category;
 import ru.practicum.category.repository.CategoryRepository;
 import ru.practicum.handler.ConflictException;
-import ru.practicum.handler.NotFoundException;
+import ru.practicum.handler.EntityNotFoundException;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -27,7 +27,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     public Category getById(@NotNull Long id) {
         return repository.findById(id).orElseThrow(
-                () -> new NotFoundException("Category with id=" + id + " was not found")
+                () -> new EntityNotFoundException("Category with id=" + id + " was not found")
         );
     }
 
@@ -45,7 +45,7 @@ public class CategoryServiceImpl implements CategoryService {
         }
 
         if (!repository.existsById(id)) {
-            throw new NotFoundException("Category with id=" + id + " was not found");
+            throw new EntityNotFoundException("Category with id=" + id + " was not found");
         }
 
         repository.deleteById(id);
@@ -53,7 +53,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     public CategoryDto update(@NotNull Long id, @NotNull CategoryDto dto) {
         if (!repository.existsById(id)) {
-            throw new NotFoundException("Category with id=" + id + " was not found");
+            throw new EntityNotFoundException("Category with id=" + id + " was not found");
         }
 
         return mapper.toCategoryDto(repository.save(new Category(id, dto.getName())));

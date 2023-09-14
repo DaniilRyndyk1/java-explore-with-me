@@ -3,7 +3,7 @@ package ru.practicum.user.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.Utils;
-import ru.practicum.handler.NotFoundException;
+import ru.practicum.handler.EntityNotFoundException;
 import ru.practicum.user.dto.NewUserRequest;
 import ru.practicum.user.dto.UserDto;
 import ru.practicum.user.mapper.UserMapper;
@@ -38,12 +38,12 @@ public class UserServiceImpl implements UserService {
 
     public User getById(@NotNull Long userId) {
         return repository.findById(userId).orElseThrow(
-                () -> new NotFoundException("User with id=" + userId + " was not found"));
+                () -> new EntityNotFoundException("User with id=" + userId + " was not found"));
     }
 
     public void checkExistsById(@NotNull Long id) {
         if (!repository.existsById(id)) {
-            throw new NotFoundException("User with id=" + id + " was not found");
+            throw new EntityNotFoundException("User with id=" + id + " was not found");
         }
     }
 }

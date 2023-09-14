@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.handler.NotFoundException;
+import ru.practicum.handler.EntityNotFoundException;
 import ru.practicum.user.dto.NewUserRequest;
 import ru.practicum.user.dto.UserDto;
 
@@ -27,7 +27,6 @@ public class UserServiceImplTest {
     private final NewUserRequest newUserRequest2 = new NewUserRequest(name2, email2);
 
     private UserDto user1;
-    private UserDto user2;
 
     @BeforeEach
     void setup() {
@@ -43,7 +42,7 @@ public class UserServiceImplTest {
 
     @Test
     void shouldGetAll() {
-        user2 = service.add(newUserRequest2);
+        UserDto user2 = service.add(newUserRequest2);
         var ids = new Long[] {user1.getId(), user2.getId()};
         var users = service.getAll(ids, 0, 10);
         assertNotNull(users);
@@ -59,7 +58,7 @@ public class UserServiceImplTest {
     @Test
     void shouldDelete() {
         service.delete(user1.getId());
-        assertThrows(NotFoundException.class,
+        assertThrows(EntityNotFoundException.class,
                 () -> service.getById(user1.getId())
         );
     }

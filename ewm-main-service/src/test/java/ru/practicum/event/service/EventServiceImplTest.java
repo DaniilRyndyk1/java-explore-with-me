@@ -15,7 +15,7 @@ import ru.practicum.event.dto.*;
 import ru.practicum.event.enums.EventState;
 import ru.practicum.event.enums.EventStateAction;
 import ru.practicum.handler.ConflictException;
-import ru.practicum.handler.NotFoundException;
+import ru.practicum.handler.EntityNotFoundException;
 import ru.practicum.statservice.StatClient;
 import ru.practicum.user.dto.NewUserRequest;
 import ru.practicum.user.mapper.UserMapper;
@@ -124,13 +124,13 @@ public class EventServiceImplTest {
 
     @Test
     void shouldNotGetDtoByIdWithNotFoundId() {
-        assertThrows(NotFoundException.class,
+        assertThrows(EntityNotFoundException.class,
                 () -> service.getDtoById(event.getId() - 1));
     }
 
     @Test
     void shouldNotGetNotPublishedDtoById() {
-        assertThrows(NotFoundException.class,
+        assertThrows(EntityNotFoundException.class,
                 () -> service.getDtoById(event2.getId()));
     }
 
@@ -157,7 +157,7 @@ public class EventServiceImplTest {
 
     @Test
     void shouldNotGetByIdWithNotFoundId() {
-        assertThrows(NotFoundException.class,
+        assertThrows(EntityNotFoundException.class,
                 () -> service.getDtoById(event.getId() - 1));
     }
 
@@ -184,19 +184,19 @@ public class EventServiceImplTest {
 
     @Test
     void shouldNotGetByIdsWithNotFoundUserId() {
-        assertThrows(NotFoundException.class,
+        assertThrows(EntityNotFoundException.class,
                 () -> service.getDtoById(user.getId() - 1, event.getId()));
     }
 
     @Test
     void shouldNotGetByIdsWithNotFoundEventId() {
-        assertThrows(NotFoundException.class,
+        assertThrows(EntityNotFoundException.class,
                 () -> service.getDtoById(user.getId(), event.getId() - 1));
     }
 
     @Test
     void shouldNotGetByIdsWithNotInitiatorUserId() {
-        assertThrows(NotFoundException.class,
+        assertThrows(EntityNotFoundException.class,
                 () -> service.getDtoById(user2.getId(), event.getId()));
     }
 

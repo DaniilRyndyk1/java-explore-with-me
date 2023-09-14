@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.event.enums.EventState;
 import ru.practicum.event.service.EventService;
 import ru.practicum.handler.ConflictException;
-import ru.practicum.handler.NotFoundException;
+import ru.practicum.handler.EntityNotFoundException;
 import ru.practicum.participationRequest.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.participationRequest.dto.EventRequestStatusUpdateResult;
 import ru.practicum.participationRequest.dto.ParticipationRequestDto;
@@ -30,7 +30,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
 
     public ParticipationRequest getById(@NotNull Long id) {
         return repository.findById(id).orElseThrow(
-                () -> new NotFoundException("Request with id=" + id + " was not found")
+                () -> new EntityNotFoundException("Request with id=" + id + " was not found")
         );
     }
 
@@ -40,7 +40,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         eventService.checkExistsById(eventId);
 
         return repository.findFirstByRequester_IdAndEvent_Id(userId, eventId).orElseThrow(
-                () -> new NotFoundException("Request with userId=" + userId + " and eventId=" + eventId + " was not found")
+                () -> new EntityNotFoundException("Request with userId=" + userId + " and eventId=" + eventId + " was not found")
         );
     }
 
@@ -54,7 +54,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         var event = eventService.getById(eventId);
 
         if (!event.getInitiator().getId().equals(userId)) {
-            throw new NotFoundException("Event with id=" + eventId + " was not found");
+            throw new EntityNotFoundException("Event with id=" + eventId + " was not found");
         }
 
         return repository.findAllByEvent_Id(eventId)
@@ -119,7 +119,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         var request = getById(requestId);
 
         if (!request.getRequester().getId().equals(userId)) {
-            throw new NotFoundException("Request with id=" + requestId + " was not found");
+            throw new EntityNotFoundException("Request with id=" + requestId + " was not found");
         }
 
         repository.setCanceledById(requestId);
@@ -133,7 +133,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
 
         var event = eventService.getById(eventId);
         if (!event.getInitiator().getId().equals(userId)) {
-            throw new NotFoundException("User isn't initiator");
+            throw new EntityNotFoundException("User isn't initiator");
         }
 
         var ids = request.getRequestIds();

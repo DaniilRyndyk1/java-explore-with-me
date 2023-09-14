@@ -13,7 +13,7 @@ import ru.practicum.event.mapper.EventMapper;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.repository.EventRepository;
 import ru.practicum.handler.ConflictException;
-import ru.practicum.handler.NotFoundException;
+import ru.practicum.handler.EntityNotFoundException;
 import ru.practicum.handler.ValidationException;
 import ru.practicum.location.service.LocationService;
 import ru.practicum.statservice.StatClient;
@@ -42,7 +42,7 @@ public class EventServiceImpl implements EventService {
         var event = getById(id);
 
         if (!event.getState().equals(EventState.PUBLISHED)) {
-            throw new NotFoundException("Event with id=" + id + " was not found");
+            throw new EntityNotFoundException("Event with id=" + id + " was not found");
         }
 
         setViews(List.of(event));
@@ -52,13 +52,13 @@ public class EventServiceImpl implements EventService {
 
     public Event getById(@NotNull Long id) {
         return repository.findById(id).orElseThrow(
-                () -> new NotFoundException("Event with id=" + id + " was not found")
+                () -> new EntityNotFoundException("Event with id=" + id + " was not found")
         );
     }
 
     public void checkExistsById(@NotNull Long id) {
         if (!repository.existsById(id)) {
-            throw new NotFoundException("Event with id=" + id + " was not found");
+            throw new EntityNotFoundException("Event with id=" + id + " was not found");
         }
     }
 
@@ -109,7 +109,7 @@ public class EventServiceImpl implements EventService {
         var event = getById(id);
 
         if (!event.getInitiator().getId().equals(userId)) {
-            throw new NotFoundException("Event with id=" + id + " was not found");
+            throw new EntityNotFoundException("Event with id=" + id + " was not found");
         }
 
         return eventMapper.toFullDto(event);

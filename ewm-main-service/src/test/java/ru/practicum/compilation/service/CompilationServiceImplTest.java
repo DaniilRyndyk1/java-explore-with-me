@@ -16,7 +16,7 @@ import ru.practicum.compilation.dto.UpdateCompilationRequest;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.NewEventDto;
 import ru.practicum.event.service.EventServiceImpl;
-import ru.practicum.handler.NotFoundException;
+import ru.practicum.handler.EntityNotFoundException;
 import ru.practicum.user.dto.NewUserRequest;
 import ru.practicum.user.service.UserServiceImpl;
 
@@ -103,7 +103,7 @@ public class CompilationServiceImplTest {
 
     @Test
     void shouldNotGetByIdWithNotFoundId() {
-        assertThrows(NotFoundException.class,
+        assertThrows(EntityNotFoundException.class,
                 () -> service.getById(compilationDto.getId() - 1));
     }
 
@@ -119,7 +119,7 @@ public class CompilationServiceImplTest {
 
     @Test
     void shouldNotGetDtoByIdWithNotFoundId() {
-        assertThrows(NotFoundException.class,
+        assertThrows(EntityNotFoundException.class,
                 () -> service.getDtoById(compilationDto.getId() - 1));
     }
 
@@ -141,7 +141,7 @@ public class CompilationServiceImplTest {
     void shouldDelete() {
         var id = compilationDto.getId();
         service.delete(id);
-        assertThrows(NotFoundException.class, () -> service.getById(id));
+        assertThrows(EntityNotFoundException.class, () -> service.getById(id));
     }
 
     @Test
@@ -159,7 +159,7 @@ public class CompilationServiceImplTest {
     void shouldNotUpdateWithNotFoundId() {
         var request = new UpdateCompilationRequest(Set.of(event2.getId()), false, "best 2");
 
-        assertThrows(NotFoundException.class,
+        assertThrows(EntityNotFoundException.class,
                 () -> service.update(compilationDto.getId() + 999L, request));
     }
 
@@ -170,7 +170,7 @@ public class CompilationServiceImplTest {
                 false,
                 "best 2");
 
-        assertThrows(NotFoundException.class,
+        assertThrows(EntityNotFoundException.class,
                 () -> service.update(compilationDto.getId(), request));
     }
 
