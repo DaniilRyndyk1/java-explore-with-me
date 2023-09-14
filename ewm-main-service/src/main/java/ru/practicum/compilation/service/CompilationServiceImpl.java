@@ -62,8 +62,7 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     public void delete(@NotNull Long id) {
-        var compilation = getById(id);
-        repository.delete(compilation);
+        repository.delete(getById(id));
     }
 
     public CompilationDto update(@NotNull Long id,

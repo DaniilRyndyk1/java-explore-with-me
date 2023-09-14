@@ -56,10 +56,16 @@ public class EventServiceImpl implements EventService {
         );
     }
 
+    public void checkExistsById(@NotNull Long id) {
+        if (!repository.existsById(id)) {
+            throw new NotFoundException("Event with id=" + id + " was not found");
+        }
+    }
+
     public List<EventShortDto> getAllByUser(@NotNull Long userId,
                                             @NotNull Integer from,
                                             @NotNull Integer size) {
-        userService.getById(userId);
+        userService.checkExistsById(userId);
 
         var pageRequest = Utils.getPageRequest(from, size);
 
@@ -98,7 +104,7 @@ public class EventServiceImpl implements EventService {
 
     public EventFullDto getDtoById(@NotNull Long userId,
                                    @NotNull Long id) {
-        userService.getById(userId);
+        userService.checkExistsById(userId);
 
         var event = getById(id);
 
@@ -138,7 +144,7 @@ public class EventServiceImpl implements EventService {
     public EventFullDto update(@NotNull Long userId,
                                @NotNull Long id,
                                @NotNull UpdateEventUserRequest request) {
-        userService.getById(userId);
+        userService.checkExistsById(userId);
 
         var event = getById(id);
         var state = event.getState();

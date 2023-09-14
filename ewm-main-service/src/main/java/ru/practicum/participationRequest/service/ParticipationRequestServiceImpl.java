@@ -36,8 +36,8 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
 
     public ParticipationRequest getById(@NotNull Long userId,
                                         @NotNull Long eventId) {
-        userService.getById(userId);
-        eventService.getById(eventId);
+        userService.checkExistsById(userId);
+        eventService.checkExistsById(eventId);
 
         return repository.findFirstByRequester_IdAndEvent_Id(userId, eventId).orElseThrow(
                 () -> new NotFoundException("Request with userId=" + userId + " and eventId=" + eventId + " was not found")
@@ -50,7 +50,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     }
 
     public List<ParticipationRequestDto> getAllByInitiatorIdAndEventId(@NotNull Long userId, @NotNull Long eventId) {
-        userService.getById(userId);
+        userService.checkExistsById(userId);
         var event = eventService.getById(eventId);
 
         if (!event.getInitiator().getId().equals(userId)) {
@@ -64,7 +64,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     }
 
     public List<ParticipationRequestDto> getAll(@NotNull Long userId) {
-        userService.getById(userId);
+        userService.checkExistsById(userId);
 
         return repository.findAllByRequester_Id(userId)
                 .stream()
@@ -115,7 +115,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
 
     public ParticipationRequestDto cancel(@NotNull Long userId,
                                           @NotNull Long requestId) {
-        userService.getById(userId);
+        userService.checkExistsById(userId);
         var request = getById(requestId);
 
         if (!request.getRequester().getId().equals(userId)) {

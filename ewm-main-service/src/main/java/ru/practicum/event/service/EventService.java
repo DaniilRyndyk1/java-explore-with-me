@@ -14,6 +14,7 @@ public interface EventService {
     EventFullDto getDtoById(@NotNull Long id);
 
     Event getById(@NotNull Long id);
+    void checkExistsById(@NotNull Long id);
 
     List<EventShortDto> getAllByUser(@NotNull Long userId,
                                      @NotNull Integer from,

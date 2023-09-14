@@ -48,7 +48,9 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     public CategoryDto update(@NotNull Long id, @NotNull CategoryDto dto) {
-        getById(id);
+        if (!repository.existsById(id)) {
+            throw new NotFoundException("Category with id=" + id + " was not found");
+        }
 
         return mapper.toCategoryDto(
                 repository.save(new Category(id, dto.getName()))
