@@ -33,9 +33,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     public CategoryDto create(@NotNull NewCategoryDto dto) {
         return mapper.toCategoryDto(
-                repository.save(
-                        mapper.toCategory(-1L, dto)
-                )
+                repository.save(mapper.toCategory(-1L, dto))
         );
     }
 
@@ -46,18 +44,14 @@ public class CategoryServiceImpl implements CategoryService {
             throw new ConflictException("The category is not empty");
         }
 
-        repository.delete(
-                repository.getById(categoryId)
-        );
+        repository.delete(repository.getById(categoryId));
     }
 
     public CategoryDto update(@NotNull Long id, @NotNull CategoryDto dto) {
         getById(id);
 
         return mapper.toCategoryDto(
-                repository.save(
-                        new Category(id, dto.getName())
-                )
+                repository.save(new Category(id, dto.getName()))
         );
     }
 

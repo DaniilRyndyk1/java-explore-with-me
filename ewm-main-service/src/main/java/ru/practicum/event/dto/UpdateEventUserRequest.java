@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ru.practicum.event.enums.EventStateAction;
 import ru.practicum.location.dto.LocationDto;
-
 import javax.validation.constraints.Size;
 
 @AllArgsConstructor

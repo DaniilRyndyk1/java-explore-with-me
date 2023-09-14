@@ -21,9 +21,7 @@ public class UserServiceImpl implements UserService {
     private final UserMapper mapper;
 
     public UserDto add(@NotNull NewUserRequest dto) {
-        return mapper.toUserDto(
-                repository.save(mapper.toUser(-1L, dto))
-        );
+        return mapper.toUserDto(repository.save(mapper.toUser(-1L, dto)));
     }
 
     public List<UserDto> getAll(Long[] ids, @NotNull Integer from, @NotNull Integer size) {
@@ -34,9 +32,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public void delete(@NotNull Long userId) {
-        repository.delete(
-                repository.getById(userId)
-        );
+        repository.delete(repository.getById(userId));
     }
 
     public User getById(@NotNull Long userId) {

@@ -57,10 +57,7 @@ public class CompilationServiceImpl implements CompilationService {
 
         return compilationMapper.toDto(
                 repository.save(compilation),
-                events
-                        .stream()
-                        .map(eventMapper::toShortDto)
-                        .collect(Collectors.toSet())
+                events.stream().map(eventMapper::toShortDto).collect(Collectors.toSet())
         );
     }
 

@@ -5,7 +5,6 @@ import lombok.NoArgsConstructor;
 import ru.practicum.event.enums.EventStateAction;
 import ru.practicum.location.dto.LocationDto;
 
-
 @NoArgsConstructor
 @Getter
 public class UpdateEventAdminRequest extends UpdateEventUserRequest {

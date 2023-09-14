@@ -46,9 +46,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
 
     public ParticipationRequestDto getDtoById(@NotNull Long userId,
                                               @NotNull Long eventId) {
-        return mapper.toDto(
-                getById(userId, eventId)
-        );
+        return mapper.toDto(getById(userId, eventId));
     }
 
     public List<ParticipationRequestDto> getAllByInitiatorIdAndEventId(@NotNull Long userId, @NotNull Long eventId) {
@@ -112,9 +110,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
             repository.incrementConfirmedRequestsByEventId(event.getId(), 1L);
         }
 
-        return mapper.toDto(
-                repository.save(request)
-        );
+        return mapper.toDto(repository.save(request));
     }
 
     public ParticipationRequestDto cancel(@NotNull Long userId,

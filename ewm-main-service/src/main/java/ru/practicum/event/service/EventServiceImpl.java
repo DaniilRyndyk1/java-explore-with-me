@@ -93,9 +93,7 @@ public class EventServiceImpl implements EventService {
         event.setCreatedOn(LocalDateTime.now());
         event.setConfirmedRequests(0L);
 
-        return eventMapper.toFullDto(
-                repository.save(event)
-        );
+        return eventMapper.toFullDto(repository.save(event));
     }
 
     public EventFullDto getDtoById(@NotNull Long userId,
@@ -132,17 +130,9 @@ public class EventServiceImpl implements EventService {
         }
 
 
-        event.setEventDate(
-                getUpdateRequestCorrectDate(
-                        request,
-                        event.getEventDate(),
-                        1L
-                )
-        );
+        event.setEventDate(getUpdateRequestCorrectDate(request, event.getEventDate(), 1L));
 
-        return eventMapper.toFullDto(
-                setValuesFromRequest(request, event)
-        );
+        return eventMapper.toFullDto(setValuesFromRequest(request, event));
     }
 
     public EventFullDto update(@NotNull Long userId,
@@ -161,17 +151,9 @@ public class EventServiceImpl implements EventService {
             throw new UnsupportedOperationException("Only pending or canceled events can be changed");
         }
 
-        event.setEventDate(
-                getUpdateRequestCorrectDate(
-                        request,
-                        event.getEventDate(),
-                        2L
-                )
-        );
+        event.setEventDate(getUpdateRequestCorrectDate(request, event.getEventDate(), 2L));
         
-        return eventMapper.toFullDto(
-                setValuesFromRequest(request, event)
-        );
+        return eventMapper.toFullDto(setValuesFromRequest(request, event));
     }
 
     public List<EventFullDto> search(Long[] users,
@@ -293,10 +275,7 @@ public class EventServiceImpl implements EventService {
 
             var views = hits.size();
 
-            repository.setViewsById(
-                    event.getId(),
-                    (long) views
-            );
+            repository.setViewsById(event.getId(), (long) views);
         }
     }
 
@@ -316,9 +295,7 @@ public class EventServiceImpl implements EventService {
         var categoryId = request.getCategory();
         if (categoryId != null && !event.getCategory().getId().equals(categoryId)) {
             var category = categoryService.getDtoById(categoryId);
-            event.setCategory(
-                    categoryMapper.toCategory(categoryId, category)
-            );
+            event.setCategory(categoryMapper.toCategory(categoryId, category));
         }
 
         if (request.getDescription() != null) {
