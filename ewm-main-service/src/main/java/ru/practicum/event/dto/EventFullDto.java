@@ -2,6 +2,7 @@ package ru.practicum.event.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.event.enums.EventState;
 import ru.practicum.location.model.Location;
@@ -13,51 +14,52 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 public class EventFullDto {
-    private final Long id;
+    private Long id;
 
     @NotEmpty
     @NotBlank
-    private final String annotation;
+    private String annotation;
 
     @NotNull
-    private final CategoryDto category;
-    private final Long confirmedRequests;
+    private CategoryDto category;
+    private Long confirmedRequests;
 
     @NotEmpty
     @NotBlank
     @Size(min = 19, max = 19)
-    private final String createdOn;
+    private String createdOn;
 
     @NotEmpty
     @NotBlank
-    private final String description;
-
-    @NotEmpty
-    @NotBlank
-    @Size(min = 19, max = 19)
-    private final String eventDate;
-
-    @NotNull
-    private final UserShortDto initiator;
-
-    @NotNull
-    private final Location location;
-
-    @NotNull
-    private final Boolean paid;
-    private final Long participantLimit;
+    private String description;
 
     @NotEmpty
     @NotBlank
     @Size(min = 19, max = 19)
-    private final String publishedOn;
-    private final Boolean requestModeration;
-    private final EventState state;
+    private String eventDate;
+
+    @NotNull
+    private UserShortDto initiator;
+
+    @NotNull
+    private Location location;
+
+    @NotNull
+    private Boolean paid;
+    private Long participantLimit;
 
     @NotEmpty
     @NotBlank
-    private final String title;
-    private final Long views;
+    @Size(min = 19, max = 19)
+    private String publishedOn;
+    private Boolean requestModeration;
+    private EventState state;
+
+    @NotEmpty
+    @NotBlank
+    private String title;
+    private Long views;
 }

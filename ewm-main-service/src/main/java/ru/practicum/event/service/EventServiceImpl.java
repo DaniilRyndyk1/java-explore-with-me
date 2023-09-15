@@ -2,6 +2,7 @@ package ru.practicum.event.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.Utils;
 import ru.practicum.category.mapper.CategoryMapper;
@@ -198,6 +199,7 @@ public class EventServiceImpl implements EventService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<EventShortDto> getAll(String text,
                                       List<Long> categories,
                                       Boolean paid,

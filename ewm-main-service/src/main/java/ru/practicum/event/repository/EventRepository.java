@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.event.enums.EventState;
 import ru.practicum.event.model.Event;
@@ -13,9 +14,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
-@Transactional
+
 public interface EventRepository extends JpaRepository<Event, Long> {
+    @Transactional(readOnly = true)
     Page<Event> findAllByInitiator_Id(Long userId, Pageable pageRequest);
+    @Transactional(readOnly = true)
     Set<Event> findAllByIdIn(Set<Long> ids);
 
     @Query("SELECT e " +
@@ -26,6 +29,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "AND e.eventDate >= :start " +
             "AND e.eventDate <= :end " +
             "ORDER BY e.id")
+    @Transactional(readOnly = true)
     Page<Event> findAllByAdminParams (
             List<Long> ids,
             List<EventState> states,
@@ -45,6 +49,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "AND e.eventDate <= :end " +
             "AND (e.category.id IN :categories OR coalesce(:categories, null) is null) " +
             "ORDER BY e.id")
+    @Transactional(readOnly = true)
     Page<Event> findAllByUserParams (
             String text,
             List<Long> categories,
@@ -53,7 +58,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             LocalDateTime end,
             Pageable pageRequest);
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Query("UPDATE Event e SET e.views = :value WHERE e.id = :id")
     @Modifying(clearAutomatically = true)
     void setViewsById(Long id, Long value);
