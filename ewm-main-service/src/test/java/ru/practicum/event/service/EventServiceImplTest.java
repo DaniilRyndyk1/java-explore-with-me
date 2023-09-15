@@ -23,6 +23,7 @@ import ru.practicum.user.model.User;
 import ru.practicum.user.service.UserServiceImpl;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static ru.practicum.Utils.dateTimeFormatter;
 import static ru.practicum.event.TestData.*;
@@ -303,7 +304,7 @@ public class EventServiceImplTest {
     @Test
     void shouldSearch() {
         var list = service.search(
-                new Long[] {user.getId()},
+                List.of(user.getId()),
                 null,
                 null,
                 LocalDateTime.now().minusDays(100).format(dateTimeFormatter),
@@ -336,7 +337,7 @@ public class EventServiceImplTest {
     @Test
     void shouldSearchWithoutRange() {
         var list = service.search(
-                new Long[] {user.getId()},
+                List.of(user.getId()),
                 null,
                 null,
                 null,

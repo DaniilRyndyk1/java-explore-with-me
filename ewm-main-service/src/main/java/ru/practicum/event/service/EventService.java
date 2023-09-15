@@ -30,9 +30,9 @@ public interface EventService {
                         @NotNull Long eventId,
                         @NotNull UpdateEventUserRequest request);
 
-    List<EventFullDto> search(Long[] users,
-                              EventState[] states,
-                              Long[] categories,
+    List<EventFullDto> search(List<Long> users,
+                              List<EventState> states,
+                              List<Long> categories,
                               String rangeStart,
                               String rangeEnd,
                               @NotNull Integer from,
@@ -41,7 +41,7 @@ public interface EventService {
     EventFullDto update(@NotNull Long eventId, @NotNull UpdateEventAdminRequest request);
 
     List<EventShortDto> getAll(String text,
-                               Long[] categories,
+                               List<Long> categories,
                                Boolean paid,
                                String rangeStart,
                                String rangeEnd,

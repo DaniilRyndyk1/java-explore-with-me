@@ -10,6 +10,7 @@ import ru.practicum.event.enums.EventState;
 import ru.practicum.event.model.Event;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Transactional
@@ -26,9 +27,9 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "AND e.eventDate <= :end " +
             "ORDER BY e.id")
     Page<Event> findAllByAdminParams (
-            Long[] ids,
-            EventState[] states,
-            Long[] categories,
+            List<Long> ids,
+            List<EventState> states,
+            List<Long> categories,
             LocalDateTime start,
             LocalDateTime end,
             Pageable pageRequest);
@@ -38,15 +39,15 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "WHERE e.state = 'PUBLISHED' " +
             "AND (LOWER(e.annotation) LIKE %:text% " +
             "OR LOWER(e.description) LIKE %:text% " +
-            "OR coalesce(:text, null) IS null) " +
-            "AND (e.paid = :paid OR coalesce(:paid, null) IS null)" +
+            "OR :text = '') " +
+            "AND (e.paid = :paid OR :paid IS null)" +
             "AND e.eventDate >= :start " +
             "AND e.eventDate <= :end " +
-            "AND (e.category.id IN :categories OR coalesce(:categories, null) IS null) " +
+            "AND (e.category.id IN :categories OR coalesce(:categories, null) is null) " +
             "ORDER BY e.id")
     Page<Event> findAllByUserParams (
             String text,
-            Long[] categories,
+            List<Long> categories,
             Boolean paid,
             LocalDateTime start,
             LocalDateTime end,

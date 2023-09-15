@@ -75,7 +75,7 @@ public class UserControllerTest {
 
     @Test
     void shouldGetAll() throws Exception {
-        when(service.getAll(any(Long[].class), any(Integer.class), any(Integer.class)))
+        when(service.getAll(any(), any(Integer.class), any(Integer.class)))
                 .thenReturn(List.of(userDto, userDto2));
 
         mvc.perform(get("/admin/users?ids=1,2").accept(MediaType.APPLICATION_JSON))

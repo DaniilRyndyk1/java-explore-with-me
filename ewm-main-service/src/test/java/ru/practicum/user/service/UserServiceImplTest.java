@@ -11,6 +11,8 @@ import ru.practicum.handler.EntityNotFoundException;
 import ru.practicum.user.dto.NewUserRequest;
 import ru.practicum.user.dto.UserDto;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -43,7 +45,7 @@ public class UserServiceImplTest {
     @Test
     void shouldGetAll() {
         UserDto user2 = service.add(newUserRequest2);
-        var ids = new Long[] {user1.getId(), user2.getId()};
+        var ids = List.of(user1.getId(), user2.getId());
         var users = service.getAll(ids, 0, 10);
         assertNotNull(users);
         assertEquals(2, users.size());

@@ -8,11 +8,13 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.user.dto.UserDto;
 import ru.practicum.user.model.User;
 
+import java.util.List;
+
 @Transactional
 public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT new ru.practicum.user.dto.UserDto(u.id, u.name, u.email) " +
             "FROM User u " +
-            "WHERE (u.id IN :ids OR coalesce(:ids, null) IS null)) " +
+            "WHERE (u.id IN :ids OR coalesce(:ids, null) IS null) " +
             "ORDER BY u.id")
-    Page<UserDto> findAllByIdIn(Long[] ids, Pageable pageRequest);
+    Page<UserDto> findAllByIdIn(List<Long> ids, Pageable pageRequest);
 }

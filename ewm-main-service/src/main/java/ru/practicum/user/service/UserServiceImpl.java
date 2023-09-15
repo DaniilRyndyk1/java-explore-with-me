@@ -24,7 +24,7 @@ public class UserServiceImpl implements UserService {
         return mapper.toUserDto(repository.save(mapper.toUser(dto)));
     }
 
-    public List<UserDto> getAll(Long[] ids, @NotNull Integer from, @NotNull Integer size) {
+    public List<UserDto> getAll(List<Long> ids, @NotNull Integer from, @NotNull Integer size) {
         return repository
                 .findAllByIdIn(ids, Utils.getPageRequest(from, size))
                 .stream()

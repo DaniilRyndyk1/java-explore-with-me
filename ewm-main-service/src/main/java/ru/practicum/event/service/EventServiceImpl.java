@@ -162,9 +162,9 @@ public class EventServiceImpl implements EventService {
         return eventMapper.toFullDto(setValuesFromRequest(request, event));
     }
 
-    public List<EventFullDto> search(Long[] users,
-                                     EventState[] states,
-                                     Long[] categories,
+    public List<EventFullDto> search(List<Long> users,
+                                     List<EventState> states,
+                                     List<Long> categories,
                                      String rangeStart,
                                      String rangeEnd,
                                      @NotNull Integer from,
@@ -199,7 +199,7 @@ public class EventServiceImpl implements EventService {
     }
 
     public List<EventShortDto> getAll(String text,
-                                      Long[] categories,
+                                      List<Long> categories,
                                       Boolean paid,
                                       String rangeStart,
                                       String rangeEnd,

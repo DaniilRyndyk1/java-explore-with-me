@@ -10,7 +10,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.event.dto.*;
-import ru.practicum.event.enums.EventState;
 import ru.practicum.handler.EntityNotFoundException;
 import ru.practicum.location.dto.LocationDto;
 import ru.practicum.location.model.Location;
@@ -295,9 +294,9 @@ public class EventControllerTest {
     void shouldSearch() throws Exception {
         when(userService.getById(any(Long.class))).thenReturn(user);
         when(service.search(
-                any(Long[].class),
-                any(EventState[].class),
-                any(Long[].class),
+                any(),
+                any(),
+                any(),
                 any(String.class),
                 any(String.class),
                 any(Integer.class),

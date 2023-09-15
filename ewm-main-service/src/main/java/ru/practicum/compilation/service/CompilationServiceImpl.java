@@ -51,6 +51,9 @@ public class CompilationServiceImpl implements CompilationService {
         Set<Event> events = Set.of();
         if (dto.getEvents() != null) {
             events = eventService.getAllByIds(dto.getEvents());
+            if (events.size() != dto.getEvents().size()) {
+                throw new EntityNotFoundException("Not all events have found");
+            }
         }
 
         var compilation = compilationMapper.toCompilation(dto, events);
@@ -75,6 +78,9 @@ public class CompilationServiceImpl implements CompilationService {
         Set<Event> events = Set.of();
         if (request.getEvents() != null) {
             events = eventService.getAllByIds(request.getEvents());
+            if (events.size() != request.getEvents().size()) {
+                throw new EntityNotFoundException("Not all events have found");
+            }
         }
 
         compilation = new Compilation(

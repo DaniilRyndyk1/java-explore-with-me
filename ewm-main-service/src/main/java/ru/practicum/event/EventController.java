@@ -58,9 +58,9 @@ public class EventController {
     }
 
     @GetMapping("admin/events")
-    public List<EventFullDto> search(@RequestParam(required = false) Long[] users,
-                                     @RequestParam(required = false) EventState[] states,
-                                     @RequestParam(required = false) Long[] categories,
+    public List<EventFullDto> search(@RequestParam(required = false) List<Long> users,
+                                     @RequestParam(required = false) List<EventState> states,
+                                     @RequestParam(required = false) List<Long> categories,
                                      @RequestParam(required = false) String rangeStart,
                                      @RequestParam(required = false) String rangeEnd,
                                      @RequestParam(defaultValue = "0") Integer from,
@@ -77,7 +77,7 @@ public class EventController {
 
     @GetMapping("events")
     public List<EventShortDto> getAll(@RequestParam(required = false) String text,
-                                      @RequestParam(required = false) Long[] categories,
+                                      @RequestParam(required = false) List<Long> categories,
                                       @RequestParam(required = false) Boolean paid,
                                       @RequestParam(required = false) String rangeStart,
                                       @RequestParam(required = false) String rangeEnd,

@@ -13,8 +13,6 @@ import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.dto.NewCategoryDto;
 import ru.practicum.handler.EntityNotFoundException;
 
-import javax.validation.ConstraintViolationException;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -54,7 +52,7 @@ public class CategoryServiceImplTest {
     @Test
     void shouldNotAddCategoryWithNullName() {
         var categoryDto3 = new NewCategoryDto(null);
-        assertThrows(ConstraintViolationException.class,
+        assertThrows(DataIntegrityViolationException.class,
                 () -> service.create(categoryDto3));
     }
 
@@ -68,10 +66,8 @@ public class CategoryServiceImplTest {
 
     @Test
     void shouldNotDeleteCategoryWithWrongId() {
-        var originalSize = service.getAll(0, 10).size();
-        service.delete(999L);
-        var newSize = service.getAll(0, 10).size();
-        assertEquals(originalSize, newSize);
+        assertThrows(EntityNotFoundException.class,
+                () -> service.delete(999L));
     }
 
     @Test

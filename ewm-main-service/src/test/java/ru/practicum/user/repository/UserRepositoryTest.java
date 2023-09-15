@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import ru.practicum.Utils;
 import ru.practicum.user.model.User;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,7 +35,7 @@ public class UserRepositoryTest {
 
     @Test
     void shouldFindAllByIdIn() {
-        var ids = new Long[] {user1.getId(), user2.getId()};
+        var ids = List.of(user1.getId(), user2.getId());
         var page = Utils.getPageRequest(0, 10);
         var result = repository.findAllByIdIn(ids, page).stream().collect(Collectors.toList());
         assertNotNull(result);
