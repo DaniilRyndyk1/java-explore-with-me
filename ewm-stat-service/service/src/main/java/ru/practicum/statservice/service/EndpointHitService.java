@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.statservice.dto.EndpointHitInputDto;
 import ru.practicum.statservice.dto.EndpointHitResultDto;
+import ru.practicum.statservice.handler.ValidationException;
 import ru.practicum.statservice.mapper.EndpointHitMapper;
 import ru.practicum.statservice.repository.EndpointHitRepository;
 
@@ -22,6 +23,10 @@ public class EndpointHitService {
                                                      LocalDateTime end,
                                                      String[] uris,
                                                      Boolean unique) {
+
+        if (end.isBefore(start)) {
+            throw new ValidationException("End date is before start date");
+        }
 
         if (uris == null) {
             if (unique) {
