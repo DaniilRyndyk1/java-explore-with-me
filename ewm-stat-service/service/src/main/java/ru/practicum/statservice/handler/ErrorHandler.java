@@ -14,4 +14,10 @@ public class ErrorHandler {
     public ErrorResponse handlerDateTimeParseException(DateTimeParseException e) {
         return new ErrorResponse(e.getMessage());
     }
+
+    @ExceptionHandler(ValidationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handlerValidationException(ValidationException e) {
+        return new ErrorResponse(e.getMessage());
+    }
 }
