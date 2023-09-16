@@ -103,6 +103,7 @@ ALTER TABLE request ADD CONSTRAINT request_requester_id FOREIGN KEY (requester_i
 REFERENCES users (id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 ALTER TABLE request ADD CONSTRAINT request_event_id FOREIGN KEY (event_id)
+
 REFERENCES events (id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 ALTER TABLE comment ADD CONSTRAINT comment_event_id FOREIGN KEY (event_id)
