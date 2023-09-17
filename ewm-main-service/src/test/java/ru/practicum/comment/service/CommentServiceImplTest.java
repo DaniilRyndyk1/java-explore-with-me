@@ -53,13 +53,13 @@ public class CommentServiceImplTest {
 
     @BeforeEach
     void setup() {
-        var userDto = userService.add(new NewUserRequest("Danila", "konosuba@ya.ru"));
+        var userDto = userService.create(new NewUserRequest("Danila", "konosuba@ya.ru"));
         user = userMapper.toUser(userDto.getId(), newUserRequest);
 
-        userDto = userService.add(new NewUserRequest("Nikita", "bebe@ya.ru"));
+        userDto = userService.create(new NewUserRequest("Nikita", "bebe@ya.ru"));
         user2 = userMapper.toUser(userDto.getId(), newUserRequest);
 
-        userDto = userService.add(new NewUserRequest("Nikita2", "bebe2@ya.ru"));
+        userDto = userService.create(new NewUserRequest("Nikita2", "bebe2@ya.ru"));
         userMapper.toUser(userDto.getId(), newUserRequest);
 
         var categoryDto = new NewCategoryDto("The best");

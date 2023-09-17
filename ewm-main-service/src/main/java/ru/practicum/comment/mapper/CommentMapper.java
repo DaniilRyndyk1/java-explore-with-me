@@ -30,11 +30,6 @@ public class CommentMapper {
                 status
         );
     }
-
-//    public Category toCategory(Long id, CategoryDto dto) {
-//        return new Category(id, dto.getName());
-//    }
-
     public CommentDto toCommentDto(Comment comment) {
         return new CommentDto(
                 comment.getId(),

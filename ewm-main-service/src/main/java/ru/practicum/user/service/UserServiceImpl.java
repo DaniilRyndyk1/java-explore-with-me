@@ -2,6 +2,7 @@ package ru.practicum.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.Utils;
 import ru.practicum.handler.EntityNotFoundException;
 import ru.practicum.user.dto.NewUserRequest;
@@ -20,8 +21,9 @@ public class UserServiceImpl implements UserService {
     private final UserRepository repository;
     private final UserMapper mapper;
 
-    public UserDto add(@NotNull NewUserRequest dto) {
-        return mapper.toUserDto(repository.save(mapper.toUser(dto)));
+    public User getById(@NotNull Long userId) {
+        return repository.findById(userId).orElseThrow(
+                () -> new EntityNotFoundException("User with id=" + userId + " was not found"));
     }
 
     public List<UserDto> getAll(List<Long> ids, @NotNull Integer from, @NotNull Integer size) {
@@ -31,19 +33,20 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
     }
 
+    public void checkExistsById(@NotNull Long id) {
+        if (!repository.existsById(id)) {
+            throw new EntityNotFoundException("User with id=" + id + " was not found");
+        }
+    }
+
+    @Transactional
     public void delete(@NotNull Long id) {
         checkExistsById(id);
         repository.deleteById(id);
     }
 
-    public User getById(@NotNull Long userId) {
-        return repository.findById(userId).orElseThrow(
-                () -> new EntityNotFoundException("User with id=" + userId + " was not found"));
-    }
-
-    public void checkExistsById(@NotNull Long id) {
-        if (!repository.existsById(id)) {
-            throw new EntityNotFoundException("User with id=" + id + " was not found");
-        }
+    @Transactional
+    public UserDto create(@NotNull NewUserRequest dto) {
+        return mapper.toUserDto(repository.save(mapper.toUser(dto)));
     }
 }

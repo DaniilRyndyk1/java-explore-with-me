@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 public interface CompilationService {
-    CompilationDto add(@NotNull NewCompilationDto dto);
+    CompilationDto create(@NotNull NewCompilationDto dto);
     void delete(@NotNull Long id);
     CompilationDto update(@NotNull Long id, @NotNull UpdateCompilationRequest request);
     List<CompilationDto> getAll(@NotNull Boolean pinned, @NotNull Integer from, @NotNull Integer size);

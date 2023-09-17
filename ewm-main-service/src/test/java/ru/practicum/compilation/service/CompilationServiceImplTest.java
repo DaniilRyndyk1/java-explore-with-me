@@ -43,11 +43,11 @@ public class CompilationServiceImplTest {
 
     @BeforeEach
     void setup() {
-        var user = userService.add(new NewUserRequest("Danila", "konosuba@ya.ru"));
+        var user = userService.create(new NewUserRequest("Danila", "konosuba@ya.ru"));
 
-        userService.add(new NewUserRequest("Nikita", "bebe@ya.ru"));
+        userService.create(new NewUserRequest("Nikita", "bebe@ya.ru"));
 
-        userService.add(new NewUserRequest("Nikita2", "bebe2@ya.ru"));
+        userService.create(new NewUserRequest("Nikita2", "bebe2@ya.ru"));
 
         var categoryDto = new NewCategoryDto("The best");
         CategoryDto category = categoryService.create(categoryDto);
@@ -78,13 +78,13 @@ public class CompilationServiceImplTest {
                         title + "!"
                 ));
 
-        compilationDto = service.add(new NewCompilationDto(
+        compilationDto = service.create(new NewCompilationDto(
                 Set.of(event.getId(), event2.getId()),
                 false,
                 "super good"
         ));
 
-        compilationDto2 = service.add(new NewCompilationDto(
+        compilationDto2 = service.create(new NewCompilationDto(
                 Set.of(event2.getId()),
                 false,
                 "super good 2"
@@ -130,7 +130,7 @@ public class CompilationServiceImplTest {
                 false,
                 "best 2"
         );
-        var result = service.add(newCompilation);
+        var result = service.create(newCompilation);
         assertNotNull(result);
         assertEquals(newCompilation.getEvents().size(), result.getEvents().size());
         assertEquals(newCompilation.getPinned(), result.getPinned());

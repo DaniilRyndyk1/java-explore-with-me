@@ -25,8 +25,8 @@ public class UserController {
 
     @PostMapping("admin/users")
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDto add(@Valid @RequestBody NewUserRequest dto) {
-        return service.add(dto);
+    public UserDto create(@Valid @RequestBody NewUserRequest dto) {
+        return service.create(dto);
     }
 
     @DeleteMapping("admin/users/{userId}")

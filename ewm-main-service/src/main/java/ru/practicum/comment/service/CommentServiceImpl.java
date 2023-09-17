@@ -2,6 +2,7 @@ package ru.practicum.comment.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.Utils;
 import ru.practicum.comment.dto.CommentDto;
 import ru.practicum.comment.dto.NewCommentDto;
@@ -28,13 +29,6 @@ public class CommentServiceImpl implements CommentService {
     private final EventService eventService;
     private final UserService userService;
 
-    public CommentDto getDtoByIds(@NotNull Long userId, @NotNull Long eventId) {
-        userService.checkExistsById(userId);
-        eventService.checkExistsById(eventId);
-
-        return mapper.toCommentDto(getByIds(userId, eventId));
-    }
-
     public Comment getById(@NotNull Long id) {
         var message = "Comment with id=" + id + " was not found";
         var comment = repository.findById(id).orElseThrow(
@@ -46,6 +40,27 @@ public class CommentServiceImpl implements CommentService {
         }
 
         return comment;
+    }
+
+    public CommentDto getDtoByIds(@NotNull Long userId, @NotNull Long eventId) {
+        userService.checkExistsById(userId);
+        eventService.checkExistsById(eventId);
+
+        return mapper.toCommentDto(getByIds(userId, eventId));
+    }
+
+    public List<CommentDto> getAllByEvent(@NotNull Long eventId, @NotNull Integer from, @NotNull Integer size) {
+        return repository.findAllByEvent_id(eventId, Utils.getPageRequest(from, size))
+                .stream()
+                .map(mapper::toCommentDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<CommentDto> getAllByUser(@NotNull Long userId, @NotNull Integer from, @NotNull Integer size) {
+        return repository.findAllByUser_id(userId, Utils.getPageRequest(from, size))
+                .stream()
+                .map(mapper::toCommentDto)
+                .collect(Collectors.toList());
     }
 
     public Comment getByIds(@NotNull Long userId, @NotNull Long eventId) {
@@ -67,6 +82,7 @@ public class CommentServiceImpl implements CommentService {
         }
     }
 
+    @Transactional
     public CommentDto create(@NotNull Long userId,
                              @NotNull Long eventId,
                              @NotNull NewCommentDto dto) {
@@ -82,6 +98,7 @@ public class CommentServiceImpl implements CommentService {
         return mapper.toCommentDto(repository.save(comment));
     }
 
+    @Transactional
     public void delete(@NotNull Long userId, @NotNull Long eventId) {
         var comment = getByIds(userId, eventId);
 
@@ -92,6 +109,7 @@ public class CommentServiceImpl implements CommentService {
         repository.deleteById(comment.getId());
     }
 
+    @Transactional
     public CommentDto update(@NotNull Long userId,
                              @NotNull Long eventId,
                              @NotNull UpdateCommentUserRequest dto) {
@@ -116,6 +134,7 @@ public class CommentServiceImpl implements CommentService {
         return mapper.toCommentDto(repository.save(comment));
     }
 
+    @Transactional
     public CommentDto updateByAdmin(@NotNull Long userId,
                                     @NotNull Long eventId,
                                     @NotNull UpdateCommentAdminRequest dto) {
@@ -136,19 +155,5 @@ public class CommentServiceImpl implements CommentService {
         }
 
         return mapper.toCommentDto(repository.save(comment));
-    }
-
-    public List<CommentDto> getAllByEvent(@NotNull Long eventId, @NotNull Integer from, @NotNull Integer size) {
-        return repository.findAllByEvent_id(eventId, Utils.getPageRequest(from, size))
-                .stream()
-                .map(mapper::toCommentDto)
-                .collect(Collectors.toList());
-    }
-
-    public List<CommentDto> getAllByUser(@NotNull Long userId, @NotNull Integer from, @NotNull Integer size) {
-        return repository.findAllByUser_id(userId, Utils.getPageRequest(from, size))
-                .stream()
-                .map(mapper::toCommentDto)
-                .collect(Collectors.toList());
     }
 }
