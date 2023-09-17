@@ -32,19 +32,19 @@ public class UserServiceImplTest {
 
     @BeforeEach
     void setup() {
-        user1 = service.add(newUserRequest1);
+        user1 = service.create(newUserRequest1);
     }
 
     @Test
     void shouldAddUser() {
-        var newObject = service.add(newUserRequest2);
+        var newObject = service.create(newUserRequest2);
         assertEquals(newUserRequest2.getName(), newObject.getName());
         assertEquals(newUserRequest2.getEmail(), newObject.getEmail());
     }
 
     @Test
     void shouldGetAll() {
-        UserDto user2 = service.add(newUserRequest2);
+        UserDto user2 = service.create(newUserRequest2);
         var ids = List.of(user1.getId(), user2.getId());
         var users = service.getAll(ids, 0, 10);
         assertNotNull(users);
@@ -69,7 +69,7 @@ public class UserServiceImplTest {
     void shouldGetById() {
         var name = "Danil2";
         var email = "danil2@yandex.ru";
-        var original = service.add(
+        var original = service.create(
                 new NewUserRequest(name, email)
         );
         var newObject = service.getById(original.getId());

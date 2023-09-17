@@ -3,6 +3,7 @@ package ru.practicum.location.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.location.dto.LocationDto;
 import ru.practicum.location.mapper.LocationMapper;
 import ru.practicum.location.model.Location;
@@ -25,6 +26,7 @@ public class LocationServiceImpl implements LocationService {
                 () -> create(new LocationDto(lat, lon)));
     }
 
+    @Transactional
     public Location create(LocationDto dto) {
         return repository.save(mapper.toLocation(dto));
     }

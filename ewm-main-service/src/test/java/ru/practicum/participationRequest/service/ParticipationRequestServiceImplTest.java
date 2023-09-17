@@ -62,13 +62,13 @@ public class ParticipationRequestServiceImplTest {
                 "konosuba@yandex.ru"
         );
 
-        var userDto = userService.add(newUserRequest);
+        var userDto = userService.create(newUserRequest);
         user = userMapper.toUser(userDto.getId(), newUserRequest);
 
-        userDto = userService.add(new NewUserRequest("Nikita", "bebe@ya.ru"));
+        userDto = userService.create(new NewUserRequest("Nikita", "bebe@ya.ru"));
         user2 = userMapper.toUser(userDto.getId(), newUserRequest);
 
-        userDto = userService.add(new NewUserRequest("Nikita2", "bebe2@ya.ru"));
+        userDto = userService.create(new NewUserRequest("Nikita2", "bebe2@ya.ru"));
         user3 = userMapper.toUser(userDto.getId(), newUserRequest);
 
         var categoryDto = new NewCategoryDto("The best");
@@ -207,7 +207,7 @@ public class ParticipationRequestServiceImplTest {
 
     @Test
     void shouldCreate() {
-        var userDto = userService.add(new NewUserRequest("Nikita3", "333bebe@ya.ru"));
+        var userDto = userService.create(new NewUserRequest("Nikita3", "333bebe@ya.ru"));
         var user3 = userMapper.toUser(userDto.getId(), newUserRequest);
 
         var result = service.create(user3.getId(), event.getId());
@@ -260,7 +260,7 @@ public class ParticipationRequestServiceImplTest {
 
     @Test
     void shouldNotCreateWithWrongEvent() {
-        var userDto = userService.add(new NewUserRequest("Nikita3", "333bebe@ya.ru"));
+        var userDto = userService.create(new NewUserRequest("Nikita3", "333bebe@ya.ru"));
         var user3 = userMapper.toUser(userDto.getId(), newUserRequest);
 
         assertThrows(EntityNotFoundException.class,
@@ -300,7 +300,7 @@ public class ParticipationRequestServiceImplTest {
 
     @Test
     void shouldNotCreateWithFullLimitEvent() {
-        var userDto = userService.add(new NewUserRequest("Nikita3", "333bebe@ya.ru"));
+        var userDto = userService.create(new NewUserRequest("Nikita3", "333bebe@ya.ru"));
         var user3 = userMapper.toUser(userDto.getId(), newUserRequest);
 
         var request3 = service.create(user3.getId(), event.getId());
@@ -311,7 +311,7 @@ public class ParticipationRequestServiceImplTest {
         );
         service.changeRequestsStatus(user.getId(), event.getId(), updateRequest);
 
-        userDto = userService.add(new NewUserRequest("Nikita4", "3334bebe@ya.ru"));
+        userDto = userService.create(new NewUserRequest("Nikita4", "3334bebe@ya.ru"));
         var user4 = userMapper.toUser(userDto.getId(), newUserRequest);
 
         assertThrows(ConflictException.class,

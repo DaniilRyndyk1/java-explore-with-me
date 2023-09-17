@@ -53,7 +53,7 @@ public class EventMapperTest {
         location = locationService.create(locationDto);
         CategoryDto categoryDto = categoryService.create(newCategoryDto);
         category = categoryMapper.toCategory(categoryDto.getId(), categoryDto);
-        UserDto userDto = userService.add(newUserRequest);
+        UserDto userDto = userService.create(newUserRequest);
         user = userMapper.toUser(userDto.getId(), newUserRequest);
         newEventDto = new NewEventDto(
                 annotation,

@@ -142,7 +142,7 @@ public class CompilationControllerTest {
 
     @Test
     void shouldCreate() throws Exception {
-        when(service.add(any(NewCompilationDto.class))).thenReturn(compilationDto);
+        when(service.create(any(NewCompilationDto.class))).thenReturn(compilationDto);
 
         mvc.perform(post("/admin/compilations")
                         .content(mapper.writeValueAsString(newCompilationDto))

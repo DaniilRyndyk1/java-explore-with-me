@@ -43,7 +43,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "AND (LOWER(e.annotation) LIKE %:text% " +
             "OR LOWER(e.description) LIKE %:text% " +
             "OR :text = '') " +
-            "AND (e.paid = :paid OR :paid IS null)" +
+            "AND (e.paid = :paid OR coalesce(:paid, null) is null)" +
             "AND e.eventDate >= :start " +
             "AND e.eventDate <= :end " +
             "AND (e.category.id IN :categories OR coalesce(:categories, null) is null) " +

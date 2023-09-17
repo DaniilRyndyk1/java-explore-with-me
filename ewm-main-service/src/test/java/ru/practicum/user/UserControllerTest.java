@@ -38,7 +38,7 @@ public class UserControllerTest {
 
     @Test
     void shouldCreate() throws Exception {
-        when(service.add(any(NewUserRequest.class)))
+        when(service.create(any(NewUserRequest.class)))
                 .thenReturn(userDto);
 
         mvc.perform(post("/admin/users")

@@ -39,6 +39,12 @@ public class EventServiceImpl implements EventService {
     private final CategoryMapper categoryMapper;
     private final StatClient client;
 
+    public Event getById(@NotNull Long id) {
+        return repository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Event with id=" + id + " was not found")
+        );
+    }
+
     public EventFullDto getDtoById(@NotNull Long id) {
         var event = getById(id);
 
@@ -49,58 +55,6 @@ public class EventServiceImpl implements EventService {
         setViews(List.of(event));
 
         return eventMapper.toFullDto(getById(id));
-    }
-
-    public Event getById(@NotNull Long id) {
-        return repository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("Event with id=" + id + " was not found")
-        );
-    }
-
-    public void checkExistsById(@NotNull Long id) {
-        if (!repository.existsById(id)) {
-            throw new EntityNotFoundException("Event with id=" + id + " was not found");
-        }
-    }
-
-    public List<EventShortDto> getAllByUser(@NotNull Long userId,
-                                            @NotNull Integer from,
-                                            @NotNull Integer size) {
-        userService.checkExistsById(userId);
-
-        var pageRequest = Utils.getPageRequest(from, size);
-
-        return repository.findAllByInitiator_Id(userId, pageRequest)
-                .stream()
-                .map(eventMapper::toShortDto)
-                .collect(Collectors.toList());
-    }
-
-    public EventFullDto create(@PathVariable Long userId,
-                               @RequestBody NewEventDto dto) {
-
-        var user = userService.getById(userId);
-        var location = locationService.create(dto.getLocation());
-        var categoryId = dto.getCategory();
-
-        var category = categoryMapper.toCategory(
-                categoryId,
-                categoryService.getDtoById(categoryId)
-        );
-
-        var eventDate = LocalDateTime.parse(dto.getEventDate(), dateTimeFormatter);
-
-        if (LocalDateTime.now().isAfter(eventDate)) {
-            throw new ValidationException("Incorrect date");
-        }
-
-        var event = eventMapper.toEvent(dto, category, user, location);
-        event.setState(EventState.PENDING);
-        event.setViews(0L);
-        event.setCreatedOn(LocalDateTime.now());
-        event.setConfirmedRequests(0L);
-
-        return eventMapper.toFullDto(repository.save(event));
     }
 
     public EventFullDto getDtoById(@NotNull Long userId,
@@ -116,51 +70,21 @@ public class EventServiceImpl implements EventService {
         return eventMapper.toFullDto(event);
     }
 
-    public EventFullDto update(@NotNull Long id,
-                               @NotNull UpdateEventAdminRequest request) {
-
-        var event = getById(id);
-        var state = event.getState();
-        var stateAction = request.getStateAction();
-        var errorMessage = "Cannot publish the event because it's not in the right state: " + state;
-
-        if (!state.equals(EventState.PENDING) && stateAction.equals(EventStateAction.PUBLISH_EVENT)) {
-            throw new ConflictException(errorMessage);
-        }
-
-        if (state.equals(EventState.PUBLISHED) && stateAction.equals(EventStateAction.REJECT_EVENT)) {
-            throw new ConflictException(errorMessage);
-        }
-
-        if (state.equals(EventState.PUBLISHED) && stateAction.equals(EventStateAction.CANCEL_REVIEW)) {
-            throw new UnsupportedOperationException(errorMessage);
-        }
-
-
-        event.setEventDate(getUpdateRequestCorrectDate(request, event.getEventDate(), 1L));
-
-        return eventMapper.toFullDto(setValuesFromRequest(request, event));
-    }
-
-    public EventFullDto update(@NotNull Long userId,
-                               @NotNull Long id,
-                               @NotNull UpdateEventUserRequest request) {
+    public List<EventShortDto> getAllByUser(@NotNull Long userId,
+                                            @NotNull Integer from,
+                                            @NotNull Integer size) {
         userService.checkExistsById(userId);
 
-        var event = getById(id);
-        var state = event.getState();
+        var pageRequest = Utils.getPageRequest(from, size);
 
-        if (state.equals(EventState.PUBLISHED)) {
-            throw new ConflictException("Cannot publish the event because it's not in the right state: " + state);
-        }
+        return repository.findAllByInitiator_Id(userId, pageRequest)
+                .stream()
+                .map(eventMapper::toShortDto)
+                .collect(Collectors.toList());
+    }
 
-        if (!state.equals(EventState.CANCELED) && !state.equals(EventState.PENDING)) {
-            throw new UnsupportedOperationException("Only pending or canceled events can be changed");
-        }
-
-        event.setEventDate(getUpdateRequestCorrectDate(request, event.getEventDate(), 2L));
-        
-        return eventMapper.toFullDto(setValuesFromRequest(request, event));
+    public Set<Event> getAllByIds(Set<Long> ids) {
+        return repository.findAllByIdIn(ids);
     }
 
     public List<EventFullDto> search(List<Long> users,
@@ -181,12 +105,12 @@ public class EventServiceImpl implements EventService {
         }
 
         var events = repository.findAllByAdminParams(
-                users,
-                states,
-                categories,
-                start,
-                end,
-                pageRequest)
+                        users,
+                        states,
+                        categories,
+                        start,
+                        end,
+                        pageRequest)
                 .stream()
                 .collect(Collectors.toList());
 
@@ -199,7 +123,6 @@ public class EventServiceImpl implements EventService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
     public List<EventShortDto> getAll(String text,
                                       List<Long> categories,
                                       Boolean paid,
@@ -266,6 +189,90 @@ public class EventServiceImpl implements EventService {
                 .collect(Collectors.toList());
     }
 
+    public void checkExistsById(@NotNull Long id) {
+        if (!repository.existsById(id)) {
+            throw new EntityNotFoundException("Event with id=" + id + " was not found");
+        }
+    }
+
+    @Transactional
+    public EventFullDto create(@PathVariable Long userId,
+                               @RequestBody NewEventDto dto) {
+
+        var user = userService.getById(userId);
+        var location = locationService.create(dto.getLocation());
+        var categoryId = dto.getCategory();
+
+        var category = categoryMapper.toCategory(
+                categoryId,
+                categoryService.getDtoById(categoryId)
+        );
+
+        var eventDate = LocalDateTime.parse(dto.getEventDate(), dateTimeFormatter);
+
+        if (LocalDateTime.now().isAfter(eventDate)) {
+            throw new ValidationException("Incorrect date");
+        }
+
+        var event = eventMapper.toEvent(dto, category, user, location);
+        event.setState(EventState.PENDING);
+        event.setViews(0L);
+        event.setCreatedOn(LocalDateTime.now());
+        event.setConfirmedRequests(0L);
+
+        return eventMapper.toFullDto(repository.save(event));
+    }
+
+    @Transactional
+    public EventFullDto update(@NotNull Long id,
+                               @NotNull UpdateEventAdminRequest request) {
+
+        var event = getById(id);
+        var state = event.getState();
+        var stateAction = request.getStateAction();
+        var errorMessage = "Cannot publish the event because it's not in the right state: " + state;
+
+        if (!state.equals(EventState.PENDING) && stateAction.equals(EventStateAction.PUBLISH_EVENT)) {
+            throw new ConflictException(errorMessage);
+        }
+
+        if (state.equals(EventState.PUBLISHED) && stateAction.equals(EventStateAction.REJECT_EVENT)) {
+            throw new ConflictException(errorMessage);
+        }
+
+        if (state.equals(EventState.PUBLISHED) && stateAction.equals(EventStateAction.CANCEL_REVIEW)) {
+            throw new UnsupportedOperationException(errorMessage);
+        }
+
+
+        event.setEventDate(getUpdateRequestCorrectDate(request, event.getEventDate(), 1L));
+
+        return eventMapper.toFullDto(setValuesFromRequest(request, event));
+    }
+
+    @Transactional
+    public EventFullDto update(@NotNull Long userId,
+                               @NotNull Long id,
+                               @NotNull UpdateEventUserRequest request) {
+        userService.checkExistsById(userId);
+
+        var event = getById(id);
+        var state = event.getState();
+
+        if (state.equals(EventState.PUBLISHED)) {
+            throw new ConflictException("Cannot publish the event because it's not in the right state: " + state);
+        }
+
+        if (!state.equals(EventState.CANCELED) && !state.equals(EventState.PENDING)) {
+            throw new UnsupportedOperationException("Only pending or canceled events can be changed");
+        }
+
+        event.setEventDate(getUpdateRequestCorrectDate(request, event.getEventDate(), 2L));
+        
+        return eventMapper.toFullDto(setValuesFromRequest(request, event));
+    }
+
+    @Transactional
     public void setViews(@NotNull List<Event> events) {
         for (Event event : events) {
             var hits = client.getHitsWithParams(
@@ -279,10 +286,6 @@ public class EventServiceImpl implements EventService {
 
             repository.setViewsById(event.getId(), (long) views);
         }
-    }
-
-    public Set<Event> getAllByIds(Set<Long> ids) {
-        return repository.findAllByIdIn(ids);
     }
 
     private Event setValuesFromRequest(UpdateEventUserRequest request, Event event) {

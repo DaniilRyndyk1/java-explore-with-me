@@ -94,6 +94,5 @@ public class CompilationRepositoryTest {
         assertEquals(compilation.getTitle(), result.get(0).getTitle());
         assertEquals(compilation.getPinned(), result.get(0).getPinned());
         assertEquals(1, result.get(0).getEvents().size());
-        assertEquals(event.getId(), result.get(0).getId());
     }
 }
